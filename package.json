@@ -1,4 +1,5 @@
 {
+  "註解": "nodejs的主設定檔",
   "private": true,
   "version": "4.0.0",
   "name": "lightweight-charts",

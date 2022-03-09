@@ -1,4 +1,5 @@
 {
+    "註解": "其它json共用的設定內容",
 	"compilerOptions": {
 		"allowSyntheticDefaultImports": true,
 		"declaration": true,

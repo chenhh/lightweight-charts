@@ -1,4 +1,5 @@
 {
+    "註解": "typescript的主設定檔",
 	"extends": "./tsconfig.options.json",
 	"compilerOptions": {
 		"noEmit": true
