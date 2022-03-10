@@ -1,3 +1,9 @@
+/*
+	1. 運行 tsc，它會在當前目錄或者是父級目錄尋找 tsconfig.json 檔案
+	2. 運行 tsc -p ./path-to-project-directory
+	tsc -w 可啟用 TypeScript 編譯器的觀測模式
+	在檢測到檔案改動之後，它將重新編譯。
+ */
 {
     // typescript的主設定檔
 	"extends": "./tsconfig.options.json",
@@ -5,6 +11,7 @@
 	  	// "不生成輸出檔案
 		"noEmit": true,
 	},
+ 	// 指定要編譯的檔案, **/*意味著匹配所有的檔案夾和所有檔案
 	"include": [
 		"src/**/*.ts",
 		"tests/**/*.ts"

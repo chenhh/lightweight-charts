@@ -1,5 +1,5 @@
 {
-  "註解": "nodejs的主設定檔",
+  "//package.sjon": "npm主設定檔",
   "private": true,
   "version": "4.0.0",
   "name": "lightweight-charts",
@@ -13,7 +13,9 @@
     "type": "git",
     "url": "https://github.com/tradingview/lightweight-charts.git"
   },
+  "//module": "定義 npm 包的 ESM(ECMAScript modules) 規范的入口檔案，browser 環境和 node 環境均可使用",
   "module": "dist/lightweight-charts.esm.production.js",
+  "//main": "定義了 npm 包的入口檔案，browser 環境和 node 環境均可使用",
   "main": "index.js",
   "typings": "dist/typings.d.ts",
   "files": [
@@ -32,9 +34,11 @@
   "engines": {
     "node": ">=16.13.0"
   },
+  "//dependencies": "dependencies 是需要釋出到生產環境",
   "dependencies": {
     "fancy-canvas": "0.2.2"
   },
+  "//devDependencies": "devDependencies 裡面的外掛只用於開發環境",
   "devDependencies": {
     "@rollup/plugin-node-resolve": "~13.1.3",
     "@rollup/plugin-replace": "~3.1.0",
@@ -86,6 +90,7 @@
     "ttypescript": "~1.5.13",
     "typescript": "4.6.2"
   },
+  "//scripts": "可使用npm run {command}的方式指行以下的指令",
   "scripts": {
     "postinstall": "npm run install-hooks",
     "install-hooks": "node scripts/githooks/install.js",
