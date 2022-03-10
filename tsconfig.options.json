@@ -1,30 +1,47 @@
 {
-    "註解": "其它json共用的設定內容",
+    // "其它json共用的設定內容",
 	"compilerOptions": {
+	  	// 允許從沒有設置默認導出的模組中默認導入。這並不影響代碼的輸出，僅為了類型檢查
 		"allowSyntheticDefaultImports": true,
+	  	// 生成相應的 .d.ts檔案
 		"declaration": true,
+	  	// 從 tslib 導入輔助工具函數
 		"importHelpers": true,
+	    // 編譯過程中需要引入的庫檔案的列表
 		"lib": [
 			"dom",
 			"es2016"
 		],
+	  	// 指定生成哪個模組系統代碼
 		"module": "esnext",
+	  	// 模組解析方式，node or classic
 		"moduleResolution": "node",
+	    // 報錯時不生成輸出檔案
 		"noEmitOnError": true,
+	  	// 報告switch語句的fallthrough錯誤。（不允許switch的case語句貫穿）
 		"noFallthroughCasesInSwitch": true,
 		"noImplicitOverride": true,
+	    // 不是函數的所有返回路徑都有返回值時報錯
 		"noImplicitReturns": true,
+	    // 若有未使用的區域性變量則拋錯
 		"noUnusedLocals": true,
+	    // 保留 const和 enum聲明
 		"preserveConstEnums": true,
 		"resolveJsonModule": true,
+	  	// 根目錄
 		"rootDir": "./",
+	    // 啟用所有嚴格類型檢查選項
 		"strict": true,
+	    // 不對具有 /** @internal */ JSDoc註解的代碼生成代碼
 		"stripInternal": false,
+	    // 指定ECMAScript目標版本
 		"target": "es2016",
+	    // 要包含的類型聲明檔案路徑列表
 		"typeRoots": [
 			"./src/typings",
 			"node_modules/@types"
 		],
+	    // 要包含的類型聲明檔名列表
 		"types": [
 			"_global-types",
 			"dom-not-standarted"

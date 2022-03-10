@@ -1,8 +1,9 @@
 {
-    "註解": "typescript的主設定檔",
+    // typescript的主設定檔
 	"extends": "./tsconfig.options.json",
 	"compilerOptions": {
-		"noEmit": true
+	  	// "不生成輸出檔案
+		"noEmit": true,
 	},
 	"include": [
 		"src/**/*.ts",

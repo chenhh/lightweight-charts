@@ -1,12 +1,14 @@
 {
-	"註解": "typescript生產環境的設定檔",
+	// typescript生產環境的設定檔
     "extends": "./tsconfig.options.json",
 	"compilerOptions": {
+	  	// 輸出的資料夾
 		"outDir": "lib/prod",
 		"plugins": [
 			{ "transform": "ts-transformer-strip-const-enums", "entrySourceFiles": ["./src/index.ts"] },
 			{ "transform": "ts-transformer-properties-rename", "entrySourceFiles": ["./src/index.ts"] }
 		],
+	    // 不對具有 /** @internal */ JSDoc註解的代碼生成代碼
 		"stripInternal": true
 	},
 	"include": [

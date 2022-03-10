@@ -2,6 +2,7 @@
 	"extends": "./tsconfig.options.json",
 	"compilerOptions": {
 		"composite": true,
+	    // 輸出的資料夾
 		"outDir": "lib/composite"
 	},
 	"references": [],

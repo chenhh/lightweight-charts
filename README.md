@@ -25,7 +25,7 @@ The Lightweight Charting Library is the best choice for you if you want to displ
 It is the best choice for you if you want to replace static image charts with interactive ones.
 The size of the library is close to static images but if you have dozens of image charts on a web page then using this library can make the size of your web page smaller.
 
-## Installing
+## 安裝
 
 ### es6 via npm
 
@@ -77,7 +77,7 @@ lineSeries.setData([
 ]);
 ```
 
-## Development
+## 開發
 
 See [BUILDING.md](./BUILDING.md) for instructions on how to build `lightweight-charts` from source.
 
