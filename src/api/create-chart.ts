@@ -8,6 +8,7 @@ import { IChartApi } from './ichart-api';
 
 /**
  * This function is the main entry point of the Lightweight Charting Library.
+ * 此函數是Lightweight繪圖函式庫的主要進入點
  *
  * @param container - ID of HTML element or element itself
  * @param options - Any subset of options to be applied at start.
