@@ -2,20 +2,26 @@
 
 The minimal supported version of [NodeJS](https://nodejs.org/) for development is 16.13.
 
+## 編譯
 
-## Compiling
 - `npm install tslib` - 先在local安裝tslib
-- `npm run tsc` - compiles the source code only (excluding tests)
+- `npm run tsc` - 只編譯源始碼 (不包含測試)
+  - 執行 `ttsc -p tsconfig.prod.json`
 - `npm run tsc-watch` - runs the TypeScript compiler in the watch mode for source code (same as `tsc`, but in the watch mode)
+  - 執行 `npm run tsc -- --watch --preserveWatchOutput`
+  - 執行 `ttsc -p tsconfig.prod.json "--watch" "--preserveWatchOutput"`
 - `npm run tsc-verify` - compiles everything (source code and tests) with composite projects config to ensure that no invalid imports or cyclic deps are found
+  - 執行 `tsc -b tsconfig.composite.json`
 
 ## Bundling
 
 - `npm run rollup` - runs Rollup to bundle code
+  - 生成 `./dist/lightweight-charts.esm.development.js`
+  - 生成 `./dist/lightweight-charts.standalone.development.js`
 - `npm run build` - compiles source code and bundles it (as one word for `npm run tsc && npm run rollup`)
 - `npm run build:prod` - the same as `npm run build`, but also bundles production (minified) builds
 
-## Testing
+## 測試
 
 - `npm run lint` - runs lint for the code
 - `npm run test` - runs unit-tests
