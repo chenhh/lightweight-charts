@@ -229,6 +229,7 @@ export interface IChartApi {
 
 	/**
 	 * Returns API to manipulate a price scale.
+	 * price scale, y軸的格式
 	 *
 	 * @param priceScaleId - ID of the price scale.
 	 * @returns Price scale API.
@@ -237,6 +238,7 @@ export interface IChartApi {
 
 	/**
 	 * Returns API to manipulate the time scale
+	 * time scale, x軸的格式，通常用Date或是Datetime
 	 *
 	 * @returns Target API
 	 */
@@ -244,6 +246,7 @@ export interface IChartApi {
 
 	/**
 	 * Applies new options to the chart
+	 * 額外的繪圖選項
 	 *
 	 * @param options - Any subset of options.
 	 */
@@ -251,6 +254,7 @@ export interface IChartApi {
 
 	/**
 	 * Returns currently applied options
+	 * 傳回目前所有的繪圖選項(唯讀)
 	 *
 	 * @returns Full set of currently applied options, including defaults
 	 */
@@ -258,6 +262,7 @@ export interface IChartApi {
 
 	/**
 	 * Make a screenshot of the chart with all the elements excluding crosshair.
+	 * 對目前的圖表快照
 	 *
 	 * @returns A canvas with the chart drawn on. Any `Canvas` methods like `toDataURL()` or `toBlob()` can be used to serialize the result.
 	 */
