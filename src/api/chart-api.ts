@@ -1,12 +1,21 @@
-import { ChartWidget, MouseEventParamsImpl, MouseEventParamsImplSupplier } from '../gui/chart-widget';
+import {
+	ChartWidget,
+	MouseEventParamsImpl,
+	MouseEventParamsImplSupplier
+} from '../gui/chart-widget';
 
-import { assert, ensureDefined } from '../helpers/assertions';
-import { Delegate } from '../helpers/delegate';
-import { clone, DeepPartial, isBoolean, merge } from '../helpers/strict-type-checks';
+import {assert, ensureDefined} from '../helpers/assertions';
+import {Delegate} from '../helpers/delegate';
+import {
+	clone,
+	DeepPartial,
+	isBoolean,
+	merge
+} from '../helpers/strict-type-checks';
 
-import { ChartOptions, ChartOptionsInternal } from '../model/chart-model';
-import { Series } from '../model/series';
-import { SeriesPlotRow } from '../model/series-data';
+import {ChartOptions, ChartOptionsInternal} from '../model/chart-model';
+import {Series} from '../model/series';
+import {SeriesPlotRow} from '../model/series-data';
 import {
 	AreaSeriesOptions,
 	AreaSeriesPartialOptions,
@@ -26,17 +35,21 @@ import {
 	PriceFormatBuiltIn,
 	SeriesType,
 } from '../model/series-options';
-import { Logical, Time } from '../model/time-data';
+import {Logical, Time} from '../model/time-data';
 
-import { CandlestickSeriesApi } from './candlestick-series-api';
-import { DataUpdatesConsumer, isFulfilledData, SeriesDataItemTypeMap } from './data-consumer';
-import { DataLayer, DataUpdateResponse, SeriesChanges } from './data-layer';
-import { getSeriesDataCreator } from './get-series-data-creator';
-import { IChartApi, MouseEventHandler, MouseEventParams } from './ichart-api';
-import { IPriceScaleApi } from './iprice-scale-api';
-import { ISeriesApi } from './iseries-api';
-import { ITimeScaleApi } from './itime-scale-api';
-import { chartOptionsDefaults } from './options/chart-options-defaults';
+import {CandlestickSeriesApi} from './candlestick-series-api';
+import {
+	DataUpdatesConsumer,
+	isFulfilledData,
+	SeriesDataItemTypeMap
+} from './data-consumer';
+import {DataLayer, DataUpdateResponse, SeriesChanges} from './data-layer';
+import {getSeriesDataCreator} from './get-series-data-creator';
+import {IChartApi, MouseEventHandler, MouseEventParams} from './ichart-api';
+import {IPriceScaleApi} from './iprice-scale-api';
+import {ISeriesApi} from './iseries-api';
+import {ITimeScaleApi} from './itime-scale-api';
+import {chartOptionsDefaults} from './options/chart-options-defaults';
 import {
 	areaStyleDefaults,
 	barStyleDefaults,
@@ -46,9 +59,9 @@ import {
 	lineStyleDefaults,
 	seriesOptionsDefaults,
 } from './options/series-options-defaults';
-import { PriceScaleApi } from './price-scale-api';
-import { SeriesApi } from './series-api';
-import { TimeScaleApi } from './time-scale-api';
+import {PriceScaleApi} from './price-scale-api';
+import {SeriesApi} from './series-api';
+import {TimeScaleApi} from './time-scale-api';
 
 function patchPriceFormat(priceFormat?: DeepPartial<PriceFormat>): void {
 	if (priceFormat === undefined || priceFormat.type === 'custom') {
@@ -100,6 +113,7 @@ function toInternalOptions(options: DeepPartial<ChartOptions>): DeepPartial<Char
 export type IPriceScaleApiProvider = Pick<IChartApi, 'priceScale'>;
 
 export class ChartApi implements IChartApi, DataUpdatesConsumer<SeriesType> {
+	// 圖表組件
 	private _chartWidget: ChartWidget;
 	private _dataLayer: DataLayer = new DataLayer();
 	private readonly _seriesMap: Map<SeriesApi<SeriesType>, Series> = new Map();
@@ -111,6 +125,11 @@ export class ChartApi implements IChartApi, DataUpdatesConsumer<SeriesType> {
 	private readonly _timeScaleApi: TimeScaleApi;
 
 	public constructor(container: HTMLElement, options?: DeepPartial<ChartOptions>) {
+		/** ChartApi的建構函數
+		 *
+		 * @param container - 建構圖表的html元素
+		 * @param options - 圖表的選項
+		 */
 		const internalOptions = (options === undefined) ?
 			clone(chartOptionsDefaults) :
 			merge(clone(chartOptionsDefaults), toInternalOptions(options)) as ChartOptionsInternal;
@@ -139,6 +158,9 @@ export class ChartApi implements IChartApi, DataUpdatesConsumer<SeriesType> {
 	}
 
 	public remove(): void {
+		/**
+		 * 清除圖表所有元素
+		 */
 		this._chartWidget.clicked().unsubscribeAll(this);
 		this._chartWidget.crosshairMoved().unsubscribeAll(this);
 
@@ -154,6 +176,9 @@ export class ChartApi implements IChartApi, DataUpdatesConsumer<SeriesType> {
 	}
 
 	public resize(width: number, height: number, forceRepaint?: boolean): void {
+		/**
+		 * 改變圖表的大小
+		 */
 		this._chartWidget.resize(width, height, forceRepaint);
 	}
 

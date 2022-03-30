@@ -27,6 +27,8 @@ export interface MouseEventParams {
 	 * Time of the data at the location of the mouse event.
 	 *
 	 * The value will be `undefined` if the location of the event in the chart is outside the range of available data.
+	 * Time類型為 UTCTimestamp | BusinessDay | string;
+	 * 而BusinessDay為日期的介面
 	 */
 	time?: Time;
 	/**
