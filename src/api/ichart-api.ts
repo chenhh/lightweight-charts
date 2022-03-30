@@ -63,15 +63,18 @@ export type MouseEventHandler = (param: MouseEventParams) => void;
 
 /**
  * The main interface of a single chart.
+ * 單一圖表的主要介面
  */
 export interface IChartApi {
 	/**
 	 * Removes the chart object including all DOM elements. This is an irreversible operation, you cannot do anything with the chart after removing it.
+	 * 移除圖表物件，包括所有的DOM元素。這是一個不可逆的操作，在移除圖表後你不能對它做任何事情。
 	 */
 	remove(): void;
 
 	/**
-	 * Sets fixed size of the chart. By default chart takes up 100% of its container.
+	 * Sets fixed size of the chart. By default, chart takes up 100% of its container.
+	 * 圖表預設使用容器100%的空間
 	 *
 	 * @param width - Target width of the chart.
 	 * @param height - Target height of the chart.
@@ -81,6 +84,7 @@ export interface IChartApi {
 
 	/**
 	 * Creates an area series with specified parameters.
+	 * 建立area序列圖表
 	 *
 	 * @param areaOptions - Customization parameters of the series being created.
 	 * @returns An interface of the created series.
@@ -93,6 +97,8 @@ export interface IChartApi {
 
 	/**
 	 * Creates a baseline series with specified parameters.
+	 * 建立baseline圖表, 有area series, baseline series, bar series candlestick series,
+	 * histogram series, line series這些基本序列繪圖，且都為IseriesApi的泛型
 	 *
 	 * @param baselineOptions - Customization parameters of the series being created.
 	 * @returns An interface of the created series.
