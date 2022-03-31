@@ -26,7 +26,7 @@ export function isUTCTimestamp(time: Time): time is UTCTimestamp {
 
 /**
  * Represents a whitespace data item, which is a data point without a value.
- *
+ * 只有時間，沒有數值的資料介面
  * @example
  * ```js
  * const data = [
@@ -49,6 +49,7 @@ export interface WhitespaceData {
 
 /**
  * A base interface for a data point of single-value series.
+ * 只有日期與純量值的資料介面
  */
 export interface SingleValueData {
 	/**
@@ -178,6 +179,7 @@ export interface SeriesDataItemTypeMap {
 }
 
 export interface DataUpdatesConsumer<TSeriesType extends SeriesType> {
+	/* 資料更新的主要介面 */
 	applyNewData(series: Series<TSeriesType>, data: SeriesDataItemTypeMap[TSeriesType][]): void;
 	updateData(series: Series<TSeriesType>, data: SeriesDataItemTypeMap[TSeriesType]): void;
 }
