@@ -153,7 +153,7 @@ export function isFulfilledData(data: SeriesDataItemTypeMap[SeriesType]): data i
 
 /**
  * Represents the type of data that a series contains.
- * 表示一个序列所包含的資料类型
+ * 表示一个合法序列所包含的資料類型
  *
  * For example a bar series contains {@link BarData} or {@link WhitespaceData}.
  */
@@ -185,7 +185,10 @@ export interface SeriesDataItemTypeMap {
 }
 
 export interface DataUpdatesConsumer<TSeriesType extends SeriesType> {
-	/* 資料更新的主要介面 */
+	/** 資料更新的主要介面
+	 *
+	 */
 	applyNewData(series: Series<TSeriesType>, data: SeriesDataItemTypeMap[TSeriesType][]): void;
+
 	updateData(series: Series<TSeriesType>, data: SeriesDataItemTypeMap[TSeriesType]): void;
 }

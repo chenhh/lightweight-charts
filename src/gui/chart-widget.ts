@@ -36,13 +36,16 @@ export interface MouseEventParamsImpl {
 export type MouseEventParamsImplSupplier = () => MouseEventParamsImpl;
 
 export class ChartWidget implements IDestroyable {
+	/**
+	 * 主要的圖表組件
+	 */
 	private readonly _options: ChartOptionsInternal;
 	private _paneWidgets: PaneWidget[] = [];
 	// private _paneSeparators: PaneSeparator[] = [];
 	private readonly _model: ChartModel;
 	private _drawRafId: number = 0;
-	private _height: number = 0;
-	private _width: number = 0;
+	private _height: number = 0;	//組件的高度
+	private _width: number = 0;		//組件的寬度
 	private _leftPriceAxisWidth: number = 0;
 	private _rightPriceAxisWidth: number = 0;
 	private _element: HTMLElement;
@@ -55,28 +58,38 @@ export class ChartWidget implements IDestroyable {
 	private _onWheelBound: (event: WheelEvent) => void;
 
 	public constructor(container: HTMLElement, options: ChartOptionsInternal) {
+		/**
+		 * 組件的建構函數
+		 */
+		// 圖表的設定值
 		this._options = options;
 
+		// 設定圖表的html element為div, 且指定div的class與css屬性
 		this._element = document.createElement('div');
 		this._element.classList.add('tv-lightweight-charts');
 		this._element.style.overflow = 'hidden';
 		this._element.style.width = '100%';
 		this._element.style.height = '100%';
+		// 取消圖表的部分屬性的預設行為
 		disableSelection(this._element);
 
+		// 設定表格的html element與css屬性
 		this._tableElement = document.createElement('table');
 		this._tableElement.setAttribute('cellspacing', '0');
 		this._element.appendChild(this._tableElement);
 
+		// 設定滑鼠滾輪的事件處理函數
 		this._onWheelBound = this._onMousewheel.bind(this);
 		this._element.addEventListener('wheel', this._onWheelBound, { passive: false });
 
+		// chart model物件, 主要的繪圖介面
 		this._model = new ChartModel(
 			this._invalidateHandler.bind(this),
 			this._options
 		);
 		this.model().crosshairMoved().subscribe(this._onPaneWidgetCrosshairMoved.bind(this), this);
 
+		// 圖表的時間軸組件
 		this._timeAxisWidget = new TimeAxisWidget(this);
 		this._tableElement.appendChild(this._timeAxisWidget.getElement());
 
@@ -110,25 +123,30 @@ export class ChartWidget implements IDestroyable {
 		this._updateTimeAxisVisibility();
 		this._model.timeScale().optionsApplied().subscribe(this._model.fullUpdate.bind(this._model), this);
 		this._model.priceScalesOptionsChanged().subscribe(this._model.fullUpdate.bind(this._model), this);
-	}
+	}	// end of constructor
 
 	public model(): ChartModel {
+		// model getter
 		return this._model;
 	}
 
 	public options(): Readonly<ChartOptionsInternal> {
+		// options getter
 		return this._options;
 	}
 
 	public paneWidgets(): PaneWidget[] {
+		// panel widget getter
 		return this._paneWidgets;
 	}
 
 	public timeAxisWidget(): TimeAxisWidget {
+		// time axis widget getter
 		return this._timeAxisWidget;
 	}
 
 	public destroy(): void {
+		// 清除所有的繪圖元件與event listener
 		this._element.removeEventListener('wheel', this._onWheelBound);
 		if (this._drawRafId !== 0) {
 			window.cancelAnimationFrame(this._drawRafId);
@@ -162,6 +180,9 @@ export class ChartWidget implements IDestroyable {
 	}
 
 	public resize(width: number, height: number, forceRepaint: boolean = false): void {
+		/**
+		 * 圖表大小有變動時，重新繪圖
+		 */
 		if (this._height === height && this._width === width) {
 			return;
 		}
