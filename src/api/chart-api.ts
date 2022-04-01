@@ -162,7 +162,7 @@ export class ChartApi implements IChartApi, DataUpdatesConsumer<SeriesType> {
 
 	public remove(): void {
 		/**
-		 * 清除圖表所有元素
+		 * 清除圖表所有元素，實現IChartApi的方法
 		 */
 		this._chartWidget.clicked().unsubscribeAll(this);
 		this._chartWidget.crosshairMoved().unsubscribeAll(this);
@@ -180,12 +180,15 @@ export class ChartApi implements IChartApi, DataUpdatesConsumer<SeriesType> {
 
 	public resize(width: number, height: number, forceRepaint?: boolean): void {
 		/**
-		 * 改變圖表的大小
+		 * 改變圖表的大小, 實現IChartApi的方法
 		 */
 		this._chartWidget.resize(width, height, forceRepaint);
 	}
 
 	public addAreaSeries(options: AreaSeriesPartialOptions = {}): ISeriesApi<'Area'> {
+		/**
+		 * 實現IChart-api介面定義的圖表, 為IseriesApi的泛型
+		 */
 		patchPriceFormat(options.priceFormat);
 
 		const strictOptions = merge(clone(seriesOptionsDefaults), areaStyleDefaults, options) as AreaSeriesOptions;
@@ -199,6 +202,9 @@ export class ChartApi implements IChartApi, DataUpdatesConsumer<SeriesType> {
 	}
 
 	public addBaselineSeries(options: BaselineSeriesPartialOptions = {}): ISeriesApi<'Baseline'> {
+		/**
+		 * 實現IChart-api介面定義的圖表, 為IseriesApi的泛型
+		 */
 		patchPriceFormat(options.priceFormat);
 
 		// to avoid assigning fields to defaults we have to clone them
@@ -213,6 +219,9 @@ export class ChartApi implements IChartApi, DataUpdatesConsumer<SeriesType> {
 	}
 
 	public addBarSeries(options: BarSeriesPartialOptions = {}): ISeriesApi<'Bar'> {
+		/**
+		 * 實現IChart-api介面定義的圖表, 為IseriesApi的泛型
+		 */
 		patchPriceFormat(options.priceFormat);
 
 		const strictOptions = merge(clone(seriesOptionsDefaults), barStyleDefaults, options) as BarSeriesOptions;
@@ -226,6 +235,9 @@ export class ChartApi implements IChartApi, DataUpdatesConsumer<SeriesType> {
 	}
 
 	public addCandlestickSeries(options: CandlestickSeriesPartialOptions = {}): ISeriesApi<'Candlestick'> {
+		/**
+		 * 實現IChart-api介面定義的圖表, 為IseriesApi的泛型
+		 */
 		fillUpDownCandlesticksColors(options);
 		patchPriceFormat(options.priceFormat);
 
@@ -240,6 +252,9 @@ export class ChartApi implements IChartApi, DataUpdatesConsumer<SeriesType> {
 	}
 
 	public addHistogramSeries(options: HistogramSeriesPartialOptions = {}): ISeriesApi<'Histogram'> {
+		/**
+		 * 實現IChart-api介面定義的圖表, 為IseriesApi的泛型
+		 */
 		patchPriceFormat(options.priceFormat);
 
 		const strictOptions = merge(clone(seriesOptionsDefaults), histogramStyleDefaults, options) as HistogramSeriesOptions;
@@ -253,6 +268,9 @@ export class ChartApi implements IChartApi, DataUpdatesConsumer<SeriesType> {
 	}
 
 	public addLineSeries(options: LineSeriesPartialOptions = {}): ISeriesApi<'Line'> {
+		/**
+		 * 實現IChart-api介面定義的圖表, 為IseriesApi的泛型
+		 */
 		patchPriceFormat(options.priceFormat);
 
 		const strictOptions = merge(clone(seriesOptionsDefaults), lineStyleDefaults, options) as LineSeriesOptions;
@@ -266,6 +284,9 @@ export class ChartApi implements IChartApi, DataUpdatesConsumer<SeriesType> {
 	}
 
 	public removeSeries(seriesApi: SeriesApi<SeriesType>): void {
+		/**
+		 * 實現IChart-api介面定義的圖表, 為IseriesApi的泛型
+		 */
 		const series = ensureDefined(this._seriesMap.get(seriesApi));
 
 		const update = this._dataLayer.removeSeries(series);
@@ -279,46 +300,79 @@ export class ChartApi implements IChartApi, DataUpdatesConsumer<SeriesType> {
 	}
 
 	public applyNewData<TSeriesType extends SeriesType>(series: Series<TSeriesType>, data: SeriesDataItemTypeMap[TSeriesType][]): void {
+		/**
+		 * 實現了DataUpdatesConsumer<SeriesType>介面的方法
+		 */
 		this._sendUpdateToChart(this._dataLayer.setSeriesData(series, data));
 	}
 
 	public updateData<TSeriesType extends SeriesType>(series: Series<TSeriesType>, data: SeriesDataItemTypeMap[TSeriesType]): void {
+		/**
+		 * 實現了DataUpdatesConsumer<SeriesType>介面的方法
+		 */
 		this._sendUpdateToChart(this._dataLayer.updateSeriesData(series, data));
 	}
 
 	public subscribeClick(handler: MouseEventHandler): void {
+		/**
+		 * 實現了IChartApi的方法
+		 */
 		this._clickedDelegate.subscribe(handler);
 	}
 
 	public unsubscribeClick(handler: MouseEventHandler): void {
+		/**
+		 * 實現了IChartApi的方法
+		 */
 		this._clickedDelegate.unsubscribe(handler);
 	}
 
 	public subscribeCrosshairMove(handler: MouseEventHandler): void {
+		/**
+		 * 實現了IChartApi的方法
+		 */
 		this._crosshairMovedDelegate.subscribe(handler);
 	}
 
 	public unsubscribeCrosshairMove(handler: MouseEventHandler): void {
+		/**
+		 * 實現了IChartApi的方法
+		 */
 		this._crosshairMovedDelegate.unsubscribe(handler);
 	}
 
 	public priceScale(priceScaleId: string): IPriceScaleApi {
+		/**
+		 * 實現了IChartApi的方法
+		 */
 		return new PriceScaleApi(this._chartWidget, priceScaleId);
 	}
 
 	public timeScale(): ITimeScaleApi {
+		/**
+		 * 實現了IChartApi的方法
+		 */
 		return this._timeScaleApi;
 	}
 
 	public applyOptions(options: DeepPartial<ChartOptions>): void {
+		/**
+		 * 實現了IChartApi的方法
+		 */
 		this._chartWidget.applyOptions(toInternalOptions(options));
 	}
 
 	public options(): Readonly<ChartOptions> {
+		/**
+		 * 實現了IChartApi的方法
+		 */
 		return this._chartWidget.options() as Readonly<ChartOptions>;
 	}
 
 	public takeScreenshot(): HTMLCanvasElement {
+		/**
+		 * 實現了IChartApi的方法
+		 */
 		return this._chartWidget.takeScreenshot();
 	}
 

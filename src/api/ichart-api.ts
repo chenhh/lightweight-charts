@@ -99,7 +99,7 @@ export interface IChartApi {
 
 	/**
 	 * Creates a baseline series with specified parameters.
-	 * 建立baseline圖表, 有area series, baseline series, bar series candlestick series,
+	 * 建立圖表, 有area series, baseline series, bar series candlestick series,
 	 * histogram series, line series這些基本序列繪圖，且都為IseriesApi的泛型
 	 *
 	 * @param baselineOptions - Customization parameters of the series being created.
