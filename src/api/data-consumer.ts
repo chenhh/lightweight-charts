@@ -65,6 +65,7 @@ export interface SingleValueData {
 
 /**
  * Structure describing a single item of data for line series
+ * LineData只有日期與純量值, 以及可選顏色的資料介面
  */
 export interface LineData extends SingleValueData {
 	/**
@@ -75,6 +76,7 @@ export interface LineData extends SingleValueData {
 
 /**
  * Structure describing a single item of data for histogram series
+ * HistogramData只有日期與純量值, 以及可選顏色的資料介面
  */
 export interface HistogramData extends SingleValueData {
 	/**
@@ -85,6 +87,7 @@ export interface HistogramData extends SingleValueData {
 
 /**
  * Represents a bar with a {@link Time} and open, high, low, and close prices.
+ * OHLC有時間、開盤、最高、最低以及收盤價5個值
  */
 export interface OhlcData {
 	/**
@@ -112,6 +115,7 @@ export interface OhlcData {
 
 /**
  * Structure describing a single item of data for bar series
+ * barData資了OHLC資料外，還有可選的顏色屬性
  */
 export interface BarData extends OhlcData {
 	/**
@@ -122,6 +126,7 @@ export interface BarData extends OhlcData {
 
 /**
  * Structure describing a single item of data for candlestick series
+ * 蠟蠋資料除了OHLC資料外，還有可選的顏色、邊界顏色以及燭芯(wick color)的顏色
  */
 export interface CandlestickData extends OhlcData {
 	/**
@@ -148,6 +153,7 @@ export function isFulfilledData(data: SeriesDataItemTypeMap[SeriesType]): data i
 
 /**
  * Represents the type of data that a series contains.
+ * 表示一个序列所包含的資料类型
  *
  * For example a bar series contains {@link BarData} or {@link WhitespaceData}.
  */
