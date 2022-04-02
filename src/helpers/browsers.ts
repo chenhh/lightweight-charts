@@ -1,6 +1,7 @@
 import { isRunningOnClientSide } from './is-running-on-client-side';
 
 export function isFF(): boolean {
+	// firefox browser
 	if (!isRunningOnClientSide) {
 		return false;
 	}
@@ -8,6 +9,7 @@ export function isFF(): boolean {
 }
 
 export function isIOS(): boolean {
+	// safari
 	if (!isRunningOnClientSide) {
 		return false;
 	}
@@ -16,6 +18,7 @@ export function isIOS(): boolean {
 }
 
 export function isChrome(): boolean {
+	// chrome browser
 	if (!isRunningOnClientSide) {
 		return false;
 	}
