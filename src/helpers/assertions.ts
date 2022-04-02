@@ -18,6 +18,7 @@ export function assert(condition: boolean, message?: string): asserts condition 
  * @returns The passed value, if it is not undefined
  */
 export function ensureDefined(value: undefined): never;
+// 為何要宣告函數後，再定義一次?
 export function ensureDefined<T>(value: T | undefined): T;
 export function ensureDefined<T>(value: T | undefined): T {
 	if (value === undefined) {
@@ -35,6 +36,7 @@ export function ensureDefined<T>(value: T | undefined): T {
  * @returns The passed value, if it is not null
  */
 export function ensureNotNull(value: null): never;
+// 為何要宣告函數後，再定義一次?
 export function ensureNotNull<T>(value: T | null): T;
 export function ensureNotNull<T>(value: T | null): T {
 	if (value === null) {
@@ -52,6 +54,7 @@ export function ensureNotNull<T>(value: T | null): T {
  * @returns The passed value, if it is not undefined and not null
  */
 export function ensure(value: undefined | null): never;
+// 為何要宣告函數後，再定義一次?
 export function ensure<T>(value: T | undefined | null): T;
 export function ensure<T>(value: T | undefined | null): T {
 	return ensureNotNull(ensureDefined(value));
