@@ -1,6 +1,9 @@
 import { IPriceFormatter } from './iprice-formatter';
 
 export class VolumeFormatter implements IPriceFormatter {
+	/**
+	 * 成交量格式化
+	 */
 	private readonly _precision: number;
 
 	public constructor(precision: number) {
@@ -8,6 +11,9 @@ export class VolumeFormatter implements IPriceFormatter {
 	}
 
 	public format(vol: number): string {
+		/**
+		 * 在PriceFormatter中的format函數，負號使用\u2212, 為何此處不使用?
+		 */
 		let sign = '';
 		if (vol < 0) {
 			sign = '-';
@@ -28,6 +34,9 @@ export class VolumeFormatter implements IPriceFormatter {
 	}
 
 	private _formatNumber(value: number): string {
+		/**
+		 * 格式化成交量時，要考慮到priceScale的設定值
+		 */
 		let res: string;
 		const priceScale = Math.pow(10, this._precision);
 		value = Math.round(value * priceScale) / priceScale;

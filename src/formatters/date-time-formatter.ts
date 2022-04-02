@@ -21,7 +21,10 @@ export class DateTimeFormatter {
 	private readonly _separator: string;
 
 	public constructor(params: Partial<DateTimeFormatterParams> = {}) {
-		const formatterParams: DateTimeFormatterParams = { ...defaultParams, ...params };
+		/**
+		 * 日期與時間的格式化, 可本地化
+		 */
+		const formatterParams: DateTimeFormatterParams = {...defaultParams, ...params};
 		this._dateFormatter = new DateFormatter(formatterParams.dateFormat, formatterParams.locale);
 		this._timeFormatter = new TimeFormatter(formatterParams.timeFormat);
 		this._separator = formatterParams.dateTimeSeparator;

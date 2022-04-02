@@ -30,18 +30,22 @@ export function merge(dst: Record<string, any>, ...sources: Record<string, any>[
 }
 
 export function isNumber(value: unknown): value is number {
+	// 是否為有限的數字
 	return (typeof value === 'number') && (isFinite(value));
 }
 
 export function isInteger(value: unknown): boolean {
+	// 是否為整數
 	return (typeof value === 'number') && ((value % 1) === 0);
 }
 
 export function isString(value: unknown): value is string {
+	// 是否為字串
 	return typeof value === 'string';
 }
 
 export function isBoolean(value: unknown): value is boolean {
+	// 是否為布林值
 	return typeof value === 'boolean';
 }
 

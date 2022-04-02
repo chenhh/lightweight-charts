@@ -7,7 +7,8 @@ const formatterOptions = {
 	decimalSignFractional: '\'',
 };
 
-/**
+/** 數字前補0的函數，長度最長為16
+ *
  * @param value - The number of convert.
  * @param length - The length. Must be between 0 and 16 inclusive.
  */
@@ -33,6 +34,9 @@ export function numberToStringWithLeadingZero(value: number, length: number): st
 }
 
 export class PriceFormatter implements IPriceFormatter {
+	/**
+	 *  IPriceFormatter介面只有要求實作format函數
+	 */
 	protected _fractionalLength: number | undefined;
 	private readonly _priceScale: number;
 	private readonly _minMove: number;
