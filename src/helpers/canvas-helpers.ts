@@ -28,6 +28,7 @@
  * @param borderWidth - Width of border to fill, must be less than width and height of the target rectangle
  */
 export function fillRectInnerBorder(ctx: CanvasRenderingContext2D, x: number, y: number, width: number, height: number, borderWidth: number): void {
+	// CanvasRenderingContext2D是typescript對於canvas繪圖的API
 	// horizontal (top and bottom) edges
 	ctx.fillRect(x + borderWidth, y, width - borderWidth * 2, borderWidth);
 	ctx.fillRect(x + borderWidth, y + height - borderWidth, width - borderWidth * 2, borderWidth);

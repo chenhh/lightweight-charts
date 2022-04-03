@@ -239,6 +239,9 @@ const rgbRe = /^rgb\(\s*(-?\d{1,10})\s*,\s*(-?\d{1,10})\s*,\s*(-?\d{1,10})\s*\)$
 const rgbaRe = /^rgba\(\s*(-?\d{1,10})\s*,\s*(-?\d{1,10})\s*,\s*(-?\d{1,10})\s*,\s*(-?[\d]{0,10}(?:\.\d+)?)\s*\)$/;
 
 function colorStringToRgba(colorString: string): Rgba {
+	/**
+	 * 將顏色字串變為RGB數值
+	 */
 	colorString = colorString.toLowerCase();
 
 	// eslint-disable-next-line no-restricted-syntax

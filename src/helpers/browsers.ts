@@ -9,7 +9,7 @@ export function isFF(): boolean {
 }
 
 export function isIOS(): boolean {
-	// safari
+	// safari browser
 	if (!isRunningOnClientSide) {
 		return false;
 	}
@@ -18,7 +18,7 @@ export function isIOS(): boolean {
 }
 
 export function isChrome(): boolean {
-	// chrome browser
+	// Chrome browser
 	if (!isRunningOnClientSide) {
 		return false;
 	}
