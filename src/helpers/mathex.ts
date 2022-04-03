@@ -1,3 +1,6 @@
+/**
+ * 擴充的數學函式庫
+ */
 export function clamp(value: number, minVal: number, maxVal: number): number {
 	return Math.min(Math.max(value, minVal), maxVal);
 }

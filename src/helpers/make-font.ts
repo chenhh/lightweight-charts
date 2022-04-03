@@ -1,6 +1,7 @@
 /**
  * Default font family.
  * Must be used to generate font string when font is not specified.
+ * 預設的字型
  */
 export const defaultFontFamily = `'Trebuchet MS', Roboto, Ubuntu, sans-serif`;
 

@@ -1,6 +1,9 @@
 import { isChrome } from './browsers';
 
 export function preventScrollByWheelClick(el: HTMLElement): void {
+	/**
+	 * wheel被點擊時的事件處理?
+	 */
 	if (!isChrome()) {
 		return;
 	}
