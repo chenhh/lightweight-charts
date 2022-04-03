@@ -4,6 +4,7 @@ import { Coordinate } from './coordinate';
 
 /**
  * Represents a price as a `number`.
+ * 名目類型
  */
 export type BarPrice = Nominal<number, 'BarPrice'>;
 
