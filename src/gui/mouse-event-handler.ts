@@ -1,3 +1,6 @@
+/**
+ * 滑鼠事件處理
+ */
 import { ensureNotNull } from '../helpers/assertions';
 import { isFF, isIOS } from '../helpers/browsers';
 import { preventScrollByWheelClick } from '../helpers/events';
@@ -73,6 +76,7 @@ export interface MouseEventHandlerTouchEvent extends MouseEventHandlerEventBase 
 export type TouchMouseEvent = MouseEventHandlerMouseEvent | MouseEventHandlerTouchEvent;
 
 export interface Position {
+	// 為何此處的x, y的類型不使用nominal類型指定?
 	x: number;
 	y: number;
 }

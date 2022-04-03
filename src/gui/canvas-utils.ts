@@ -1,6 +1,10 @@
-import { Binding as CanvasCoordinateSpaceBinding, bindToDevicePixelRatio } from 'fancy-canvas/coordinate-space';
+/**
+ * 與canvas繪圖相關的函數
+ */
 
-import { ensureNotNull } from '../helpers/assertions';
+import {Binding as CanvasCoordinateSpaceBinding, bindToDevicePixelRatio} from 'fancy-canvas/coordinate-space';
+
+import {ensureNotNull} from '../helpers/assertions';
 
 export class Size {
 	public h: number;
@@ -24,6 +28,9 @@ export function getCanvasDevicePixelRatio(canvas: HTMLCanvasElement): number {
 }
 
 export function getContext2D(canvas: HTMLCanvasElement): CanvasRenderingContext2D {
+	/**
+	 * 取得canvas html元素, 型別為內建的CanvasRenderingContext2D
+	 */
 	const ctx = ensureNotNull(canvas.getContext('2d'));
 	// sometimes (very often) ctx getContext returns the same context every time
 	// and there might be previous transformation
@@ -60,6 +67,9 @@ export function createBoundCanvas(parentElement: HTMLElement, size: Size): Canva
 }
 
 export function drawScaled(ctx: CanvasRenderingContext2D, ratio: number, func: () => void): void {
+	/**
+	 * 長,寬等比例縮放canvas
+	 */
 	ctx.save();
 	ctx.scale(ratio, ratio);
 	func();
