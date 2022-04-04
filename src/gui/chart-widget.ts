@@ -125,10 +125,12 @@ export class ChartWidget implements IDestroyable {
 		// or after but with adjustSize to properly update time scale
 		this.resize(width, height);
 
+		// TODO: 不了解此method的功
 		this._syncGuiWithModel();
 
 		// 將div放入container內
 		container.appendChild(this._element);
+		// 由option中讀取time axis是否可見
 		this._updateTimeAxisVisibility();
 		// 綁定事件處理
 		this._model.timeScale().optionsApplied().subscribe(this._model.fullUpdate.bind(this._model), this);
