@@ -90,12 +90,15 @@ export class ChartWidget implements IDestroyable {
 			this._invalidateHandler.bind(this),
 			this._options
 		);
+		// ChartModel的crosshairMoved的事件處理綁定
 		this.model().crosshairMoved().subscribe(this._onPaneWidgetCrosshairMoved.bind(this), this);
 
 		// 圖表的時間軸(x軸)組件
 		this._timeAxisWidget = new TimeAxisWidget(this);
+		// 將timeAxis置於table中
 		this._tableElement.appendChild(this._timeAxisWidget.getElement());
 
+		// 從options中讀取圖表的寬度與高度
 		let width = this._options.width;
 		let height = this._options.height;
 
