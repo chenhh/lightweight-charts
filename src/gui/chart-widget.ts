@@ -39,23 +39,23 @@ export class ChartWidget implements IDestroyable {
 	/**
 	 * 主要的圖表組件
 	 */
-	private readonly _options: ChartOptionsInternal;
+	private readonly _options: ChartOptionsInternal;	//繪圖選項
 	private _paneWidgets: PaneWidget[] = [];
 	// private _paneSeparators: PaneSeparator[] = [];
 	private readonly _model: ChartModel;
 	private _drawRafId: number = 0;
 	private _height: number = 0;	//組件的高度
 	private _width: number = 0;		//組件的寬度
-	private _leftPriceAxisWidth: number = 0;
-	private _rightPriceAxisWidth: number = 0;
+	private _leftPriceAxisWidth: number = 0;	//左側y軸的寬度
+	private _rightPriceAxisWidth: number = 0;	//右側y軸的寬度
 	private _element: HTMLElement;
 	private readonly _tableElement: HTMLElement;
 	private _timeAxisWidget: TimeAxisWidget;
 	private _invalidateMask: InvalidateMask | null = null;
 	private _drawPlanned: boolean = false;
-	private _clicked: Delegate<MouseEventParamsImplSupplier> = new Delegate();
-	private _crosshairMoved: Delegate<MouseEventParamsImplSupplier> = new Delegate();
-	private _onWheelBound: (event: WheelEvent) => void;
+	private _clicked: Delegate<MouseEventParamsImplSupplier> = new Delegate();	//滑鼠點擊事件處理
+	private _crosshairMoved: Delegate<MouseEventParamsImplSupplier> = new Delegate();	//滑鼠在圖上的十字線事件
+	private _onWheelBound: (event: WheelEvent) => void;	//滑鼠滾輪可縮放圖表
 
 	public constructor(container: HTMLElement, options: ChartOptionsInternal) {
 		/**
@@ -64,18 +64,21 @@ export class ChartWidget implements IDestroyable {
 		// 圖表的設定值
 		this._options = options;
 
+		// container通常是div，而此處的div是container內再一層div
 		// 設定圖表的html element為div, 且指定div的class與css屬性
 		this._element = document.createElement('div');
 		this._element.classList.add('tv-lightweight-charts');
 		this._element.style.overflow = 'hidden';
 		this._element.style.width = '100%';
 		this._element.style.height = '100%';
-		// 取消圖表的部分屬性的預設行為
+		// 禁止element被反白選中
 		disableSelection(this._element);
 
 		// 設定表格的html element與css屬性
 		this._tableElement = document.createElement('table');
+		// 表格欄位間用cellspacing 屬性(px)指定距離
 		this._tableElement.setAttribute('cellspacing', '0');
+		// 在div後增加table
 		this._element.appendChild(this._tableElement);
 
 		// 設定滑鼠滾輪的事件處理函數
@@ -89,7 +92,7 @@ export class ChartWidget implements IDestroyable {
 		);
 		this.model().crosshairMoved().subscribe(this._onPaneWidgetCrosshairMoved.bind(this), this);
 
-		// 圖表的時間軸組件
+		// 圖表的時間軸(x軸)組件
 		this._timeAxisWidget = new TimeAxisWidget(this);
 		this._tableElement.appendChild(this._timeAxisWidget.getElement());
 
@@ -119,8 +122,10 @@ export class ChartWidget implements IDestroyable {
 
 		this._syncGuiWithModel();
 
+		// 將div放入container內
 		container.appendChild(this._element);
 		this._updateTimeAxisVisibility();
+		// 綁定事件處理
 		this._model.timeScale().optionsApplied().subscribe(this._model.fullUpdate.bind(this._model), this);
 		this._model.priceScalesOptionsChanged().subscribe(this._model.fullUpdate.bind(this._model), this);
 	}	// end of constructor
@@ -687,6 +692,7 @@ export class ChartWidget implements IDestroyable {
 }
 
 function disableSelection(element: HTMLElement): void {
+	/* 禁止指定的element被反白選中 */
 	element.style.userSelect = 'none';
 	// eslint-disable-next-line deprecation/deprecation
 	element.style.webkitUserSelect = 'none';

@@ -27,7 +27,8 @@ The size of the library is close to static images but if you have dozens of imag
 
 ## 我的註解
 
-[測試網頁](./debug.html)
+* [測試網頁](./debug.html)
+* [文件](https://tradingview.github.io/lightweight-charts/docs)
 
 ## 安裝
 
