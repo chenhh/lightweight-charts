@@ -100,6 +100,8 @@ export class ChartWidget implements IDestroyable {
 		let height = this._options.height;
 
 		if (width === 0 || height === 0) {
+			// https://developer.mozilla.org/zh-CN/docs/Web/API/Element/getBoundingClientRect
+			// 方法返回元素的大小及其相對於視口的位置, 返回值是一個 DOMRect 物件
 			const containerRect = container.getBoundingClientRect();
 			// TODO: Fix it better
 			// on Hi-DPI CSS size * Device Pixel Ratio should be integer to avoid smoothing
