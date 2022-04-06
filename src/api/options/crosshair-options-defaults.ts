@@ -1,6 +1,7 @@
 import { CrosshairMode, CrosshairOptions } from '../../model/crosshair';
 import { LineStyle } from '../../renderers/draw-line';
 
+// 圖中十字線的選項
 export const crosshairOptionsDefaults: CrosshairOptions = {
 	vertLine: {
 		color: '#758696',

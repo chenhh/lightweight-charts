@@ -138,12 +138,12 @@ export class ChartWidget implements IDestroyable {
 	}	// end of constructor
 
 	public model(): ChartModel {
-		// model getter
+		// model getter，可用於做chain method call
 		return this._model;
 	}
 
 	public options(): Readonly<ChartOptionsInternal> {
-		// options getter
+		// options getter，可用於做chain method call
 		return this._options;
 	}
 
@@ -158,17 +158,23 @@ export class ChartWidget implements IDestroyable {
 	}
 
 	public destroy(): void {
-		// 清除所有的繪圖元件與event listener
+		/* 清除所有的繪圖元件與event listener */
+		// 取消滑鼠滾輪事件
 		this._element.removeEventListener('wheel', this._onWheelBound);
+		// 取消動畫事件
 		if (this._drawRafId !== 0) {
 			window.cancelAnimationFrame(this._drawRafId);
 		}
-
+		// 取消滑鼠十字線事件
 		this._model.crosshairMoved().unsubscribeAll(this);
+		// 取消時間軸(x軸)事件
 		this._model.timeScale().optionsApplied().unsubscribeAll(this);
+		// 取消價格軸(y軸, 左或右方)事件
 		this._model.priceScalesOptionsChanged().unsubscribeAll(this);
+		// 清除model
 		this._model.destroy();
 
+		// pane widget是table element中的widget
 		for (const paneWidget of this._paneWidgets) {
 			this._tableElement.removeChild(paneWidget.getElement());
 			paneWidget.clicked().unsubscribeAll(this);
@@ -181,12 +187,13 @@ export class ChartWidget implements IDestroyable {
 		// }
 		// this._paneSeparators = [];
 
+		// 清除time axis widget
 		ensureNotNull(this._timeAxisWidget).destroy();
 
 		if (this._element.parentElement !== null) {
 			this._element.parentElement.removeChild(this._element);
 		}
-
+		// 滑鼠十字線
 		this._crosshairMoved.destroy();
 		this._clicked.destroy();
 	}

@@ -9,6 +9,7 @@ import { priceScaleOptionsDefaults } from './price-scale-options-defaults';
 import { timeScaleOptionsDefaults } from './time-scale-options-defaults';
 import { watermarkOptionsDefaults } from './watermark-options-defaults';
 
+// 繪圖的選項
 export const chartOptionsDefaults: ChartOptionsInternal = {
 	width: 0,
 	height: 0,
@@ -29,6 +30,7 @@ export const chartOptionsDefaults: ChartOptionsInternal = {
 	timeScale: timeScaleOptionsDefaults,
 	watermark: watermarkOptionsDefaults,
 	localization: {
+		//判斷是否執行在browser中, 在bom中，可用navigator.language得到語系
 		locale: isRunningOnClientSide ? navigator.language : '',
 		dateFormat: 'dd MMM \'yy',
 	},
