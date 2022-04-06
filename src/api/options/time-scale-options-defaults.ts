@@ -11,7 +11,7 @@ export const timeScaleOptionsDefaults: TimeScaleOptions = {
 	borderVisible: true,
 	borderColor: '#2B2B43',
 	visible: true,
-	timeVisible: false,
+	timeVisible: false,	//預設只看到的日期, true可看到日期與時間
 	secondsVisible: true,
 	shiftVisibleRangeOnNewBar: true,
 };

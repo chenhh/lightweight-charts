@@ -35,6 +35,7 @@ export type TimeAndCoordinateProvider = () => CrosshairTimeAndCoordinate;
 
 /**
  * Represents the crosshair mode.
+ * magnet指十字線會指向圖表的特定值，而normal可在圖表上任意移動
  */
 export const enum CrosshairMode {
 	/**

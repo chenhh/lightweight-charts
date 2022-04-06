@@ -19,5 +19,6 @@ export const crosshairOptionsDefaults: CrosshairOptions = {
 		labelVisible: true,
 		labelBackgroundColor: '#4c525e',
 	},
+	// magnet指十字線會指向圖表的特定值，而normal可在圖表上任意移動
 	mode: CrosshairMode.Magnet,
 };
