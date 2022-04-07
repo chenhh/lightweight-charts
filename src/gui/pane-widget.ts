@@ -96,17 +96,20 @@ export class PaneWidget implements IDestroyable, MouseEventHandlers {
 	public constructor(chart: ChartWidget, state: Pane) {
 		/**
 		 * pane widget放在chart-widget的table中
+		 * chart - ChartWidget
+		 * state - Pane model
 		 */
 		this._chart = chart;
 
 		this._state = state;
 		this._state.onDestroyed().subscribe(this._onStateDestroyed.bind(this), this, true);
 
-		// 設定欄位屬性
+		// 設定中間欄位屬性
 		this._paneCell = document.createElement('td');
 		this._paneCell.style.padding = '0';
 		this._paneCell.style.position = 'relative';
 
+		// 中間欄位再插入div container
 		const paneWrapper = document.createElement('div');
 		paneWrapper.style.width = '100%';
 		paneWrapper.style.height = '100%';

@@ -61,7 +61,7 @@ export class ChartWidget implements IDestroyable {
 	private _leftPriceAxisWidth: number = 0;	//左側y軸的寬度
 	private _rightPriceAxisWidth: number = 0;	//右側y軸的寬度
 	private _element: HTMLElement;
-	private readonly _tableElement: HTMLElement;
+	private readonly _tableElement: HTMLElement; // tableElement是element中的排版方法
 	private _timeAxisWidget: TimeAxisWidget;
 	private _invalidateMask: InvalidateMask | null = null;
 	private _drawPlanned: boolean = false;
