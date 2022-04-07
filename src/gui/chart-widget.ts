@@ -72,6 +72,12 @@ export class ChartWidget implements IDestroyable {
 	public constructor(container: HTMLElement, options: ChartOptionsInternal) {
 		/**
 		 * 組件的建構函數
+		 * 最外層是使用者自訂的container，通常是div
+		 * 第二層是此處建立的div, class為tv-lightweight-charts
+		 * 第三層是table，cellspacing為0
+		 * table內有兩列, padding均為0px
+		 * 	第一列是left price axis, main chart(內有一層div中與多層canvas), right price axis
+		 * 	第二列是空白, time axis (canvas), 空白
 		 */
 		// 圖表的設定值
 		this._options = options;
