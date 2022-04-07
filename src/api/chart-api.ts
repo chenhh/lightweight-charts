@@ -116,8 +116,7 @@ export class ChartApi implements IChartApi, DataUpdatesConsumer<SeriesType> {
 	/** 實現了IchartApi介面，內容為圖表的主要行為
 	 *  實現了DataUpdatesConsumer<SeriesType>介面，內容為資料更新的主要行為
 	 */
-	// 圖表組件
-	private _chartWidget: ChartWidget;
+	private _chartWidget: ChartWidget;	// 圖表組件
 	private _dataLayer: DataLayer = new DataLayer();
 	private readonly _seriesMap: Map<SeriesApi<SeriesType>, Series> = new Map();
 	private readonly _seriesMapReversed: Map<Series, SeriesApi<SeriesType>> = new Map();
@@ -133,12 +132,15 @@ export class ChartApi implements IChartApi, DataUpdatesConsumer<SeriesType> {
 		 * @param container - 建構圖表的html元素
 		 * @param options - 圖表的選項
 		 */
+			// 是否有定義圖表的選項，沒有時使用預設值，有定義時，將自定選項和預設選項合併, 最後的合併選項為internalOptions
 		const internalOptions = (options === undefined) ?
 			clone(chartOptionsDefaults) :
 			merge(clone(chartOptionsDefaults), toInternalOptions(options)) as ChartOptionsInternal;
 
+		// 使用指定的html元素和選項建立圖表組件
 		this._chartWidget = new ChartWidget(container, internalOptions);
 
+		// 圖表上按下滑鼠的事件
 		this._chartWidget.clicked().subscribe(
 			(paramSupplier: MouseEventParamsImplSupplier) => {
 				if (this._clickedDelegate.hasListeners()) {
@@ -147,6 +149,7 @@ export class ChartApi implements IChartApi, DataUpdatesConsumer<SeriesType> {
 			},
 			this
 		);
+		// 圖表上十字線移動的事件
 		this._chartWidget.crosshairMoved().subscribe(
 			(paramSupplier: MouseEventParamsImplSupplier) => {
 				if (this._crosshairMovedDelegate.hasListeners()) {
@@ -155,7 +158,7 @@ export class ChartApi implements IChartApi, DataUpdatesConsumer<SeriesType> {
 			},
 			this
 		);
-
+		// 取得圖表組件中的model
 		const model = this._chartWidget.model();
 		this._timeScaleApi = new TimeScaleApi(model, this._chartWidget.timeAxisWidget());
 	}

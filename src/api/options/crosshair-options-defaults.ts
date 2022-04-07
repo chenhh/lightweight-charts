@@ -3,6 +3,7 @@ import { LineStyle } from '../../renderers/draw-line';
 
 // 圖中十字線的選項
 export const crosshairOptionsDefaults: CrosshairOptions = {
+	// 垂直線格式
 	vertLine: {
 		color: '#758696',
 		width: 1,
@@ -11,6 +12,7 @@ export const crosshairOptionsDefaults: CrosshairOptions = {
 		labelVisible: true,
 		labelBackgroundColor: '#4c525e',
 	},
+	// 水平線格式
 	horzLine: {
 		color: '#758696',
 		width: 1,

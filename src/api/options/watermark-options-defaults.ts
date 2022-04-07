@@ -9,7 +9,7 @@ export const watermarkOptionsDefaults: WatermarkOptions = {
 	fontSize: 48,
 	fontFamily: defaultFontFamily,
 	fontStyle: '',
-	text: '',
+	text: '',			 // 浮水印的文字
 	horzAlign: 'center', // 預設在圖表中央
 	vertAlign: 'center',
 };

@@ -94,11 +94,15 @@ export class PaneWidget implements IDestroyable, MouseEventHandlers {
 	private _isSettingSize: boolean = false;
 
 	public constructor(chart: ChartWidget, state: Pane) {
+		/**
+		 * pane widget放在chart-widget的table中
+		 */
 		this._chart = chart;
 
 		this._state = state;
 		this._state.onDestroyed().subscribe(this._onStateDestroyed.bind(this), this, true);
 
+		// 設定欄位屬性
 		this._paneCell = document.createElement('td');
 		this._paneCell.style.padding = '0';
 		this._paneCell.style.position = 'relative';
@@ -109,9 +113,11 @@ export class PaneWidget implements IDestroyable, MouseEventHandlers {
 		paneWrapper.style.position = 'relative';
 		paneWrapper.style.overflow = 'hidden';
 
+		// 左側price axis欄位屬性
 		this._leftAxisCell = document.createElement('td');
 		this._leftAxisCell.style.padding = '0';
 
+		// 右側price axis欄位屬性
 		this._rightAxisCell = document.createElement('td');
 		this._rightAxisCell.style.padding = '0';
 
@@ -133,6 +139,7 @@ export class PaneWidget implements IDestroyable, MouseEventHandlers {
 		topCanvas.style.left = '0';
 		topCanvas.style.top = '0';
 
+		// 欄位順序: 左側price axis, 圖表, 右側price axis
 		this._rowElement = document.createElement('tr');
 		this._rowElement.appendChild(this._leftAxisCell);
 		this._rowElement.appendChild(this._paneCell);

@@ -37,15 +37,27 @@ export type MouseEventParamsImplSupplier = () => MouseEventParamsImpl;
 
 export class ChartWidget implements IDestroyable {
 	/**
-	 * 主要的圖表組件
+	 * 主要的圖表組件, 包含了:
+	 * 	- 主要圖表(ChartModel)，
+	 *  - 左(右)側的y軸
+	 *  - 時間軸(TimeAxisWidget)
+	 *  的組件們
+	 *
+	 *  只有在網頁的script上建構圖表，之後圖表的行為都是依使用者操作的事件驅動
+	 *
+	 *  使用者指定container的元素(通常是div)後，建構子在內層建立一個繪圖的div container後，
+	 *  內層container再插入一個table，裡面放入paneWidgets的元素，
+	 *  table內第一列的第一欄是左側的price axis, 中間欄是圖表，最右側欄是右側的price axis，
+	 *  第二列再放入time axis
+	 *
 	 */
 	private readonly _options: ChartOptionsInternal;	//繪圖選項
 	private _paneWidgets: PaneWidget[] = [];
 	// private _paneSeparators: PaneSeparator[] = [];
 	private readonly _model: ChartModel;
 	private _drawRafId: number = 0;
-	private _height: number = 0;	//組件的高度
-	private _width: number = 0;		//組件的寬度
+	private _height: number = 0;	//chart組件的高度
+	private _width: number = 0;		//chart組件的寬度
 	private _leftPriceAxisWidth: number = 0;	//左側y軸的寬度
 	private _rightPriceAxisWidth: number = 0;	//右側y軸的寬度
 	private _element: HTMLElement;
@@ -55,7 +67,7 @@ export class ChartWidget implements IDestroyable {
 	private _drawPlanned: boolean = false;
 	private _clicked: Delegate<MouseEventParamsImplSupplier> = new Delegate();	//滑鼠點擊事件處理
 	private _crosshairMoved: Delegate<MouseEventParamsImplSupplier> = new Delegate();	//滑鼠在圖上的十字線事件
-	private _onWheelBound: (event: WheelEvent) => void;	//滑鼠滾輪可縮放圖表
+	private _onWheelBound: (event: WheelEvent) => void;	//滑鼠滾輪的事件函數指標
 
 	public constructor(container: HTMLElement, options: ChartOptionsInternal) {
 		/**
@@ -83,7 +95,10 @@ export class ChartWidget implements IDestroyable {
 
 		// 設定滑鼠滾輪的事件處理函數
 		this._onWheelBound = this._onMousewheel.bind(this);
-		this._element.addEventListener('wheel', this._onWheelBound, { passive: false });
+		// option passive,用途是告訴瀏覽器，這個事件 handler function 會不會呼叫event.preventDefault來停止瀏覽器的原生行為
+		// 就是如果你是 scroll event，以前會因為瀏覽器要判斷會不會被preventDefault，所以讓 scroll 的效能變差，
+		// 加上這個選項可以直接告訴瀏覽器說沒有要 preventDefault 後，原生的事件行為就可以不管 event handler 直接處理了
+		this._element.addEventListener('wheel', this._onWheelBound, {passive: false});
 
 		// chart model物件, 主要的繪圖介面
 		this._model = new ChartModel(
@@ -125,12 +140,12 @@ export class ChartWidget implements IDestroyable {
 		// or after but with adjustSize to properly update time scale
 		this.resize(width, height);
 
-		// TODO: 不了解此method的功
+		// TODO: 不了解此method的功能
 		this._syncGuiWithModel();
 
-		// 將div放入container內
+		// 將建立好的圖表放入使用者指定的container內
 		container.appendChild(this._element);
-		// 由option中讀取time axis是否可見
+		// 由option中讀取時間是否可見, 預設只能看到日期
 		this._updateTimeAxisVisibility();
 		// 綁定事件處理
 		this._model.timeScale().optionsApplied().subscribe(this._model.fullUpdate.bind(this._model), this);
@@ -447,6 +462,9 @@ export class ChartWidget implements IDestroyable {
 	}
 
 	private _onMousewheel(event: WheelEvent): void {
+		/**
+		 * 滑鼠滾輪事件的處理函數
+		 */
 		let deltaX = event.deltaX / 100;
 		let deltaY = -(event.deltaY / 100);
 
