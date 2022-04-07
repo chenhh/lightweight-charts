@@ -52,7 +52,7 @@ export class ChartWidget implements IDestroyable {
 	 *
 	 */
 	private readonly _options: ChartOptionsInternal;	//繪圖選項
-	private _paneWidgets: PaneWidget[] = [];
+	private _paneWidgets: PaneWidget[] = [];	// pane widgets array
 	// private _paneSeparators: PaneSeparator[] = [];
 	private readonly _model: ChartModel;
 	private _drawRafId: number = 0;
@@ -241,14 +241,17 @@ export class ChartWidget implements IDestroyable {
 	}
 
 	public paint(invalidateMask?: InvalidateMask): void {
+		// 繪制圖形
 		if (invalidateMask === undefined) {
 			invalidateMask = new InvalidateMask(InvalidationLevel.Full);
 		}
 
+		// for all pane widgets in the array
 		for (let i = 0; i < this._paneWidgets.length; i++) {
 			this._paneWidgets[i].paint(invalidateMask.invalidateForPane(i).level);
 		}
 
+		// 只有在時間選項為可見時才繪製時間軸
 		if (this._options.timeScale.visible) {
 			this._timeAxisWidget.paint(invalidateMask.fullInvalidation());
 		}
