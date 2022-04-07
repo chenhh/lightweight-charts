@@ -21,6 +21,15 @@ export class Size {
 }
 
 export function getCanvasDevicePixelRatio(canvas: HTMLCanvasElement): number {
+	/**
+	 * https://developer.mozilla.org/zh-TW/docs/Web/API/HTMLCanvasElement
+	 * HTMLCanvasElement 介面提供控制 canvas 元素的屬性和方法. HTMLCanvasElement 介面也繼承了 HTMLElement 介面的屬性和方法.
+	 * ownerDocument 唯讀屬性會回傳一個此節點所屬的的頂層 document 物件。
+	 * 在瀏覽器中，document.defaultView 屬性會指向一個目前 document 所屬的 window 物件，若無則為 null。
+	 * Windo 介面的devicePixelRatio返回當前顯示設備的物理畫素解析度與CSS畫素解析度之比。
+	 * 此值也可以解釋為畫素大小的比率：一個CSS畫素的大小與一個物理畫素的大小。
+	 * 簡單來說，它告訴瀏覽器應使用多少螢幕實際畫素來繪制單個CSS畫素。
+	 */
 	return canvas.ownerDocument &&
 		canvas.ownerDocument.defaultView &&
 		canvas.ownerDocument.defaultView.devicePixelRatio

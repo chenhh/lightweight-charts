@@ -149,6 +149,7 @@ export class PaneWidget implements IDestroyable, MouseEventHandlers {
 		this._rowElement.appendChild(this._rightAxisCell);
 		this.updatePriceAxisWidgetsStates();
 
+		// 水平或是垂直拖接圖表的滑鼠事件
 		this._mouseEventHandler = new MouseEventHandler(
 			this._topCanvasBinding.canvas,
 			this,
@@ -181,10 +182,12 @@ export class PaneWidget implements IDestroyable, MouseEventHandlers {
 	}
 
 	public state(): Pane {
+		// state getter
 		return ensureNotNull(this._state);
 	}
 
 	public setState(pane: Pane | null): void {
+		// 重新設定state
 		if (this._state !== null) {
 			this._state.onDestroyed().unsubscribeAll(this);
 		}
@@ -199,10 +202,12 @@ export class PaneWidget implements IDestroyable, MouseEventHandlers {
 	}
 
 	public chart(): ChartWidget {
+		// 回傳chart widget
 		return this._chart;
 	}
 
 	public getElement(): HTMLElement {
+		// 回傳row element, 有三個欄位
 		return this._rowElement;
 	}
 
