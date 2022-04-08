@@ -315,16 +315,19 @@ interface GradientColorsCache {
 }
 
 export class ChartModel implements IDestroyable {
-	private readonly _options: ChartOptionsInternal;
+	/**
+	 * 主要的繪圖模型
+	 */
+	private readonly _options: ChartOptionsInternal;	//圖表的選項
 	private readonly _invalidateHandler: InvalidateHandler;
 
 	private readonly _rendererOptionsProvider: PriceAxisRendererOptionsProvider;
 
-	private readonly _timeScale: TimeScale;
-	private readonly _panes: Pane[] = [];
-	private readonly _crosshair: Crosshair;
-	private readonly _magnet: Magnet;
-	private readonly _watermark: Watermark;
+	private readonly _timeScale: TimeScale;	// 時間軸
+	private readonly _panes: Pane[] = [];	// table中的排版(?)
+	private readonly _crosshair: Crosshair;	// 十字線
+	private readonly _magnet: Magnet;		// 十字線是否自動貼近圖形
+	private readonly _watermark: Watermark;	// 浮水印
 
 	private _serieses: Series[] = [];
 

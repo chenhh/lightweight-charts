@@ -45,11 +45,6 @@ export class ChartWidget implements IDestroyable {
 	 *
 	 *  只有在網頁的script上建構圖表，之後圖表的行為都是依使用者操作的事件驅動
 	 *
-	 *  使用者指定container的元素(通常是div)後，建構子在內層建立一個繪圖的div container後，
-	 *  內層container再插入一個table，裡面放入paneWidgets的元素，
-	 *  table內第一列的第一欄是左側的price axis, 中間欄是圖表，最右側欄是右側的price axis，
-	 *  第二列再放入time axis
-	 *
 	 */
 	private readonly _options: ChartOptionsInternal;	//繪圖選項
 	private _paneWidgets: PaneWidget[] = [];	// pane widgets array
@@ -72,7 +67,7 @@ export class ChartWidget implements IDestroyable {
 	public constructor(container: HTMLElement, options: ChartOptionsInternal) {
 		/**
 		 * 組件的建構函數
-		 * 最外層是使用者自訂的container，通常是div
+		 * 最外層是使用者自訂的container，通常是div, overflow:hidden;　//自動隱藏超出的文字或圖片。
 		 * 第二層是此處建立的div, class為tv-lightweight-charts
 		 * 第三層是table，cellspacing為0
 		 * table內有兩列, padding均為0px
@@ -82,21 +77,21 @@ export class ChartWidget implements IDestroyable {
 		// 圖表的設定值
 		this._options = options;
 
-		// container通常是div，而此處的div是container內再一層div
+		// container通常是(outer) div，而此處的div是container內再一層(inner)div
 		// 設定圖表的html element為div, 且指定div的class與css屬性
 		this._element = document.createElement('div');
 		this._element.classList.add('tv-lightweight-charts');
-		this._element.style.overflow = 'hidden';
+		this._element.style.overflow = 'hidden';	// overflow: hidden, 自動隱藏超出的文字或圖片
 		this._element.style.width = '100%';
 		this._element.style.height = '100%';
 		// 禁止element被反白選中
-		disableSelection(this._element);
+		disableSelection(this._element);	// user-select: none
 
 		// 設定表格的html element與css屬性
 		this._tableElement = document.createElement('table');
 		// 表格欄位間用cellspacing 屬性(px)指定距離
 		this._tableElement.setAttribute('cellspacing', '0');
-		// 在div後增加table
+		// 在top inner div後增加table
 		this._element.appendChild(this._tableElement);
 
 		// 設定滑鼠滾輪的事件處理函數
@@ -106,7 +101,7 @@ export class ChartWidget implements IDestroyable {
 		// 加上這個選項可以直接告訴瀏覽器說沒有要 preventDefault 後，原生的事件行為就可以不管 event handler 直接處理了
 		this._element.addEventListener('wheel', this._onWheelBound, {passive: false});
 
-		// chart model物件, 主要的繪圖介面
+		// chart model物件, 主要的繪圖
 		this._model = new ChartModel(
 			this._invalidateHandler.bind(this),
 			this._options
@@ -116,7 +111,7 @@ export class ChartWidget implements IDestroyable {
 
 		// 圖表的時間軸(x軸)組件
 		this._timeAxisWidget = new TimeAxisWidget(this);
-		// 將timeAxis置於table中
+		// 將timeAxis置於table中的第二列
 		this._tableElement.appendChild(this._timeAxisWidget.getElement());
 
 		// 從options中讀取圖表的寬度與高度
