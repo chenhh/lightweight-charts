@@ -44,20 +44,20 @@ export class ChartWidget implements IDestroyable {
 	 *  的組件們
 	 *
 	 *  只有在網頁的script上建構圖表，之後圖表的行為都是依使用者操作的事件驅動
-	 *
+
 	 */
-	private readonly _options: ChartOptionsInternal;	// 繪圖選項
-	private _paneWidgets: PaneWidget[] = [];	// pane widgets array
+	private readonly _options: ChartOptionsInternal; // 繪圖選項
+	private _paneWidgets: PaneWidget[] = [];	// pane widgets array, 排版的組件
 	// private _paneSeparators: PaneSeparator[] = [];
-	private readonly _model: ChartModel;
+	private readonly _model: ChartModel;	// 主要的繪圖模型
 	private _drawRafId: number = 0;
 	private _height: number = 0;	// chart組件的高度
 	private _width: number = 0;		// chart組件的寬度
 	private _leftPriceAxisWidth: number = 0;	// 左側y軸的寬度
 	private _rightPriceAxisWidth: number = 0;	// 右側y軸的寬度
-	private _element: HTMLElement;
+	private _element: HTMLElement;	// chart組件的根元素
 	private readonly _tableElement: HTMLElement; // tableElement是element中的排版方法
-	private _timeAxisWidget: TimeAxisWidget;
+	private _timeAxisWidget: TimeAxisWidget;	// 時間軸組件
 	private _invalidateMask: InvalidateMask | null = null;
 	private _drawPlanned: boolean = false;
 	private _clicked: Delegate<MouseEventParamsImplSupplier> = new Delegate();	// 滑鼠點擊事件處理

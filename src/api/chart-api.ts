@@ -161,7 +161,7 @@ export class ChartApi implements IChartApi, DataUpdatesConsumer<SeriesType> {
 		// 取得圖表組件中的model
 		const model = this._chartWidget.model();
 		this._timeScaleApi = new TimeScaleApi(model, this._chartWidget.timeAxisWidget());
-	}
+	} // end of constructor
 
 	public remove(): void {
 		/**

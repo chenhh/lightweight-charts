@@ -36,15 +36,15 @@ function markWithGreaterWeight(a: TimeMark, b: TimeMark): TimeMark {
 export class TimeAxisWidget implements MouseEventHandlers, IDestroyable {
 	private readonly _chart: ChartWidget;
 	private readonly _options: LayoutOptions;
-	private readonly _element: HTMLElement;
-	private readonly _leftStubCell: HTMLElement;
-	private readonly _rightStubCell: HTMLElement;
-	private readonly _cell: HTMLElement;
-	private readonly _dv: HTMLElement;
+	private readonly _element: HTMLElement;		// 根元素, 為<tr>
+	private readonly _leftStubCell: HTMLElement; // 左側cell的html外框
+	private readonly _rightStubCell: HTMLElement; // 右側cell的html外框
+	private readonly _cell: HTMLElement;	// 中間cell的html外框
+	private readonly _dv: HTMLElement;		// 中間cell td內的div元素
 	private readonly _canvasBinding: CanvasCoordinateSpaceBinding;
 	private readonly _topCanvasBinding: CanvasCoordinateSpaceBinding;
-	private _leftStub: PriceAxisStub | null = null;
-	private _rightStub: PriceAxisStub | null = null;
+	private _leftStub: PriceAxisStub | null = null;	// 左側cell的價格圖表
+	private _rightStub: PriceAxisStub | null = null;// 右側cell的價格圖表
 	private readonly _mouseEventHandler: MouseEventHandler;
 	private _rendererOptions: TimeAxisViewRendererOptions | null = null;
 	private _mouseDown: boolean = false;
@@ -54,21 +54,29 @@ export class TimeAxisWidget implements MouseEventHandlers, IDestroyable {
 	private _isSettingSize: boolean = false;
 
 	public constructor(chartWidget: ChartWidget) {
+		/**
+		 * 時間軸組件, 為ChartWidget的子組件
+		 */
 		this._chart = chartWidget;
-		this._options = chartWidget.options().layout;
+		this._options = chartWidget.options().layout; // LayoutOptions
 
+		// 因為是在pane widgets排版, 所以為根元素為tr, 共有三欄, 時間軸位於中間欄
 		this._element = document.createElement('tr');
 
+		// 左側第一欄元素為空欄, padding=0
 		this._leftStubCell = document.createElement('td');
 		this._leftStubCell.style.padding = '0';
 
+		// 第三欄元素為空欄, padding=0
 		this._rightStubCell = document.createElement('td');
 		this._rightStubCell.style.padding = '0';
 
+		// cell為中間欄
 		this._cell = document.createElement('td');
 		this._cell.style.height = '25px';
 		this._cell.style.padding = '0';
 
+		// 時間軸在cell中的的子元素div中
 		this._dv = document.createElement('div');
 		this._dv.style.width = '100%';
 		this._dv.style.height = '100%';
@@ -76,6 +84,7 @@ export class TimeAxisWidget implements MouseEventHandlers, IDestroyable {
 		this._dv.style.overflow = 'hidden';
 		this._cell.appendChild(this._dv);
 
+		// 時間軸第一層的主要繪圖屬性
 		this._canvasBinding = createBoundCanvas(this._dv, new Size(16, 16));
 		this._canvasBinding.subscribeCanvasConfigured(this._canvasConfiguredHandler);
 		const canvas = this._canvasBinding.canvas;
@@ -84,6 +93,7 @@ export class TimeAxisWidget implements MouseEventHandlers, IDestroyable {
 		canvas.style.left = '0';
 		canvas.style.top = '0';
 
+		// 時間軸第二層的主要繪圖屬性
 		this._topCanvasBinding = createBoundCanvas(this._dv, new Size(16, 16));
 		this._topCanvasBinding.subscribeCanvasConfigured(this._topCanvasConfiguredHandler);
 		const topCanvas = this._topCanvasBinding.canvas;
@@ -92,10 +102,12 @@ export class TimeAxisWidget implements MouseEventHandlers, IDestroyable {
 		topCanvas.style.left = '0';
 		topCanvas.style.top = '0';
 
+		// row的順序, 左側空欄, 時間軸, 右側空欄
 		this._element.appendChild(this._leftStubCell);
 		this._element.appendChild(this._cell);
 		this._element.appendChild(this._rightStubCell);
 
+		// 重新充填cell中的元素
 		this._recreateStubs();
 		this._chart.model().priceScalesOptionsChanged().subscribe(this._recreateStubs.bind(this), this);
 
@@ -107,7 +119,7 @@ export class TimeAxisWidget implements MouseEventHandlers, IDestroyable {
 				treatHorzTouchDragAsPageScroll: () => false,
 			}
 		);
-	}
+	}	// end of constructor
 
 	public destroy(): void {
 		this._mouseEventHandler.destroy();
@@ -466,11 +478,13 @@ export class TimeAxisWidget implements MouseEventHandlers, IDestroyable {
 	private _recreateStubs(): void {
 		const model = this._chart.model();
 		const options = model.options();
+		// 清除左側cell中的元素
 		if (!options.leftPriceScale.visible && this._leftStub !== null) {
 			this._leftStubCell.removeChild(this._leftStub.getElement());
 			this._leftStub.destroy();
 			this._leftStub = null;
 		}
+		// 清除右側cell中的元素
 		if (!options.rightPriceScale.visible && this._rightStub !== null) {
 			this._rightStubCell.removeChild(this._rightStub.getElement());
 			this._rightStub.destroy();
