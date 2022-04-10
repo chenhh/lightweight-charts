@@ -38,7 +38,11 @@ export class PriceAxisStub implements IDestroyable {
 		params: PriceAxisStubParams,
 		borderVisible: BorderVisibleGetter,
 		bottomColor: ColorGetter
-	) {
+	)
+	/*
+	  * price axis stub位於time axis widget的左側或右側的cell中
+	 */ {
+		// 左側或右側的cell中
 		this._isLeft = side === 'left';
 		this._rendererOptionsProvider = params.rendererOptionsProvider;
 
@@ -46,6 +50,7 @@ export class PriceAxisStub implements IDestroyable {
 		this._borderVisible = borderVisible;
 		this._bottomColor = bottomColor;
 
+		// price axis為長直柱，所以寬度為25px, 高度為100%
 		this._cell = document.createElement('div');
 		this._cell.style.width = '25px';
 		this._cell.style.height = '100%';

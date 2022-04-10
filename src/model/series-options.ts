@@ -787,6 +787,7 @@ export type LineSeriesPartialOptions = SeriesPartialOptions<LineStyleOptions>;
 
 /**
  * Represents the type of options for each series type.
+ * 目前支援的繪圖類型
  *
  * For example a bar series has options represented by {@link BarSeriesOptions}.
  */

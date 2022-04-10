@@ -30,6 +30,10 @@ import { priceLineOptionsDefaults } from './options/price-line-options-defaults'
 import { PriceLine } from './price-line-api';
 
 export class SeriesApi<TSeriesType extends SeriesType> implements ISeriesApi<TSeriesType> {
+	/*
+	 *  圖表已經立，準備加入資料的API
+	 *  TSeriesType為所要建立的圖表類型
+	 */
 	protected _series: Series<TSeriesType>;
 	protected _dataUpdatesConsumer: DataUpdatesConsumer<TSeriesType>;
 
@@ -115,6 +119,7 @@ export class SeriesApi<TSeriesType extends SeriesType> implements ISeriesApi<TSe
 	}
 
 	public setData(data: SeriesDataItemTypeMap[TSeriesType][]): void {
+		// 新增資料進入圖表
 		checkItemsAreOrdered(data);
 		checkSeriesValuesType(this._series.seriesType(), data);
 
@@ -122,6 +127,7 @@ export class SeriesApi<TSeriesType extends SeriesType> implements ISeriesApi<TSe
 	}
 
 	public update(bar: SeriesDataItemTypeMap[TSeriesType]): void {
+		// 更新資料至圖表
 		checkSeriesValuesType(this._series.seriesType(), [bar]);
 
 		this._dataUpdatesConsumer.updateData(this._series, bar);
@@ -163,6 +169,7 @@ export class SeriesApi<TSeriesType extends SeriesType> implements ISeriesApi<TSe
 	}
 
 	public options(): Readonly<SeriesOptionsMap[TSeriesType]> {
+		// 讀取序列的選項
 		return clone(this._series.options());
 	}
 
@@ -183,6 +190,7 @@ export class SeriesApi<TSeriesType extends SeriesType> implements ISeriesApi<TSe
 	}
 
 	public seriesType(): TSeriesType {
+		// 回傳目前的圖表類別
 		return this._series.seriesType();
 	}
 }

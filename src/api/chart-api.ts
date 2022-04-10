@@ -191,6 +191,7 @@ export class ChartApi implements IChartApi, DataUpdatesConsumer<SeriesType> {
 	public addAreaSeries(options: AreaSeriesPartialOptions = {}): ISeriesApi<'Area'> {
 		/**
 		 * 實現IChart-api介面定義的圖表, 為IseriesApi的泛型
+		 * 此處只有建立圖表，尚未加入資料
 		 */
 		patchPriceFormat(options.priceFormat);
 
@@ -207,6 +208,7 @@ export class ChartApi implements IChartApi, DataUpdatesConsumer<SeriesType> {
 	public addBaselineSeries(options: BaselineSeriesPartialOptions = {}): ISeriesApi<'Baseline'> {
 		/**
 		 * 實現IChart-api介面定義的圖表, 為IseriesApi的泛型
+		 * 此處只有建立圖表，尚未加入資料
 		 */
 		patchPriceFormat(options.priceFormat);
 
@@ -224,6 +226,7 @@ export class ChartApi implements IChartApi, DataUpdatesConsumer<SeriesType> {
 	public addBarSeries(options: BarSeriesPartialOptions = {}): ISeriesApi<'Bar'> {
 		/**
 		 * 實現IChart-api介面定義的圖表, 為IseriesApi的泛型
+		 * 此處只有建立圖表，尚未加入資料
 		 */
 		patchPriceFormat(options.priceFormat);
 
@@ -240,6 +243,7 @@ export class ChartApi implements IChartApi, DataUpdatesConsumer<SeriesType> {
 	public addCandlestickSeries(options: CandlestickSeriesPartialOptions = {}): ISeriesApi<'Candlestick'> {
 		/**
 		 * 實現IChart-api介面定義的圖表, 為IseriesApi的泛型
+		 * 此處只有建立圖表，尚未加入資料
 		 */
 		fillUpDownCandlesticksColors(options);
 		patchPriceFormat(options.priceFormat);
@@ -257,6 +261,7 @@ export class ChartApi implements IChartApi, DataUpdatesConsumer<SeriesType> {
 	public addHistogramSeries(options: HistogramSeriesPartialOptions = {}): ISeriesApi<'Histogram'> {
 		/**
 		 * 實現IChart-api介面定義的圖表, 為IseriesApi的泛型
+		 * 此處只有建立圖表，尚未加入資料
 		 */
 		patchPriceFormat(options.priceFormat);
 
@@ -273,6 +278,7 @@ export class ChartApi implements IChartApi, DataUpdatesConsumer<SeriesType> {
 	public addLineSeries(options: LineSeriesPartialOptions = {}): ISeriesApi<'Line'> {
 		/**
 		 * 實現IChart-api介面定義的圖表, 為IseriesApi的泛型
+		 * 此處只有建立圖表，尚未加入資料
 		 */
 		patchPriceFormat(options.priceFormat);
 

@@ -316,9 +316,9 @@ interface GradientColorsCache {
 
 export class ChartModel implements IDestroyable {
 	/**
-	 * 主要的繪圖模型
+	 * 主要的繪圖模型, 不用處理html的屬性
 	 */
-	private readonly _options: ChartOptionsInternal;	//圖表的選項
+	private readonly _options: ChartOptionsInternal;	// 圖表的選項
 	private readonly _invalidateHandler: InvalidateHandler;
 
 	private readonly _rendererOptionsProvider: PriceAxisRendererOptionsProvider;
@@ -357,17 +357,20 @@ export class ChartModel implements IDestroyable {
 
 		this._backgroundTopColor = this._getBackgroundColor(BackgroundColorSide.Top);
 		this._backgroundBottomColor = this._getBackgroundColor(BackgroundColorSide.Bottom);
-	}
+	} // end of constructor
 
 	public fullUpdate(): void {
+		// 全部元素更新,  失效層級為full
 		this._invalidate(new InvalidateMask(InvalidationLevel.Full));
 	}
 
 	public lightUpdate(): void {
+		// light更新, 失效層級為light
 		this._invalidate(new InvalidateMask(InvalidationLevel.Light));
 	}
 
 	public cursorUpdate(): void {
+		// 游標更新,  失效層級為cursor
 		this._invalidate(new InvalidateMask(InvalidationLevel.Cursor));
 	}
 

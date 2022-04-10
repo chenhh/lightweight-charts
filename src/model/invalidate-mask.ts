@@ -8,6 +8,7 @@ export const enum InvalidationLevel {
 }
 
 export interface PaneInvalidation {
+	// 指定資料或繪圖更新時, 元素失效的層級, 越高級需要更新的元素越多
 	level: InvalidationLevel;
 	autoScale?: boolean;
 }
