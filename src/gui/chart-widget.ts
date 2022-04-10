@@ -36,7 +36,7 @@ export interface MouseEventParamsImpl {
 export type MouseEventParamsImplSupplier = () => MouseEventParamsImpl;
 
 export class ChartWidget implements IDestroyable {
-	/**
+	/*
 	 * 主要的圖表組件, 包含了:
 	 * 	- 主要圖表(ChartModel)，
 	 *  - 左(右)側的y軸
@@ -46,28 +46,28 @@ export class ChartWidget implements IDestroyable {
 	 *  只有在網頁的script上建構圖表，之後圖表的行為都是依使用者操作的事件驅動
 	 *
 	 */
-	private readonly _options: ChartOptionsInternal;	//繪圖選項
+	private readonly _options: ChartOptionsInternal;	// 繪圖選項
 	private _paneWidgets: PaneWidget[] = [];	// pane widgets array
 	// private _paneSeparators: PaneSeparator[] = [];
 	private readonly _model: ChartModel;
 	private _drawRafId: number = 0;
-	private _height: number = 0;	//chart組件的高度
-	private _width: number = 0;		//chart組件的寬度
-	private _leftPriceAxisWidth: number = 0;	//左側y軸的寬度
-	private _rightPriceAxisWidth: number = 0;	//右側y軸的寬度
+	private _height: number = 0;	// chart組件的高度
+	private _width: number = 0;		// chart組件的寬度
+	private _leftPriceAxisWidth: number = 0;	// 左側y軸的寬度
+	private _rightPriceAxisWidth: number = 0;	// 右側y軸的寬度
 	private _element: HTMLElement;
 	private readonly _tableElement: HTMLElement; // tableElement是element中的排版方法
 	private _timeAxisWidget: TimeAxisWidget;
 	private _invalidateMask: InvalidateMask | null = null;
 	private _drawPlanned: boolean = false;
-	private _clicked: Delegate<MouseEventParamsImplSupplier> = new Delegate();	//滑鼠點擊事件處理
-	private _crosshairMoved: Delegate<MouseEventParamsImplSupplier> = new Delegate();	//滑鼠在圖上的十字線事件
-	private _onWheelBound: (event: WheelEvent) => void;	//滑鼠滾輪的事件函數指標
+	private _clicked: Delegate<MouseEventParamsImplSupplier> = new Delegate();	// 滑鼠點擊事件處理
+	private _crosshairMoved: Delegate<MouseEventParamsImplSupplier> = new Delegate();	// 滑鼠在圖上的十字線事件
+	private _onWheelBound: (event: WheelEvent) => void;	// 滑鼠滾輪的事件函數指標
 
 	public constructor(container: HTMLElement, options: ChartOptionsInternal) {
-		/**
+		/*
 		 * 組件的建構函數
-		 * 最外層是使用者自訂的container，通常是div, overflow:hidden;　//自動隱藏超出的文字或圖片。
+		 * 最外層是使用者自訂的container，通常是div, overflow:hidden; 自動隱藏超出的文字或圖片。
 		 * 第二層是此處建立的div, class為tv-lightweight-charts
 		 * 第三層是table，cellspacing為0
 		 * table內有兩列, padding均為0px

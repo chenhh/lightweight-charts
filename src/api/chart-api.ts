@@ -113,7 +113,7 @@ function toInternalOptions(options: DeepPartial<ChartOptions>): DeepPartial<Char
 export type IPriceScaleApiProvider = Pick<IChartApi, 'priceScale'>;
 
 export class ChartApi implements IChartApi, DataUpdatesConsumer<SeriesType> {
-	/** 實現了IchartApi介面，內容為圖表的主要行為
+	/* 實現了IchartApi介面，內容為圖表的主要行為
 	 *  實現了DataUpdatesConsumer<SeriesType>介面，內容為資料更新的主要行為
 	 */
 	private _chartWidget: ChartWidget;	// 圖表組件

@@ -1,5 +1,10 @@
-/**
+/*
  * Represents a type `T` where every property is optional.
+ * 對一個物件型別使用 keyof 操作符，會返回該物件屬性名組成的一個字串或者數字字面量的聯合
+ * type PersonDict = {
+ *   //"key" 可以是取成任何名稱
+ *   [key: string]: string | number;
+ * };
  */
 export type DeepPartial<T> = {
 	[P in keyof T]?: T[P] extends (infer U)[]
