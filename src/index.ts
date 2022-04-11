@@ -21,5 +21,6 @@ export { createChart } from './api/create-chart';
  * Returns the current version as a string. For example `'3.3.0'`.
  */
 export function version(): string {
+	// 回傳Light-weight chart version的版本
 	return process.env.BUILD_VERSION;
 }

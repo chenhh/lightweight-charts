@@ -113,14 +113,17 @@ function toInternalOptions(options: DeepPartial<ChartOptions>): DeepPartial<Char
 export type IPriceScaleApiProvider = Pick<IChartApi, 'priceScale'>;
 
 export class ChartApi implements IChartApi, DataUpdatesConsumer<SeriesType> {
-	/* 實現了IchartApi介面，內容為圖表的主要行為
-	 *  實現了DataUpdatesConsumer<SeriesType>介面，內容為資料更新的主要行為
+	/* 實現了IchartAPI介面，內容為圖表的主要行為, 此為Chart的最頂層物件
+	 * 實現了DataUpdatesConsumer<SeriesType>介面，內容為資料更新的主要行為
+	 * SeriesType限定義Bar, Candlestick, Area, Baseline, Line, Histogram
 	 */
 	private _chartWidget: ChartWidget;	// 圖表組件
-	private _dataLayer: DataLayer = new DataLayer();
+	private _dataLayer: DataLayer = new DataLayer();	// 資料可以有多層
+	// 正向與反向記錄Series class與對應的SeriesApi class
 	private readonly _seriesMap: Map<SeriesApi<SeriesType>, Series> = new Map();
 	private readonly _seriesMapReversed: Map<Series, SeriesApi<SeriesType>> = new Map();
 
+	// 事件處理
 	private readonly _clickedDelegate: Delegate<MouseEventParams> = new Delegate();
 	private readonly _crosshairMovedDelegate: Delegate<MouseEventParams> = new Delegate();
 
@@ -158,8 +161,9 @@ export class ChartApi implements IChartApi, DataUpdatesConsumer<SeriesType> {
 			},
 			this
 		);
-		// 取得圖表組件中的model
+		// 取得圖表組件中的model，有left and right price axis, time axis與chart
 		const model = this._chartWidget.model();
+		// time axis縮放的API
 		this._timeScaleApi = new TimeScaleApi(model, this._chartWidget.timeAxisWidget());
 	} // end of constructor
 
