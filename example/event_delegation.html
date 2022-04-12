@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>event delegation</title>
+</head>
+<body>
+<div id="buttons">
+	<button id="btn1">Click me!</button>
+	<button id="btn2">Click me!</button>
+	<!-- buttons... -->
+	<button id="btn3">Click me!</button>
+</div>
+<script>
+	let buttons = document.querySelector('#buttons');
+	let count = 0;
+	buttons.addEventListener('click', (e) => {
+		count += 1;
+		if (e.target.nodeName === 'BUTTON') {
+			console.log('Click delegation!');
+			console.log(e.target);
+			console.log(e.currentTarget);
+			console.log(count);
+		}
+	});
+</script>
+</body>
+</html>
