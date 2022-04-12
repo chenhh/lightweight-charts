@@ -16,6 +16,7 @@
 	let count = 0;
 	buttons.addEventListener('click', (e) => {
 		count += 1;
+		// console.log(e.target.id);
 		if (e.target.nodeName === 'BUTTON') {
 			console.log('Click delegation!');
 			console.log(e.target);
