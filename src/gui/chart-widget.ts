@@ -46,7 +46,7 @@ export class ChartWidget implements IDestroyable {
 	 *  只有在網頁的script上建構圖表，之後圖表的行為都是依使用者操作的事件驅動
 
 	 */
-	private readonly _options: ChartOptionsInternal; // 繪圖選項
+	private readonly _options: ChartOptionsInternal; // 繪圖選項, 由chart-api物件傳入
 	private _paneWidgets: PaneWidget[] = [];	// pane widgets array, 排版的組件
 	// private _paneSeparators: PaneSeparator[] = [];
 	private readonly _model: ChartModel;	// 主要的繪圖模型
@@ -58,7 +58,7 @@ export class ChartWidget implements IDestroyable {
 	private _element: HTMLElement;	// chart組件的根元素
 	private readonly _tableElement: HTMLElement; // tableElement是element中的排版方法
 	private _timeAxisWidget: TimeAxisWidget;	// 時間軸組件
-	private _invalidateMask: InvalidateMask | null = null;
+	private _invalidateMask: InvalidateMask | null = null;	// 指定失效的組件，只更新失效部份的內容
 	private _drawPlanned: boolean = false;
 	private _clicked: Delegate<MouseEventParamsImplSupplier> = new Delegate();	// 滑鼠點擊事件處理
 	private _crosshairMoved: Delegate<MouseEventParamsImplSupplier> = new Delegate();	// 滑鼠在圖上的十字線事件
@@ -242,12 +242,15 @@ export class ChartWidget implements IDestroyable {
 	}
 
 	public paint(invalidateMask?: InvalidateMask): void {
-		// 繪制圖形
+		/** 繪制chart widget中的組件
+		 *
+		 */
+		// 預設invalidate Mask level為full
 		if (invalidateMask === undefined) {
 			invalidateMask = new InvalidateMask(InvalidationLevel.Full);
 		}
 
-		// for all pane widgets in the array
+		// for all pane widgets in the array, 依level繪制組件
 		for (let i = 0; i < this._paneWidgets.length; i++) {
 			this._paneWidgets[i].paint(invalidateMask.invalidateForPane(i).level);
 		}
@@ -507,6 +510,10 @@ export class ChartWidget implements IDestroyable {
 	}
 
 	private _drawImpl(invalidateMask: InvalidateMask): void {
+		/**
+		 * 重新繪製圖形, 依指定的invalidateMask決定須要繪製的組件
+		 * 有四個Level None = 0, Cursor = 1, Light = 2, Full = 3,
+		 */
 		const invalidationType = invalidateMask.fullInvalidation();
 
 		// actions for full invalidation ONLY (not shared with light)
@@ -543,7 +550,7 @@ export class ChartWidget implements IDestroyable {
 				this._invalidateMask = null;
 			}
 		}
-
+		// invalid level為none或cursor時，只會呼叫此部份, 而其它level都會呼叫此部份
 		this.paint(invalidateMask);
 	}
 
@@ -585,6 +592,7 @@ export class ChartWidget implements IDestroyable {
 	}
 
 	private _invalidateHandler(invalidateMask: InvalidateMask): void {
+		// 合併invalidateMask
 		if (this._invalidateMask !== null) {
 			this._invalidateMask.merge(invalidateMask);
 		} else {
@@ -593,11 +601,17 @@ export class ChartWidget implements IDestroyable {
 
 		if (!this._drawPlanned) {
 			this._drawPlanned = true;
+			// window.requestAnimationFrame()方法通知瀏覽器我們想要產生動畫，
+			// 並且要求瀏覽器在下次重繪畫面前呼叫特定函式更新動畫。
+			// requestAnimationFrame解決了瀏覽器不知道javascript動畫什麼時候開始、
+			// 不知道最佳迴圈間隔時間的問題。它是跟著瀏覽器的繪製走的，
+			// 這樣就不會存在過度繪製的問題，動畫不會丟幀。
 			this._drawRafId = window.requestAnimationFrame(() => {
 				this._drawPlanned = false;
 				this._drawRafId = 0;
 
 				if (this._invalidateMask !== null) {
+					// 重新設定invalidateMask
 					const mask = this._invalidateMask;
 					this._invalidateMask = null;
 					this._drawImpl(mask);

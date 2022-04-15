@@ -66,6 +66,7 @@ export class InvalidateMask {
 	private _timeScaleInvalidations: TimeScaleInvalidation[] = [];
 
 	public constructor(globalLevel: InvalidationLevel) {
+		// 全局失效等級
 		this._globalLevel = globalLevel;
 	}
 

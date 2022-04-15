@@ -126,6 +126,7 @@ export class PaneWidget implements IDestroyable, MouseEventHandlers {
 
 		this._paneCell.appendChild(paneWrapper);
 
+		// 底層的canvas
 		this._canvasBinding = createBoundCanvas(paneWrapper, new Size(16, 16));
 		this._canvasBinding.subscribeCanvasConfigured(this._canvasConfiguredHandler);
 		const canvas = this._canvasBinding.canvas;
@@ -134,6 +135,7 @@ export class PaneWidget implements IDestroyable, MouseEventHandlers {
 		canvas.style.left = '0';
 		canvas.style.top = '0';
 
+		// 頂層(第二層)的canvas
 		this._topCanvasBinding = createBoundCanvas(paneWrapper, new Size(16, 16));
 		this._topCanvasBinding.subscribeCanvasConfigured(this._topCanvasConfiguredHandler);
 		const topCanvas = this._topCanvasBinding.canvas;

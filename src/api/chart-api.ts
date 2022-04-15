@@ -123,8 +123,9 @@ export class ChartApi implements IChartApi, DataUpdatesConsumer<SeriesType> {
 	private readonly _seriesMap: Map<SeriesApi<SeriesType>, Series> = new Map();
 	private readonly _seriesMapReversed: Map<Series, SeriesApi<SeriesType>> = new Map();
 
-	// 事件處理
+	// 滑鼠點擊事件處理, Delegate生成callback functions list, 即點擊後會依序呼叫list中的functions.
 	private readonly _clickedDelegate: Delegate<MouseEventParams> = new Delegate();
+	// 滑鼠十字線移動事件處理
 	private readonly _crosshairMovedDelegate: Delegate<MouseEventParams> = new Delegate();
 
 	private readonly _timeScaleApi: TimeScaleApi;
@@ -143,23 +144,29 @@ export class ChartApi implements IChartApi, DataUpdatesConsumer<SeriesType> {
 		// 使用指定的html元素和選項建立圖表組件
 		this._chartWidget = new ChartWidget(container, internalOptions);
 
-		// 圖表上按下滑鼠的事件
+		// 圖表上按下滑鼠的事件, 實作ISubscription的方法
 		this._chartWidget.clicked().subscribe(
+			/* 當chart widget上按下滑鼠，且chartapi的click listeners list不為空，
+			   則將chart widget上的滑鼠事件轉發給chartapi click listeners list對應的callback functions
+			 */
 			(paramSupplier: MouseEventParamsImplSupplier) => {
 				if (this._clickedDelegate.hasListeners()) {
 					this._clickedDelegate.fire(this._convertMouseParams(paramSupplier()));
 				}
 			},
-			this
+			this	// linked object
 		);
 		// 圖表上十字線移動的事件
 		this._chartWidget.crosshairMoved().subscribe(
+			/* 當chart widget上滑鼠十字線移動，且chartapi的moved listeners list不為空，
+			   則將chart widget上的滑鼠事件轉發給chartapi moved listeners list對應的callback functions
+			 */
 			(paramSupplier: MouseEventParamsImplSupplier) => {
 				if (this._crosshairMovedDelegate.hasListeners()) {
 					this._crosshairMovedDelegate.fire(this._convertMouseParams(paramSupplier()));
 				}
 			},
-			this
+			this	// linked object
 		);
 		// 取得圖表組件中的model，有left and right price axis, time axis與chart
 		const model = this._chartWidget.model();
