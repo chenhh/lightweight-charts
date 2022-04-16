@@ -1,7 +1,7 @@
 import {
 	ChartWidget,
 	MouseEventParamsImpl,
-	MouseEventParamsImplSupplier
+	MouseEventParamsImplSupplier,
 } from '../gui/chart-widget';
 
 import {assert, ensureDefined} from '../helpers/assertions';
@@ -10,7 +10,7 @@ import {
 	clone,
 	DeepPartial,
 	isBoolean,
-	merge
+	merge,
 } from '../helpers/strict-type-checks';
 
 import {ChartOptions, ChartOptionsInternal} from '../model/chart-model';
@@ -41,7 +41,7 @@ import {CandlestickSeriesApi} from './candlestick-series-api';
 import {
 	DataUpdatesConsumer,
 	isFulfilledData,
-	SeriesDataItemTypeMap
+	SeriesDataItemTypeMap,
 } from './data-consumer';
 import {DataLayer, DataUpdateResponse, SeriesChanges} from './data-layer';
 import {getSeriesDataCreator} from './get-series-data-creator';
@@ -64,9 +64,12 @@ import {SeriesApi} from './series-api';
 import {TimeScaleApi} from './time-scale-api';
 
 function patchPriceFormat(priceFormat?: DeepPartial<PriceFormat>): void {
+	/** 修正price format的minMove */
+	// 沒有定義或是自定義的price format時直接返回
 	if (priceFormat === undefined || priceFormat.type === 'custom') {
 		return;
 	}
+	// 當有定義minMove時且precision沒有定義時，進行修正
 	const priceFormatBuiltIn = priceFormat as DeepPartial<PriceFormatBuiltIn>;
 	if (priceFormatBuiltIn.minMove !== undefined && priceFormatBuiltIn.precision === undefined) {
 		priceFormatBuiltIn.precision = precisionByMinMove(priceFormatBuiltIn.minMove);
@@ -178,15 +181,19 @@ export class ChartApi implements IChartApi, DataUpdatesConsumer<SeriesType> {
 		/**
 		 * 清除圖表所有元素，實現IChartApi的方法
 		 */
+		// 圖形組件的滑鼠事件
 		this._chartWidget.clicked().unsubscribeAll(this);
 		this._chartWidget.crosshairMoved().unsubscribeAll(this);
 
+		// 時間軸與圖形組件
 		this._timeScaleApi.destroy();
 		this._chartWidget.destroy();
 
+		// 資料序列
 		this._seriesMap.clear();
 		this._seriesMapReversed.clear();
 
+		// api的滑鼠事件
 		this._clickedDelegate.destroy();
 		this._crosshairMovedDelegate.destroy();
 		this._dataLayer.destroy();
