@@ -73,6 +73,22 @@ export class ChartWidget implements IDestroyable {
 		 * table內有兩列, padding均為0px
 		 * 	第一列是left price axis, main chart(內有一層div中與多層canvas), right price axis
 		 * 	第二列是空白, time axis (canvas), 空白
+		 *
+		 * widget處理外層的html tag
+		 * chartWidget處理最外層的div與table的css屬性和event handing。
+		 * 如Pane widget[]處理第一列的left price axis, chart, right price axis的html與css屬性和event handing。
+		 * 而TimeAxisWidget處理第二列的time axis的html與css屬性和event handing。
+		 *    - 時間內容由model->time-scale處理。
+		 *
+		 *    *--------------------------------------------*
+		 *    | div, class=tv-lightweight-charts           |
+		 *    *--------------------------------------------*
+		 *    | table                                      |
+		 *    *--------------------------------------------
+		 * 	  |<tr> pane widget (由ChartModel生成至Pane widget[])
+		 *	  *--------------------------------------------
+		 *	  |<tr> time-axis-widget
+		 *    *--------------------------------------------
 		 */
 		// 圖表的設定值
 		this._options = options;
@@ -154,22 +170,22 @@ export class ChartWidget implements IDestroyable {
 	}	// end of constructor
 
 	public model(): ChartModel {
-		// model getter，可用於做chain method call
+		/* model getter，可用於做chain method call */
 		return this._model;
 	}
 
 	public options(): Readonly<ChartOptionsInternal> {
-		// options getter，可用於做chain method call
+		/* options getter，可用於做chain method call */
 		return this._options;
 	}
 
 	public paneWidgets(): PaneWidget[] {
-		// panel widget getter
+		/* panel widget getter */
 		return this._paneWidgets;
 	}
 
 	public timeAxisWidget(): TimeAxisWidget {
-		// time axis widget getter
+		/* time axis widget getter */
 		return this._timeAxisWidget;
 	}
 
@@ -235,15 +251,17 @@ export class ChartWidget implements IDestroyable {
 		this._tableElement.style.width = widthStr;
 
 		if (forceRepaint) {
+			// 強制重新繪圖, 因為要全部重繪，所以InvalidateMask的level為full
 			this._drawImpl(new InvalidateMask(InvalidationLevel.Full));
 		} else {
+			// 單純更新模型內容
 			this._model.fullUpdate();
 		}
 	}
 
 	public paint(invalidateMask?: InvalidateMask): void {
 		/** 繪制chart widget中的組件
-		 *
+		 * 需要繪制的部份為PaneWidget與timeAxisWidget
 		 */
 		// 預設invalidate Mask level為full
 		if (invalidateMask === undefined) {
@@ -621,6 +639,9 @@ export class ChartWidget implements IDestroyable {
 	}
 
 	private _updateGui(): void {
+		/**
+		 * full invalidation時，更新所有組件
+		 */
 		this._syncGuiWithModel();
 	}
 
@@ -630,7 +651,12 @@ export class ChartWidget implements IDestroyable {
 	// }
 
 	private _syncGuiWithModel(): void {
+		/**
+		 * full invalidation時，更新所有組件
+		 */
+			// 先處理pane widgets
 		const panes = this._model.panes();
+		// 何時pane widgets的數量會與panes不一致?
 		const targetPaneWidgetsCount = panes.length;
 		const actualPaneWidgetsCount = this._paneWidgets.length;
 

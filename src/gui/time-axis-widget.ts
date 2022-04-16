@@ -55,7 +55,9 @@ export class TimeAxisWidget implements MouseEventHandlers, IDestroyable {
 
 	public constructor(chartWidget: ChartWidget) {
 		/**
-		 * 時間軸組件, 為ChartWidget的子組件
+		 * 時間軸組件, 只負責處理ChartWidget中，table第二列的html與css屬性和event handling，
+		 * 第二例有三欄，第一、三欄為空，第二列(cell)為time axis的內容
+		 * time axis的顯示的時間內容由time-scale處理
 		 */
 		this._chart = chartWidget;
 		this._options = chartWidget.options().layout; // LayoutOptions
@@ -150,6 +152,7 @@ export class TimeAxisWidget implements MouseEventHandlers, IDestroyable {
 	}
 
 	public mouseDownEvent(event: TouchMouseEvent): void {
+		/* 在時間軸按下滑鼠的事件 */
 		if (this._mouseDown) {
 			return;
 		}

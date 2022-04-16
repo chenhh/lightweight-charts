@@ -316,20 +316,21 @@ interface GradientColorsCache {
 
 export class ChartModel implements IDestroyable {
 	/**
-	 * 主要的繪圖模型, 不用處理html的屬性
+	 * 主要的繪圖模型, 不用處理html的屬性, 但是要處理日期, left and right price axis, chart,
+	 * 滑鼠為magnet時移動方式，以及watermark的內容
 	 */
 	private readonly _options: ChartOptionsInternal;	// 圖表的選項
 	private readonly _invalidateHandler: InvalidateHandler;
 
 	private readonly _rendererOptionsProvider: PriceAxisRendererOptionsProvider;
 
-	private readonly _timeScale: TimeScale;	// 時間軸
-	private readonly _panes: Pane[] = [];	// table中的排版(?)
+	private readonly _timeScale: TimeScale;	// 時間軸時間顯示的屬性
+	private readonly _panes: Pane[] = [];	// table中第一列的組件們
 	private readonly _crosshair: Crosshair;	// 十字線
 	private readonly _magnet: Magnet;		// 十字線是否自動貼近圖形
 	private readonly _watermark: Watermark;	// 浮水印
 
-	private _serieses: Series[] = [];
+	private _serieses: Series[] = [];		// 資料的圖形，再用series.setData將資料傳入
 
 	private _width: number = 0;
 	private _initialTimeScrollPos: number | null = null;
