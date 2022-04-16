@@ -23,6 +23,7 @@ export type UTCTimestamp = Nominal<number, 'UTCTimestamp'>;
 
 /**
  * Represents a time as a day/month/year.
+ * 以BusinessDay的三個數字儲存日期，再格式化輸出
  *
  * @example
  * ```js

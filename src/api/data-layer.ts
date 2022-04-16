@@ -29,6 +29,10 @@ type TimedData = Pick<SeriesDataItemTypeMap[SeriesType], 'time'>;
 type TimeConverter = (time: Time) => TimePoint;
 
 function businessDayConverter(time: Time): TimePoint {
+	/**
+	 * 將type Time = UTCTimestamp | BusinessDay | string
+	 * 轉換為TimePoint
+	 */
 	if (!isBusinessDay(time)) {
 		throw new Error('time must be of type BusinessDay');
 	}
