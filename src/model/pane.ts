@@ -26,7 +26,7 @@ export class Pane implements IDestroyable {
 	private readonly _model: ChartModel;	// 在ctor中指定，通常指向parent chart model
 	private readonly _grid: Grid;			// 背景網格線
 
-	private _dataSources: IPriceDataSource[] = [];
+	private _dataSources: IPriceDataSource[] = [];	// 資料此處只有屬性和內容，繪圖不在Pane中?
 	private _overlaySourcesByScaleId: Map<string, IPriceDataSource[]> = new Map();
 
 	private _height: number = 0;
@@ -51,9 +51,11 @@ export class Pane implements IDestroyable {
 
 		const options = model.options();
 
+		// 左側與右側的price axis物件
 		this._leftPriceScale = this._createPriceScale(DefaultPriceScaleId.Left, options.leftPriceScale);
 		this._rightPriceScale = this._createPriceScale(DefaultPriceScaleId.Right, options.rightPriceScale);
 
+		// 左側與右側的price axis事件處理
 		this._leftPriceScale.modeChanged().subscribe(this._onPriceScaleModeChanged.bind(this, this._leftPriceScale), this);
 		this._rightPriceScale.modeChanged().subscribe(this._onPriceScaleModeChanged.bind(this, this._rightPriceScale), this);
 
@@ -61,6 +63,7 @@ export class Pane implements IDestroyable {
 	}
 
 	public applyScaleOptions(options: DeepPartial<ChartOptions>): void {
+		/* 選項中有四個部份和Pane有關，全部處理 */
 		if (options.leftPriceScale) {
 			this._leftPriceScale.applyOptions(options.leftPriceScale);
 		}
@@ -113,31 +116,44 @@ export class Pane implements IDestroyable {
 	}
 
 	public stretchFactor(): number {
+		/* stretchFactor getter */
 		return this._stretchFactor;
 	}
 
 	public setStretchFactor(factor: number): void {
+		/* stretchFactor setter */
 		this._stretchFactor = factor;
 	}
 
 	public model(): ChartModel {
+		/* model getter */
 		return this._model;
 	}
 
 	public width(): number {
+		/* width getter */
 		return this._width;
 	}
 
 	public height(): number {
+		/* height getter */
 		return this._height;
 	}
 
 	public setWidth(width: number): void {
+		/*
+			width setter
+			改變寬度時，data繪圖的大小也要改變
+		*/
 		this._width = width;
 		this.updateAllSources();
 	}
 
 	public setHeight(height: number): void {
+		/*
+			height setter
+			改變高度時，price axis高度和間距也要改變
+		*/
 		this._height = height;
 
 		this._leftPriceScale.setHeight(height);
