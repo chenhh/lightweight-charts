@@ -322,7 +322,7 @@ export class ChartModel implements IDestroyable {
 	private readonly _options: ChartOptionsInternal;	// 圖表的選項
 	private readonly _invalidateHandler: InvalidateHandler;
 
-	private readonly _rendererOptionsProvider: PriceAxisRendererOptionsProvider;
+	private readonly _rendererOptionsProvider: PriceAxisRendererOptionsProvider;	// 繪製y軸的選項
 
 	private readonly _timeScale: TimeScale;	// 時間軸時間顯示的屬性
 	private readonly _panes: Pane[] = [];	// table中第一列的組件們
@@ -343,17 +343,22 @@ export class ChartModel implements IDestroyable {
 	private _gradientColorsCache: GradientColorsCache | null = null;
 
 	public constructor(invalidateHandler: InvalidateHandler, options: ChartOptionsInternal) {
+		/**
+		 * invalidateHandler, 處理失效組件重繪的callback function, 通常由chart-widget傳入
+		 */
 		this._invalidateHandler = invalidateHandler;
 		this._options = options;
 
+		// y軸的選項物件
 		this._rendererOptionsProvider = new PriceAxisRendererOptionsProvider(this);
 
+		// 生成圖表子組件
 		this._timeScale = new TimeScale(this, options.timeScale, this._options.localization);
 		this._crosshair = new Crosshair(this, options.crosshair);
 		this._magnet = new Magnet(options.crosshair);
 		this._watermark = new Watermark(this, options.watermark);
 
-		this.createPane();
+		this.createPane();	// 生成pane且置於_panes[]中
 		this._panes[0].setStretchFactor(DEFAULT_STRETCH_FACTOR * 2);
 
 		this._backgroundTopColor = this._getBackgroundColor(BackgroundColorSide.Top);
@@ -495,6 +500,7 @@ export class ChartModel implements IDestroyable {
 	}
 
 	public createPane(index?: number): Pane {
+		// 使用時，通常不會設定index
 		const pane = new Pane(this._timeScale, this);
 
 		if (index !== undefined) {

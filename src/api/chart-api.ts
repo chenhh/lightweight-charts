@@ -139,7 +139,7 @@ export class ChartApi implements IChartApi, DataUpdatesConsumer<SeriesType> {
 		 * @param container - 建構圖表的html元素
 		 * @param options - 圖表的選項
 		 */
-			// 是否有定義圖表的選項，沒有時使用預設值，有定義時，將自定選項和預設選項合併, 最後的合併選項為internalOptions
+		// 是否有定義圖表的選項，沒有時使用預設值，有定義時，將自定選項和預設選項合併, 最後的合併選項為internalOptions
 		const internalOptions = (options === undefined) ?
 			clone(chartOptionsDefaults) :
 			merge(clone(chartOptionsDefaults), toInternalOptions(options)) as ChartOptionsInternal;

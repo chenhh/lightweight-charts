@@ -10,6 +10,9 @@ export class GridPaneView implements IUpdatablePaneView {
 	private _invalidated: boolean = true;
 
 	public constructor(pane: Pane) {
+		/* 由parent pane中的Grid, 再生成grid pane view
+		*  而此處的pane指向parent pane
+		* */
 		this._pane = pane;
 	}
 

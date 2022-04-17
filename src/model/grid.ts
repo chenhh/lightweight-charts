@@ -42,9 +42,11 @@ export interface GridOptions {
 }
 
 export class Grid {
+	/* 網格線 */
 	private _paneView: GridPaneView;
 
 	public constructor(pane: Pane) {
+		/* 指向parent pane */
 		this._paneView = new GridPaneView(pane);
 	}
 

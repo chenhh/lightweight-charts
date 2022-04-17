@@ -10,8 +10,12 @@ const enum RendererConstants {
 }
 
 export class PriceAxisRendererOptionsProvider {
+	/**
+	 * 所有的member都是唯讀
+	 */
 	private readonly _chartModel: ChartModel;
 
+	//  PriceAxisViewRendererOptions的預設值
 	private readonly _rendererOptions: PriceAxisViewRendererOptions = {
 		borderSize: RendererConstants.BorderSize,
 		tickLength: RendererConstants.TickLength,
@@ -27,12 +31,14 @@ export class PriceAxisRendererOptionsProvider {
 	};
 
 	public constructor(chartModel: ChartModel) {
+		// 在chart model中的ctor被呼叫
 		this._chartModel = chartModel;
 	}
 
 	public options(): Readonly<PriceAxisViewRendererOptions> {
 		const rendererOptions = this._rendererOptions;
 
+		// 由chart model的option讀取新值
 		const currentFontSize = this._fontSize();
 		const currentFontFamily = this._fontFamily();
 
@@ -49,7 +55,7 @@ export class PriceAxisRendererOptionsProvider {
 			rendererOptions.paddingOuter = Math.ceil(currentFontSize / 2 + rendererOptions.tickLength / 2);
 			rendererOptions.baselineOffset = Math.round(currentFontSize / 10);
 		}
-
+		// 由chart model的option讀取新值
 		rendererOptions.color = this._textColor();
 
 		return this._rendererOptions;

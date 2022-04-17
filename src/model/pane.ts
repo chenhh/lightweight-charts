@@ -22,16 +22,16 @@ interface MinMaxOrderInfo {
 }
 
 export class Pane implements IDestroyable {
-	private readonly _timeScale: TimeScale;
-	private readonly _model: ChartModel;
-	private readonly _grid: Grid;
+	private readonly _timeScale: TimeScale;	// 在ctor中指定，通常指向chart model的time scale物件
+	private readonly _model: ChartModel;	// 在ctor中指定，通常指向parent chart model
+	private readonly _grid: Grid;			// 背景網格線
 
 	private _dataSources: IPriceDataSource[] = [];
 	private _overlaySourcesByScaleId: Map<string, IPriceDataSource[]> = new Map();
 
 	private _height: number = 0;
 	private _width: number = 0;
-	private _stretchFactor: number = DEFAULT_STRETCH_FACTOR;
+	private _stretchFactor: number = DEFAULT_STRETCH_FACTOR;	// 有預設值，而在chart model中會用2倍的預設值
 	private _cachedOrderedSources: readonly IPriceDataSource[] | null = null;
 
 	private _destroyed: Delegate = new Delegate();
@@ -40,6 +40,11 @@ export class Pane implements IDestroyable {
 	private _rightPriceScale: PriceScale;
 
 	public constructor(timeScale: TimeScale, model: ChartModel) {
+		/**
+		 * Pane為Chart model的子組件，因此在ctor中的chart model指向parent
+		 * 通常在chart model的ctor中的create pane時被呼叫產生新的Pane
+		 * 而timeScale使用chart model中相同的實例
+		 */
 		this._timeScale = timeScale;
 		this._model = model;
 		this._grid = new Grid(this);

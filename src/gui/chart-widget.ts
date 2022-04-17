@@ -80,15 +80,15 @@ export class ChartWidget implements IDestroyable {
 		 * 而TimeAxisWidget處理第二列的time axis的html與css屬性和event handing。
 		 *    - 時間內容由model->time-scale處理。
 		 *
-		 *    *--------------------------------------------*
-		 *    | div, class=tv-lightweight-charts           |
-		 *    *--------------------------------------------*
-		 *    | table                                      |
-		 *    *--------------------------------------------
-		 * 	  |<tr> pane widget (由ChartModel生成至Pane widget[])
-		 *	  *--------------------------------------------
-		 *	  |<tr> time-axis-widget
-		 *    *--------------------------------------------
+		 *    *---------------------------------------------------*
+		 *    | div, class=tv-lightweight-charts                  |
+		 *    *---------------------------------------------------*
+		 *    | table                                             |
+		 *    *---------------------------------------------------*
+		 * 	  |<tr> pane widget (由ChartModel生成至Pane widget[])  |
+		 *	  *---------------------------------------------------*
+		 *	  |<tr> time-axis-widget                              |
+		 *    *---------------------------------------------------*
 		 */
 		// 圖表的設定值
 		this._options = options;
@@ -117,7 +117,7 @@ export class ChartWidget implements IDestroyable {
 		// 加上這個選項可以直接告訴瀏覽器說沒有要 preventDefault 後，原生的事件行為就可以不管 event handler 直接處理了
 		this._element.addEventListener('wheel', this._onWheelBound, {passive: false});
 
-		// chart model物件, 主要的繪圖
+		// chart model物件, 主要的繪圖內容
 		this._model = new ChartModel(
 			this._invalidateHandler.bind(this),
 			this._options
