@@ -35,7 +35,8 @@ import { sortSources } from './sort-sources';
 import { SeriesItemsIndexesRange, TimePointIndex } from './time-data';
 
 /**
- * Represents the price scale mode.
+ * Represents the price scale mode. (y軸的刻度模式)
+ * 由Options中，rightPriceScale中的mode決定
  */
 export const enum PriceScaleMode {
 	/**
@@ -73,14 +74,18 @@ export interface PricedValue {
 	y: Coordinate;
 }
 
-/** Defines margins of the price scale. */
+/** Defines margins of the price scale.
+ * 定義在rightPriceScale中的scaleMargins選項
+ * */
 export interface PriceScaleMargins {
 	/**
 	 * Top margin in percentages. Must be greater or equal to 0 and less than 1.
+	 * scale的最大數值離圖形的最大數值距離的比例
 	 */
 	top: number;
 	/**
 	 * Bottom margin in percentages. Must be greater or equal to 0 and less than 1.
+	 * scale的最小數值離圖形的最小數值距離的比例
 	 */
 	bottom: number;
 }
@@ -135,7 +140,7 @@ export interface PriceScaleOptions {
 
 	/**
 	 * Set true to draw a border between the price scale and the chart area.
-	 *
+	 * price scale到圖形邊界的框線是否可見
 	 * @defaultValue `true`
 	 */
 	borderVisible: boolean;
@@ -156,7 +161,7 @@ export interface PriceScaleOptions {
 
 	/**
 	 * Indicates if this price scale visible. Ignored by overlay price scales.
-	 *
+	 *	leftPriceScale預設為false, rightPriceScale預設為true
 	 * @defaultValue `true` for the right price scale and `false` for the left
 	 */
 	visible: boolean;

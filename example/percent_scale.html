@@ -6,27 +6,36 @@
 	<script type="text/javascript"
 			src="../dist/lightweight-charts.standalone.development.js">
 	</script>
+	<style>
+		body {
+			background: black;
+		}
+	</style>
 </head>
 <body>
 <div id="container"></div>
 <script>
-	var chart = LightweightCharts.createChart("container", {
-		width: 600,
-		height: 300,
-		rightPriceScale: {
+	let chart = LightweightCharts.createChart("container", {
+		width: 800,
+		height: 400,
+		leftPriceScale: {
 			scaleMargins: {
 				top: 0.1,
 				bottom: 0.1,
 			},
 			mode: LightweightCharts.PriceScaleMode.Percentage,
-			borderColor: 'rgba(197, 203, 206, 0.4)',
+			borderColor: 'rgba(100, 203, 200, 0.4)',
+			visible: true,
+		},
+		rightPriceScale: {
+			visible: false,
 		},
 		timeScale: {
 			borderColor: 'rgba(197, 203, 206, 0.4)',
 		},
 		layout: {
 			backgroundColor: '#100841',
-			textColor: '#ffffff',
+			textColor: '#000000',
 		},
 		grid: {
 			vertLines: {

@@ -51,7 +51,7 @@ export class Pane implements IDestroyable {
 
 		const options = model.options();
 
-		// 左側與右側的price axis物件
+		// 左側與右側的price scale物件
 		this._leftPriceScale = this._createPriceScale(DefaultPriceScaleId.Left, options.leftPriceScale);
 		this._rightPriceScale = this._createPriceScale(DefaultPriceScaleId.Right, options.rightPriceScale);
 
@@ -435,7 +435,9 @@ export class Pane implements IDestroyable {
 	}
 
 	private _createPriceScale(id: string, options: OverlayPriceScaleOptions | VisiblePriceScaleOptions): PriceScale {
+		// 設定選項
 		const actualOptions: PriceScaleOptions = { visible: true, autoScale: true, ...clone(options) };
+		// 建立price scale物件
 		const priceScale = new PriceScale(
 			id,
 			actualOptions,
