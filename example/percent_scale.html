@@ -18,7 +18,7 @@
 	let chart = LightweightCharts.createChart("container", {
 		width: 800,
 		height: 400,
-		leftPriceScale: {
+		rightPriceScale: {
 			scaleMargins: {
 				top: 0.1,
 				bottom: 0.1,
@@ -26,9 +26,9 @@
 			mode: LightweightCharts.PriceScaleMode.Percentage,
 			borderColor: 'rgba(100, 203, 200, 0.4)',
 			visible: true,
-		},
-		rightPriceScale: {
-			visible: false,
+			entireTextOnly: true,
+
+
 		},
 		timeScale: {
 			borderColor: 'rgba(197, 203, 206, 0.4)',

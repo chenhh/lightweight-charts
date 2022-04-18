@@ -90,7 +90,9 @@ export interface PriceScaleMargins {
 	bottom: number;
 }
 
-/** Structure that describes price scale options */
+/** Structure that describes price scale options
+ * Price scale 的可調整選項
+ * */
 export interface PriceScaleOptions {
 	/**
 	 * Autoscaling is a feature that automatically adjusts a price scale to fit the visible range of data.
@@ -168,7 +170,7 @@ export interface PriceScaleOptions {
 
 	/**
 	 * Draw small horizontal line on price axis labels.
-	 *
+	 * scale axis是否要繪製每個tick的小凸出線
 	 * @defaultValue `true`
 	 */
 	drawTicks: boolean;
@@ -224,10 +226,13 @@ export class PriceScale {
 	private _logFormula: LogFormula = logFormulaForPriceRange(null);
 
 	public constructor(id: string, options: PriceScaleOptions, layoutOptions: LayoutOptions, localizationOptions: LocalizationOptions) {
-		this._id = id;
-		this._options = options;
-		this._layoutOptions = layoutOptions;
-		this._localizationOptions = localizationOptions;
+		/**
+		 * 由Pane中的ctor，以_createPriceScale建立左、右兩側的price scale
+		 */
+		this._id = id;	// left or right
+		this._options = options;	// leftPriceScale或rightPriceScale的選項
+		this._layoutOptions = layoutOptions;	// options的Layout選項
+		this._localizationOptions = localizationOptions; // options的Localization選項
 		this._markBuilder = new PriceTickMarkBuilder(this, 100, this._coordinateToLogical.bind(this), this._logicalToCoordinate.bind(this));
 	}
 
