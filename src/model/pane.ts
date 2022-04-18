@@ -42,12 +42,12 @@ export class Pane implements IDestroyable {
 	public constructor(timeScale: TimeScale, model: ChartModel) {
 		/**
 		 * Pane為Chart model的子組件，因此在ctor中的chart model指向parent
-		 * 通常在chart model的ctor中的create pane時被呼叫產生新的Pane
+		 * 通常在chart model的ctor中的createpane()時被呼叫產生新的Pane
 		 * 而timeScale使用chart model中相同的實例
 		 */
-		this._timeScale = timeScale;
-		this._model = model;
-		this._grid = new Grid(this);
+		this._timeScale = timeScale;	// 通常指向model中的time scale
+		this._model = model;			// 通常指向parent model
+		this._grid = new Grid(this);	// 網格
 
 		const options = model.options();
 
@@ -173,6 +173,7 @@ export class Pane implements IDestroyable {
 	}
 
 	public dataSources(): readonly IPriceDataSource[] {
+		/* data source getter */
 		return this._dataSources;
 	}
 
@@ -185,11 +186,13 @@ export class Pane implements IDestroyable {
 	}
 
 	public addDataSource(source: IPriceDataSource, targetScaleId: string, zOrder?: number): void {
+		/* 新增data source時，加在最上層 (z-index最大值+1) */
 		const targetZOrder = (zOrder !== undefined) ? zOrder : this._getZOrderMinMax().maxZOrder + 1;
 		this._insertDataSource(source, targetScaleId, targetZOrder);
 	}
 
 	public removeDataSource(source: IPriceDataSource): void {
+		/* 移除data source時，要調整id */
 		const index = this._dataSources.indexOf(source);
 		assert(index !== -1, 'removeDataSource: invalid data source');
 
@@ -234,10 +237,12 @@ export class Pane implements IDestroyable {
 	}
 
 	public leftPriceScale(): PriceScale {
+		/* leftPriceScale getter */
 		return this._leftPriceScale;
 	}
 
 	public rightPriceScale(): PriceScale {
+		/* rightPriceScale getter */
 		return this._rightPriceScale;
 	}
 
@@ -371,6 +376,7 @@ export class Pane implements IDestroyable {
 	}
 
 	private _getZOrderMinMax(): MinMaxOrderInfo {
+		/* 取data source中, z-index的最大與最小值 */
 		const sources = this.orderedSources();
 		if (sources.length === 0) {
 			return { minZOrder: 0, maxZOrder: 0 };

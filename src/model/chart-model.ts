@@ -510,6 +510,7 @@ export class ChartModel implements IDestroyable {
 			this._panes.push(pane);
 		}
 
+		// pane的真正index
 		const actualIndex = (index === undefined) ? this._panes.length - 1 : index;
 
 		// we always do autoscaling on the creation
