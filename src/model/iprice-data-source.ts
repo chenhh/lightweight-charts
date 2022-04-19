@@ -11,10 +11,13 @@ export interface FirstValue {
 }
 
 export interface IPriceDataSource extends IDataSource {
-	firstValue(): FirstValue | null;
+	firstValue(): FirstValue | null;	// 第一筆資料的時間
 	formatter(): IPriceFormatter;
+
 	priceLineColor(lastBarColor: string): string;
-	model(): ChartModel;
+
+	model(): ChartModel;				// 指向root model
 	minMove(): number;
+
 	autoscaleInfo(startTimePoint: TimePointIndex, endTimePoint: TimePointIndex): AutoscaleInfoImpl | null;
 }
