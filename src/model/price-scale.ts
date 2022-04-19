@@ -417,29 +417,34 @@ export class PriceScale {
 	}
 
 	public priceRange(): PriceRangeImpl | null {
+		/* 保證回傳有效的price range */
 		this._makeSureItIsValid();
 		return this._priceRange;
 	}
 
 	public setPriceRange(newPriceRange: PriceRangeImpl | null, isForceSetValue?: boolean): void {
+		/* 更新price range */
 		const oldPriceRange = this._priceRange;
 
+		// 當不是強制更新時
 		if (!isForceSetValue &&
 			!(oldPriceRange === null && newPriceRange !== null) &&
 			(oldPriceRange === null || oldPriceRange.equals(newPriceRange))) {
 			return;
 		}
-
+		// 更新快取
 		this._marksCache = null;
 		this._priceRange = newPriceRange;
 	}
 
 	public isEmpty(): boolean {
+		/* 當高度為0, 或priceRange為空時回傳true */
 		this._makeSureItIsValid();
 		return this._height === 0 || !this._priceRange || this._priceRange.isEmpty();
 	}
 
 	public invertedCoordinate(coordinate: number): number {
+		/* 將price scale反向 */
 		return this.isInverted() ? coordinate : this.height() - 1 - coordinate;
 	}
 
@@ -624,6 +629,7 @@ export class PriceScale {
 	}
 
 	public isInverted(): boolean {
+		/* options中的invertScale選項，預設為false */
 		return this._options.invertScale;
 	}
 
