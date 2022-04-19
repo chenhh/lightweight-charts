@@ -325,7 +325,7 @@ export class ChartModel implements IDestroyable {
 	private readonly _rendererOptionsProvider: PriceAxisRendererOptionsProvider;	// 繪製y軸的選項
 
 	private readonly _timeScale: TimeScale;	// 時間軸時間顯示的屬性
-	private readonly _panes: Pane[] = [];	// table中第一列的組件們
+	private readonly _panes: Pane[] = [];	// table中第一列組件中的left and right price scale
 	private readonly _crosshair: Crosshair;	// 十字線
 	private readonly _magnet: Magnet;		// 十字線是否自動貼近圖形
 	private readonly _watermark: Watermark;	// 浮水印

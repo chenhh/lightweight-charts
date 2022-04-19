@@ -49,6 +49,9 @@ export class Delegate<T1 = void, T2 = void> implements ISubscription<T1, T2> {
 	}
 
 	public fire(param1: T1, param2: T2): void {
+		/*
+			將event傳送出去，如price-scale.ts中的this._modeChanged.fire(oldMode, this.mode())
+		 */
 		// 展開符 ... 展開陣列再裝進 [] 空陣列, copy by value
 		const listenersSnapshot = [...this._listeners];
 		// 去除list中，singleshot為true的callback function

@@ -104,7 +104,7 @@ export interface PriceScaleOptions {
 
 	/**
 	 * Price scale mode.
-	 *
+	 * 有normal ,logarithmic, percentage, IndexedTo100四個選項
 	 * @defaultValue {@link PriceScaleMode.Normal}
 	 */
 	mode: PriceScaleMode;
@@ -237,14 +237,17 @@ export class PriceScale {
 	}
 
 	public id(): string {
+		/* id getter */
 		return this._id;
 	}
 
 	public options(): Readonly<PriceScaleOptions> {
+		/* options getter */
 		return this._options;
 	}
 
 	public applyOptions(options: DeepPartial<PriceScaleOptions>): void {
+		/* 重新設定options */
 		merge(this._options, options);
 		this.updateFormatter();
 
@@ -267,29 +270,34 @@ export class PriceScale {
 			if (top + bottom > 1) {
 				throw new Error(`Invalid margins - sum of margins must be less than 1, given=${top + bottom}`);
 			}
-
+			// 清除快取
 			this._invalidateInternalHeightCache();
 			this._marksCache = null;
 		}
 	}
 
 	public isAutoScale(): boolean {
+		/* auto scale getter */
 		return this._options.autoScale;
 	}
 
 	public isLog(): boolean {
+		/* price scale mode */
 		return this._options.mode === PriceScaleMode.Logarithmic;
 	}
 
 	public isPercentage(): boolean {
+		/* price scale mode */
 		return this._options.mode === PriceScaleMode.Percentage;
 	}
 
 	public isIndexedTo100(): boolean {
+		/* price scale mode */
 		return this._options.mode === PriceScaleMode.IndexedTo100;
 	}
 
 	public mode(): PriceScaleState {
+		/* state getter */
 		return {
 			autoScale: this._options.autoScale,
 			isInverted: this._options.invertScale,
@@ -299,15 +307,18 @@ export class PriceScale {
 
 	// eslint-disable-next-line complexity
 	public setMode(newMode: Partial<PriceScaleState>): void {
+		/* 更新mode的動作 */
 		const oldMode = this.mode();
 		let priceRange: PriceRangeImpl | null = null;
 
+		// 沿用舊的auto scal選項
 		if (newMode.autoScale !== undefined) {
 			this._options.autoScale = newMode.autoScale;
 		}
 
 		if (newMode.mode !== undefined) {
 			this._options.mode = newMode.mode;
+			// 當mode為percentage或indexto100時，auto scale為true
 			if (newMode.mode === PriceScaleMode.Percentage || newMode.mode === PriceScaleMode.IndexedTo100) {
 				this._options.autoScale = true;
 			}
@@ -316,20 +327,24 @@ export class PriceScale {
 		}
 
 		// define which scale converted from
+		// 當舊的mode為logarithmic且新的mode與舊的mode不同時
 		if (oldMode.mode === PriceScaleMode.Logarithmic && newMode.mode !== oldMode.mode) {
+			// 可以從log scale轉換，試著算出新的priceRange
 			if (canConvertPriceRangeFromLog(this._priceRange, this._logFormula)) {
 				priceRange = convertPriceRangeFromLog(this._priceRange, this._logFormula);
 
 				if (priceRange !== null) {
 					this.setPriceRange(priceRange);
 				}
-			} else {
+			} else { // 無法從log scale轉換
 				this._options.autoScale = true;
 			}
 		}
 
 		// define which scale converted to
+		// 當新的mode為logarithmic且新的mode與舊的mode不同時
 		if (newMode.mode === PriceScaleMode.Logarithmic && newMode.mode !== oldMode.mode) {
+			// 可以轉換至log scale，試著算出新的priceRange
 			priceRange = convertPriceRangeToLog(this._priceRange, this._logFormula);
 
 			if (priceRange !== null) {
@@ -338,50 +353,61 @@ export class PriceScale {
 		}
 
 		const modeChanged = oldMode.mode !== this._options.mode;
+		// mode改變，且舊的mode為percentage時
 		if (modeChanged && (oldMode.mode === PriceScaleMode.Percentage || this.isPercentage())) {
 			this.updateFormatter();
 		}
 
+		// mode改變，且舊的mode為indexedto100時
 		if (modeChanged && (oldMode.mode === PriceScaleMode.IndexedTo100 || this.isIndexedTo100())) {
 			this.updateFormatter();
 		}
-
+		// scale反轉時
 		if (newMode.isInverted !== undefined && oldMode.isInverted !== newMode.isInverted) {
 			this._options.invertScale = newMode.isInverted;
 			this._onIsInvertedChanged();
 		}
-
+		// 將mode改變的訊號送出給listener
 		this._modeChanged.fire(oldMode, this.mode());
 	}
 
 	public modeChanged(): ISubscription<PriceScaleState, PriceScaleState> {
+		/*  將mode改變的訊號送出給listener */
 		return this._modeChanged;
 	}
 
 	public fontSize(): number {
+		/* options layout fontsize getter */
 		return this._layoutOptions.fontSize;
 	}
 
 	public height(): number {
+		/* height getter */
 		return this._height;
 	}
 
 	public setHeight(value: number): void {
+		/* height setter */
 		if (this._height === value) {
 			return;
 		}
 
 		this._height = value;
+		// update cache
 		this._invalidateInternalHeightCache();
 		this._marksCache = null;
 	}
 
 	public internalHeight(): number {
+		/* internal height getter
+		* 因為是計算值，所以有內建快取存計算值
+		* */
 		if (this._internalHeightCache) {
 			return this._internalHeightCache;
 		}
 
 		const res = this.height() - this._topMarginPx() - this._bottomMarginPx();
+		// update cache
 		this._internalHeightCache = res;
 		return res;
 	}

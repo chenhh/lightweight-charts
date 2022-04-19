@@ -36,8 +36,8 @@ export class Pane implements IDestroyable {
 
 	private _destroyed: Delegate = new Delegate();
 
-	private _leftPriceScale: PriceScale;
-	private _rightPriceScale: PriceScale;
+	private _leftPriceScale: PriceScale;	// 左側price scale, 預設不可見
+	private _rightPriceScale: PriceScale;	// 右側price scale, 預設可見
 
 	public constructor(timeScale: TimeScale, model: ChartModel) {
 		/**
