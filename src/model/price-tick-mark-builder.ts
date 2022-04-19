@@ -10,6 +10,11 @@ export type LogicalToCoordinateConverter = (x: number, firstValue: number, keepI
 const TICK_DENSITY = 2.5;
 
 export class PriceTickMarkBuilder {
+	/**
+	 * PriceRange物件是記錄price scale的最大最小值，
+	 * 而PriceTickMarkBuilder是計算scale的刻度，會依price scale的mode變化
+	 */
+
 	private _marks: PriceMark[] = [];
 	private _base: number;
 	private readonly _priceScale: PriceScale;

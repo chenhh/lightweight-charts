@@ -176,6 +176,7 @@ export interface PriceScaleOptions {
 	drawTicks: boolean;
 }
 
+// 判斷price range是否有效的cache
 interface RangeCache {
 	isValid: boolean;
 	visibleBars: RangeImpl<TimePointIndex> | null;
@@ -193,30 +194,33 @@ interface MarksCache {
 }
 
 export class PriceScale {
-	private readonly _id: string;
+	private readonly _id: string;	// left或right, 表示左或右側的price scale
 
-	private readonly _layoutOptions: LayoutOptions;
-	private readonly _localizationOptions: LocalizationOptions;
-	private readonly _options: PriceScaleOptions;
+	private readonly _layoutOptions: LayoutOptions;	// options中的layout設定值
+	private readonly _localizationOptions: LocalizationOptions; // options中的localization設定值
+	private readonly _options: PriceScaleOptions; //options中的leftPriceScale或rightPriceScale設定值
 
 	private _height: number = 0;
 	private _internalHeightCache: number | null = null;
 
-	private _priceRange: PriceRangeImpl | null = null;
+	private _priceRange: PriceRangeImpl | null = null;	// PriceRangeImpl物件，包含min, max值與methods
 	private _priceRangeSnapshot: PriceRangeImpl | null = null;
-	private _invalidatedForRange: RangeCache = { isValid: false, visibleBars: null };
+	private _invalidatedForRange: RangeCache = {isValid: false, visibleBars: null};
 
-	private _marginAbove: number = 0;
-	private _marginBelow: number = 0;
+	private _marginAbove: number = 0;	//  PriceScaleMargin中top[0,1]後的計算值
+	private _marginBelow: number = 0;	//  PriceScaleMargin中bottom[0,1]後的計算值
 
-	private _markBuilder: PriceTickMarkBuilder;
-	private _onMarksChanged: Delegate = new Delegate();
+	private _markBuilder: PriceTickMarkBuilder; // 是計算scale的刻度，會依price scale的mode變化
+	private _onMarksChanged: Delegate = new Delegate(); // tickmark改變時的的事件處理
 
+	// price scale mode改變時的事件處理
 	private _modeChanged: Delegate<PriceScaleState, PriceScaleState> = new Delegate();
 
+	// 資料來源
 	private _dataSources: IPriceDataSource[] = [];
 	private _cachedOrderedSources: IPriceDataSource[] | null = null;
 
+	// tickMark的快取
 	private _marksCache: MarksCache | null = null;
 
 	private _scaleStartPoint: number | null = null;
