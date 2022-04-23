@@ -4,7 +4,7 @@ import { Coordinate } from './coordinate';
 
 /**
  * Represents a price as a `number`.
- * 名目類型
+ * 名稱BarPrice的數值類型
  */
 export type BarPrice = Nominal<number, 'BarPrice'>;
 
@@ -32,6 +32,7 @@ export interface BarPrices {
 
 /**
  * Represents the y-axis coordinates of a bar's open, high, low, close prices.
+ * 名稱為Coordinate的數值類型
  */
 export interface BarCoordinates {
 	openY: Coordinate;

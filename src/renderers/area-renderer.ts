@@ -12,7 +12,7 @@ export interface PaneRendererAreaDataBase {
 	lineWidth: LineWidth;
 	lineStyle: LineStyle;
 
-	bottom: Coordinate;
+	bottom: Coordinate;	// 名稱為Coordinate的number
 	baseLevelCoordinate: Coordinate;
 
 	barWidth: number;
@@ -21,6 +21,10 @@ export interface PaneRendererAreaDataBase {
 }
 
 export abstract class PaneRendererAreaBase<TData extends PaneRendererAreaDataBase> extends ScaledRenderer {
+	/***
+	 * area plot的abstract base class, 沒有完全實作
+	 */
+
 	protected _data: TData | null = null;
 
 	public setData(data: TData): void {
