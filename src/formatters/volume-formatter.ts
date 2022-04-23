@@ -13,6 +13,9 @@ export class VolumeFormatter implements IPriceFormatter {
 	public format(vol: number): string {
 		/**
 		 * 在PriceFormatter中的format函數，負號使用\u2212, 為何此處不使用?
+		 * 大於一千時用K表示
+		 * 大於一百萬時用Ｍ表示
+		 * 大於十億時用B表示
 		 */
 		let sign = '';
 		if (vol < 0) {

@@ -6,7 +6,8 @@ export class DateFormatter {
 
 	public constructor(dateFormat: string = 'yyyy-MM-dd', locale: string = 'default') {
 		/**
-		 * 日期的格式化，可選本地化
+		 * 日期的格式化，可選本地化,
+		 * 只有日期不含時間
 		 */
 		this._dateFormat = dateFormat;
 		this._locale = locale;

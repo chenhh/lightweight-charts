@@ -1,6 +1,9 @@
 import { PriceFormatter } from './price-formatter';
 
 export class PercentageFormatter extends PriceFormatter {
+	/**
+	 * price scale為percentage時的class
+	 */
 	public constructor(priceScale: number = 100) {
 		super(priceScale);
 	}
