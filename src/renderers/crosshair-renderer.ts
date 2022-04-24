@@ -2,17 +2,17 @@ import { drawHorizontalLine, drawVerticalLine, LineStyle, LineWidth, setLineStyl
 import { IPaneRenderer } from './ipane-renderer';
 
 export interface CrosshairLineStyle {
-	lineStyle: LineStyle;
-	lineWidth: LineWidth;
-	color: string;
-	visible: boolean;
+	lineStyle: LineStyle;	// 直線格式
+	lineWidth: LineWidth;	// 直線寬度
+	color: string;			// 線條顏色
+	visible: boolean;		// 是否可見
 }
 
 export interface CrosshairRendererData {
-	vertLine: CrosshairLineStyle;
-	horzLine: CrosshairLineStyle;
-	x: number;
-	y: number;
+	vertLine: CrosshairLineStyle;	// 垂直線的格式
+	horzLine: CrosshairLineStyle;	// 水平線的格式
+	x: number;	// x軸座標
+	y: number;	// x軸座標
 	w: number;
 	h: number;
 }

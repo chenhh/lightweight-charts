@@ -9,14 +9,14 @@ export interface GridMarks {
 	coord: number;
 }
 export interface GridRendererData {
-	vertLinesVisible: boolean;
-	vertLinesColor: string;
-	vertLineStyle: LineStyle;
+	vertLinesVisible: boolean;	// 垂直線是否可見
+	vertLinesColor: string;		// 垂直線的顏色
+	vertLineStyle: LineStyle;	// 垂直線的格式
 	timeMarks: GridMarks[];
 
-	horzLinesVisible: boolean;
-	horzLinesColor: string;
-	horzLineStyle: LineStyle;
+	horzLinesVisible: boolean;	// 水平線是否可見
+	horzLinesColor: string;		// 水平線的顏色
+	horzLineStyle: LineStyle;	// 水平線的格式
 	priceMarks: PriceMark[];
 
 	h: number;

@@ -1,6 +1,10 @@
 import { IPaneRenderer } from './ipane-renderer';
 
 export abstract class ScaledRenderer implements IPaneRenderer {
+	/**
+	 * ScaledRender實作了部份IPaneRender的函數，且為一些class的抽象類，
+	 * 已經實作的部份被繼承後可共用。
+	 */
 	public draw(ctx: CanvasRenderingContext2D, pixelRatio: number, isHovered: boolean, hitTestData?: unknown): void {
 		ctx.save();
 		// actually we must be sure that this scaling applied only once at the same time
@@ -21,7 +25,9 @@ export abstract class ScaledRenderer implements IPaneRenderer {
 		ctx.restore();
 	}
 
+	// 前景繪圖，等待子類別實作
 	protected abstract _drawImpl(ctx: CanvasRenderingContext2D, isHovered: boolean, hitTestData?: unknown): void;
 
+	// 北景繪圖，預設為不動作，或者子類別可覆蓋行為
 	protected _drawBackgroundImpl(ctx: CanvasRenderingContext2D, isHovered: boolean, hitTestData?: unknown): void {}
 }
