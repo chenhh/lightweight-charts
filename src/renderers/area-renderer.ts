@@ -1,13 +1,31 @@
-import { Coordinate } from '../model/coordinate';
-import { SeriesItemsIndexesRange } from '../model/time-data';
+import {Coordinate} from '../model/coordinate';
+import {SeriesItemsIndexesRange} from '../model/time-data';
 
-import { LineStyle, LineType, LineWidth, setLineStyle } from './draw-line';
-import { LineItem } from './line-renderer';
-import { ScaledRenderer } from './scaled-renderer';
-import { walkLine } from './walk-line';
+import {LineStyle, LineType, LineWidth, setLineStyle} from './draw-line';
+import {LineItem} from './line-renderer';
+import {ScaledRenderer} from './scaled-renderer';
+import {walkLine} from './walk-line';
+
+/**
+ * LineItem = TimedValue & PricedValue & LinePoint & { color?: string };
+ * interface TimedValue {
+ * 	time: TimePointIndex; // 名稱為TimePointIndex的名目number類型
+ * 	x: Coordinate;
+ * }
+ * interface PricedValue {
+ * 	price: BarPrice;  // 名稱為BarPrice的名目number類型
+ * 	y: Coordinate;	  // 名稱為Coordinate的名目number類型
+ * }
+ * interface LinePoint {
+ *	x: Coordinate;
+ *  y: Coordinate;
+ * }
+ */
+
 
 export interface PaneRendererAreaDataBase {
 	items: LineItem[];
+	// 線條的格式
 	lineType: LineType;
 	lineWidth: LineWidth;
 	lineStyle: LineStyle;
@@ -84,7 +102,12 @@ export abstract class PaneRendererAreaBase<TData extends PaneRendererAreaDataBas
 		// https://developer.mozilla.org/zh-CN/docs/Web/API/CanvasRenderingContext2D/closePath
 		ctx.closePath();
 
+		// fillstyle由子類別實作, 設定填滿圖形時用的顏色.
+		// https://developer.mozilla.org/zh-TW/docs/Web/API/Canvas_API/Tutorial/Applying_styles_and_colors
 		ctx.fillStyle = this._fillStyle(ctx);
+
+		// 填充當前或已存在的路徑的方法。採取非零環繞("nonzero", 預設)或者奇偶環繞("evenodd")規則。
+		// https://developer.mozilla.org/zh-CN/docs/Web/API/CanvasRenderingContext2D/fill
 		ctx.fill();
 	}
 
