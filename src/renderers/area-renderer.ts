@@ -22,7 +22,6 @@ import {walkLine} from './walk-line';
  * }
  */
 
-
 export interface PaneRendererAreaDataBase {
 	items: LineItem[];
 	// 線條的格式
@@ -31,7 +30,7 @@ export interface PaneRendererAreaDataBase {
 	lineStyle: LineStyle;
 
 	bottom: Coordinate;	// 名稱為Coordinate的number
-	baseLevelCoordinate: Coordinate;
+	baseLevelCoordinate: Coordinate;	// price(y軸)的起始座標
 
 	barWidth: number;
 
@@ -89,6 +88,7 @@ export abstract class PaneRendererAreaBase<TData extends PaneRendererAreaDataBas
 			ctx.lineTo(point.x + halfBarWidth, this._data.baseLevelCoordinate);
 		} else {
 			// 有多筆資料時
+			// 將一個新的子路徑的起始點移動到(x，y)坐標的方法。類似將筆抬起來放到(x,y)，不會畫線
 			ctx.moveTo(this._data.items[this._data.visibleRange.from].x, this._data.baseLevelCoordinate);
 			ctx.lineTo(this._data.items[this._data.visibleRange.from].x, this._data.items[this._data.visibleRange.from].y);
 
@@ -117,8 +117,8 @@ export abstract class PaneRendererAreaBase<TData extends PaneRendererAreaDataBas
 }
 
 export interface PaneRendererAreaData extends PaneRendererAreaDataBase {
-	topColor: string;
-	bottomColor: string;
+	topColor: string;	 // gradient的起始顏色
+	bottomColor: string; // gradient的終止顏色
 }
 
 export class PaneRendererArea extends PaneRendererAreaBase<PaneRendererAreaData> {
@@ -126,7 +126,14 @@ export class PaneRendererArea extends PaneRendererAreaBase<PaneRendererAreaData>
 		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 		const data = this._data!;
 
+		// 創建一個沿參數坐標指定的直線的漸變。
+		// https://developer.mozilla.org/zh-CN/docs/Web/API/CanvasRenderingContext2D/createLinearGradient
 		const gradient = ctx.createLinearGradient(0, 0, 0, data.bottom);
+
+		// https://developer.mozilla.org/zh-CN/docs/Web/API/CanvasGradient
+		// 新增一個由偏移(offset)和顏色(color)定義的斷點到漸變中。
+		// 如果偏移值不在0到1之間，將拋出INDEX_SIZE_ERR錯誤，
+		// 如果顏色值不能被解析為有效的CSS顏色值 <color>，將拋出SYNTAX_ERR錯誤。
 		gradient.addColorStop(0, data.topColor);
 		gradient.addColorStop(1, data.bottomColor);
 		return gradient;

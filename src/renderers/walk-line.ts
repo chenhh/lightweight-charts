@@ -5,11 +5,12 @@ import { LinePoint, LineType } from './draw-line';
 
 /**
  * BEWARE: The method must be called after beginPath and before stroke/fill/closePath/etc
+ * 多筆資料時的lineTo移動路徑
  */
 export function walkLine(
 	ctx: CanvasRenderingContext2D,
-	points: readonly LinePoint[],
-	lineType: LineType,
+	points: readonly LinePoint[],	// (x,y)座標陣列
+	lineType: LineType,				// 直線，stepline或曲線
 	visibleRange: SeriesItemsIndexesRange
 ): void {
 	if (points.length === 0) {
