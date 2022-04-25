@@ -83,8 +83,10 @@ export abstract class PaneRendererAreaBase<TData extends PaneRendererAreaDataBas
 			// 將一個新的子路徑的起始點移動到(x，y)坐標的方法。類似將筆抬起來放到(x,y)，不會畫線
 			ctx.moveTo(point.x - halfBarWidth, this._data.baseLevelCoordinate);
 			// 由moveTo設定的位置或是上一個lineTo為起點，畫直線到lineTo指定的座標
+			// 首先先畫以point.x為中心，寬度為barWidth的水平線
 			ctx.lineTo(point.x - halfBarWidth, point.y);
 			ctx.lineTo(point.x + halfBarWidth, point.y);
+			// 畫出長度為baseLevelCoordinate - point.y的垂直線
 			ctx.lineTo(point.x + halfBarWidth, this._data.baseLevelCoordinate);
 		} else {
 			// 有多筆資料時
