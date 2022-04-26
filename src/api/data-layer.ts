@@ -223,8 +223,12 @@ type SeriesDataItemWithOriginalTime<TSeriesType extends SeriesType> = SeriesData
 };
 
 export class DataLayer {
-	// note that _pointDataByTimePoint and _seriesRowsBySeries shares THE SAME objects in their values between each other
-	// it's just different kind of maps to make usages/perf better
+	/**
+	 *  在ChartApi中初始化時就建立，而在applyNewData()中使用dataLayer的setSeriesData()加入資料
+	 *  沒有constructor，處理的都是在圖表中關於資料的方法
+	 */
+		// note that _pointDataByTimePoint and _seriesRowsBySeries shares THE SAME objects in their values between each other
+		// it's just different kind of maps to make usages/perf better
 	private _pointDataByTimePoint: Map<UTCTimestamp, TimePointData> = new Map();
 	private _seriesRowsBySeries: Map<Series, SeriesPlotRow[]> = new Map();
 	private _seriesLastTimePoint: Map<Series, TimePoint> = new Map();

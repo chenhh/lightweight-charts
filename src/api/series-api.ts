@@ -51,6 +51,7 @@ export class SeriesApi<TSeriesType extends SeriesType> implements ISeriesApi<TSe
 	}
 
 	public priceFormatter(): IPriceFormatter {
+		/* series formatter getter */
 		return this._series.formatter();
 	}
 
@@ -124,10 +125,14 @@ export class SeriesApi<TSeriesType extends SeriesType> implements ISeriesApi<TSe
 	}
 
 	public setData(data: SeriesDataItemTypeMap[TSeriesType][]): void {
-		// 新增資料進入圖表
-		checkItemsAreOrdered(data);
-		checkSeriesValuesType(this._series.seriesType(), data);
+		/**
+		 * 新增資料進入圖表
+		 * data是新增的資料
+		 * */
+		checkItemsAreOrdered(data);	// 檢查資料是否以時間排序完成
+		checkSeriesValuesType(this._series.seriesType(), data);	//檢查資料是否合法
 
+		// ChartApi的method
 		this._dataUpdatesConsumer.applyNewData(this._series, data);
 	}
 

@@ -18,10 +18,15 @@ export function checkPriceLineOptions(options: PriceLineOptions): void {
 }
 
 export function checkItemsAreOrdered(data: readonly (SeriesMarker<Time> | SeriesDataItemTypeMap[SeriesType])[], allowDuplicates: boolean = false): void {
+	/* 檢查資料是否已經排序完成，以時間排序
+	*  在SeriesApi中，setData時進行檢查
+	*  */
+	// 生產環境中不檢查
 	if (process.env.NODE_ENV === 'production') {
 		return;
 	}
 
+	// 資料長度為0時不檢查
 	if (data.length === 0) {
 		return;
 	}
@@ -36,10 +41,14 @@ export function checkItemsAreOrdered(data: readonly (SeriesMarker<Time> | Series
 }
 
 export function checkSeriesValuesType(type: SeriesType, data: readonly SeriesDataItemTypeMap[SeriesType][]): void {
+	/* 檢查資料的類型
+	*  在SeriesApi中，setData時進行檢查
+	* */
+	// 生產環境中不檢查
 	if (process.env.NODE_ENV === 'production') {
 		return;
 	}
-
+	// 對序列每一筆資料檢查類型, 可分為checkBarItem和checkLineItem兩大類
 	data.forEach(getChecker(type));
 }
 

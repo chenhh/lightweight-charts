@@ -724,9 +724,12 @@ export class ChartModel implements IDestroyable {
 	}
 
 	public recalculateAllPanes(): void {
-		this._watermark.updateAllViews();
-		this._panes.forEach((p: Pane) => p.recalculate());
-		this.updateCrosshair();
+		/**
+		 * 資料在chart-api的_sendUpdateToChart()更新後，重新計算所有的Pane
+		 */
+		this._watermark.updateAllViews();	// 更新浮水印
+		this._panes.forEach((p: Pane) => p.recalculate());	// 更新Pane
+		this.updateCrosshair();	// 更新滑鼠十字線
 	}
 
 	public destroy(): void {
