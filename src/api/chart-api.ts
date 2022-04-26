@@ -122,7 +122,8 @@ export class ChartApi implements IChartApi, DataUpdatesConsumer<SeriesType> {
 	 */
 	private _chartWidget: ChartWidget;	// 圖表組件
 	private _dataLayer: DataLayer = new DataLayer();	// 資料可以有多層
-	// 正向與反向記錄Series class與對應的SeriesApi class
+	// 正向與反向記錄Series class與對應的SeriesApi class, 可做快速查詢與反查詢
+	// SeriesApi與Series同一類型，在addAreaSeries中被呼叫加入
 	private readonly _seriesMap: Map<SeriesApi<SeriesType>, Series> = new Map();
 	private readonly _seriesMapReversed: Map<Series, SeriesApi<SeriesType>> = new Map();
 
@@ -210,6 +211,7 @@ export class ChartApi implements IChartApi, DataUpdatesConsumer<SeriesType> {
 		/**
 		 * 實現IChart-api介面定義的圖表, 為IseriesApi的泛型
 		 * 此處只有建立圖表，尚未加入資料
+		 * 回傳SeriesApi的實體，才可用setData()加入資料
 		 */
 		patchPriceFormat(options.priceFormat);
 
@@ -227,11 +229,13 @@ export class ChartApi implements IChartApi, DataUpdatesConsumer<SeriesType> {
 		/**
 		 * 實現IChart-api介面定義的圖表, 為IseriesApi的泛型
 		 * 此處只有建立圖表，尚未加入資料
+		 * 回傳SeriesApi的實體，才可用setData()加入資料
 		 */
 		patchPriceFormat(options.priceFormat);
 
 		// to avoid assigning fields to defaults we have to clone them
 		const strictOptions = merge(clone(seriesOptionsDefaults), clone(baselineStyleDefaults), options) as BaselineSeriesOptions;
+		// 在chart model中，會將series記錄起來
 		const series = this._chartWidget.model().createSeries('Baseline', strictOptions);
 
 		const res = new SeriesApi<'Baseline'>(series, this, this);
@@ -245,6 +249,7 @@ export class ChartApi implements IChartApi, DataUpdatesConsumer<SeriesType> {
 		/**
 		 * 實現IChart-api介面定義的圖表, 為IseriesApi的泛型
 		 * 此處只有建立圖表，尚未加入資料
+		 * 回傳SeriesApi的實體，才可用setData()加入資料
 		 */
 		patchPriceFormat(options.priceFormat);
 
@@ -262,6 +267,7 @@ export class ChartApi implements IChartApi, DataUpdatesConsumer<SeriesType> {
 		/**
 		 * 實現IChart-api介面定義的圖表, 為IseriesApi的泛型
 		 * 此處只有建立圖表，尚未加入資料
+		 * 回傳SeriesApi的實體，才可用setData()加入資料
 		 */
 		fillUpDownCandlesticksColors(options);
 		patchPriceFormat(options.priceFormat);
@@ -280,6 +286,7 @@ export class ChartApi implements IChartApi, DataUpdatesConsumer<SeriesType> {
 		/**
 		 * 實現IChart-api介面定義的圖表, 為IseriesApi的泛型
 		 * 此處只有建立圖表，尚未加入資料
+		 * 回傳SeriesApi的實體，才可用setData()加入資料
 		 */
 		patchPriceFormat(options.priceFormat);
 
@@ -297,9 +304,11 @@ export class ChartApi implements IChartApi, DataUpdatesConsumer<SeriesType> {
 		/**
 		 * 實現IChart-api介面定義的圖表, 為IseriesApi的泛型
 		 * 此處只有建立圖表，尚未加入資料
+		 * 回傳SeriesApi的實體，才可用setData()加入資料
 		 */
 		patchPriceFormat(options.priceFormat);
 
+		// 將line options的預設值和自訂值合併
 		const strictOptions = merge(clone(seriesOptionsDefaults), lineStyleDefaults, options) as LineSeriesOptions;
 		const series = this._chartWidget.model().createSeries('Line', strictOptions);
 

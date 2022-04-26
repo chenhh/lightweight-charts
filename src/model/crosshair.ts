@@ -149,6 +149,7 @@ export class Crosshair extends DataSource {
 		this._options = options;
 		this._markersPaneView = new CrosshairMarksPaneView(model, this);
 
+		// arrow function pointer
 		const valuePriceProvider = (rawPriceProvider: RawPriceProvider, rawCoordinateProvider: RawCoordinateProvider) => {
 			return (priceScale: PriceScale) => {
 				const coordinate = rawCoordinateProvider();

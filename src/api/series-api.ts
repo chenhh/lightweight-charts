@@ -34,15 +34,20 @@ export class SeriesApi<TSeriesType extends SeriesType> implements ISeriesApi<TSe
 	 *  圖表已經立，準備加入資料的API
 	 *  TSeriesType為所要建立的圖表類型
 	 */
-	protected _series: Series<TSeriesType>;
+	protected _series: Series<TSeriesType>;	// 對應的series, 在ctor中對映
 	protected _dataUpdatesConsumer: DataUpdatesConsumer<TSeriesType>;
 
 	private readonly _priceScaleApiProvider: IPriceScaleApiProvider;
 
 	public constructor(series: Series<TSeriesType>, dataUpdatesConsumer: DataUpdatesConsumer<TSeriesType>, priceScaleApiProvider: IPriceScaleApiProvider) {
-		this._series = series;
-		this._dataUpdatesConsumer = dataUpdatesConsumer;
-		this._priceScaleApiProvider = priceScaleApiProvider;
+		/**
+		 *  在ChartApi中的addAreaSeries等方法中被呼叫,
+		 *  series為已經建立的資料實例，
+		 *  dataUpdatesConsumer, priceScaleApiProvider為ChartApi的實例(有實作界面)
+		 */
+		this._series = series;	// 指向ChartApi中的seriesMap的某一個序列
+		this._dataUpdatesConsumer = dataUpdatesConsumer;	    // 指向ChartApi實例
+		this._priceScaleApiProvider = priceScaleApiProvider;	// 指向ChartApi實例
 	}
 
 	public priceFormatter(): IPriceFormatter {

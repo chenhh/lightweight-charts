@@ -751,10 +751,17 @@ export class ChartModel implements IDestroyable {
 	}
 
 	public createSeries<T extends SeriesType>(seriesType: T, options: SeriesOptionsMap[T]): Series<T> {
+		/**
+		 * 在chart-api中，addLineSeries等方法建立series的方法
+		 * seriesType為支援的繪圖，有line, area, Histogram, CandleStick, Bar, Baseline
+		 * options為對應繪圖類別的選項
+		 */
 		const pane = this._panes[0];
+		// 私有的_createSeries有將參數的位置調換
 		const series = this._createSeries(options, seriesType, pane);
 		this._serieses.push(series);
 
+		// 此處的_serieses指的是加入model中的序列個數，而不是單一序列中的資料點數
 		if (this._serieses.length === 1) {
 			// call fullUpdate to recalculate chart's parts geometry
 			this.fullUpdate();
@@ -899,6 +906,11 @@ export class ChartModel implements IDestroyable {
 	}
 
 	private _createSeries<T extends SeriesType>(options: SeriesOptionsInternal<T>, seriesType: T, pane: Pane): Series<T> {
+		/**
+		 * 在createSeries的公開方法中被呼叫, 限定T為支援的series類別
+		 * 此處的pane一般是this._panes[0]
+		 */
+			// 包含建立series資料和繪圖的部份的物件
 		const series = new Series<T>(this, options, seriesType);
 
 		const targetScaleId = options.priceScaleId !== undefined ? options.priceScaleId : this.defaultVisiblePriceScaleId();

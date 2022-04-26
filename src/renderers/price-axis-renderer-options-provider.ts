@@ -36,6 +36,7 @@ export class PriceAxisRendererOptionsProvider {
 	}
 
 	public options(): Readonly<PriceAxisViewRendererOptions> {
+		// 回傳值為Readonly的PriceAxisViewRendererOptions
 		const rendererOptions = this._rendererOptions;
 
 		// 由chart model的option讀取新值

@@ -17,6 +17,7 @@ export class PriceRangeImpl {
 	}
 
 	public equals(pr: PriceRangeImpl | null): boolean {
+		/* 最大值與最小值均相等時才回傳true */
 		if (pr === null) {
 			return false;
 		}

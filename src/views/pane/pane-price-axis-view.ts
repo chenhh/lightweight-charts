@@ -48,6 +48,9 @@ export class PanePriceAxisView implements IPaneView {
 	private _fontSize: number;
 
 	public constructor(priceAxisView: IPriceAxisView, dataSource: IPriceDataSource, chartModel: ChartModel) {
+		/**
+		 * 在Series的ctor中被建構
+		 */
 		this._priceAxisView = priceAxisView;
 		this._textWidthCache = new TextWidthCache(50); // when should we clear cache?
 		this._dataSource = dataSource;

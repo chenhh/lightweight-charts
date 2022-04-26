@@ -7,6 +7,11 @@ import { PriceAxisViewRendererCommonData, PriceAxisViewRendererData } from '../.
 import { PriceAxisView } from './price-axis-view';
 
 export class SeriesPriceAxisView extends PriceAxisView {
+	/**
+	 *  在Series的ctor中被建構
+	 */
+
+
 	private readonly _source: Series;
 
 	public constructor(source: Series) {

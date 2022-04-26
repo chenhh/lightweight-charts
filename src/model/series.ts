@@ -94,7 +94,7 @@ export type SeriesOptionsInternal<T extends SeriesType = SeriesType> = SeriesOpt
 export type SeriesPartialOptionsInternal<T extends SeriesType = SeriesType> = SeriesPartialOptionsMap[T];
 
 export class Series<T extends SeriesType = SeriesType> extends PriceDataSource implements IDestroyable {
-	private readonly _seriesType: T;
+	private readonly _seriesType: T;	//支援的繪圖類型
 	private _data: SeriesPlotList<T> = createSeriesPlotList();
 	private readonly _priceAxisViews: IPriceAxisView[];
 	private readonly _panePriceAxisView: PanePriceAxisView;
@@ -112,21 +112,31 @@ export class Series<T extends SeriesType = SeriesType> extends PriceDataSource i
 	private _animationTimeoutId: TimerId | null = null;
 
 	public constructor(model: ChartModel, options: SeriesOptionsInternal<T>, seriesType: T) {
-		super(model);
+		/**
+		 * 在chart-model中的_createSeries被呼叫
+		 * 資料序列
+		 * model指向parent chart model,
+		 * options為series的選項
+		 * seriesType T限定為支援的繪圖類型
+		 */
+		super(model);	//PriceDataSource
 		this._options = options;
 		this._seriesType = seriesType;
 
 		const priceAxisView = new SeriesPriceAxisView(this);
-		this._priceAxisViews = [priceAxisView];
+		this._priceAxisViews = [priceAxisView];	// add to array
 
 		this._panePriceAxisView = new PanePriceAxisView(priceAxisView, this, model);
 
+		// 只有限定類型支援AnimationPaneView
 		if (seriesType === 'Area' || seriesType === 'Line' || seriesType === 'Baseline') {
 			this._lastPriceAnimationPaneView = new SeriesLastPriceAnimationPaneView(this as Series<'Area'> | Series<'Line'> | Series<'Baseline'>);
 		}
 
+		// 由options中的price格式決定price scale
 		this._recreateFormatter();
 
+		/* 由series type決定繪圖內容 */
 		this._recreatePaneViews();
 	}
 
@@ -531,6 +541,7 @@ export class Series<T extends SeriesType = SeriesType> extends PriceDataSource i
 	}
 
 	private _recreateFormatter(): void {
+		/*  決定price scale */
 		switch (this._options.priceFormat.type) {
 			case 'custom': {
 				this._formatter = { format: this._options.priceFormat.formatter };
@@ -588,6 +599,7 @@ export class Series<T extends SeriesType = SeriesType> extends PriceDataSource i
 	}
 
 	private _recreatePaneViews(): void {
+		/* 由series type決定繪圖內容 */
 		this._markersPaneView = new SeriesMarkersPaneView(this, this.model());
 
 		switch (this._seriesType) {
