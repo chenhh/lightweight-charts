@@ -72,7 +72,7 @@ export class Watermark extends DataSource {
 	public constructor(model: ChartModel, options: WatermarkOptions) {
 		super();
 		this._options = options;
-		this._paneView = new WatermarkPaneView(this);
+		this._paneView = new WatermarkPaneView(this);	// 繪圖交給PaneView
 	}
 
 	public override priceAxisViews(): readonly IPriceAxisView[] {

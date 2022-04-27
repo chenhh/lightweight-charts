@@ -7,9 +7,13 @@ import { WatermarkRenderer, WatermarkRendererData } from '../../renderers/waterm
 import { IUpdatablePaneView } from './iupdatable-pane-view';
 
 export class WatermarkPaneView implements IUpdatablePaneView {
+	/**
+	 *  watermark的繪圖的部份, 在Watermark class建立時同時建立
+	 */
 	private _source: Watermark;
 	private _invalidated: boolean = true;
 
+	// render的預設值
 	private readonly _rendererData: WatermarkRendererData = {
 		visible: false,
 		color: '',
@@ -22,14 +26,17 @@ export class WatermarkPaneView implements IUpdatablePaneView {
 	private readonly _renderer: WatermarkRenderer = new WatermarkRenderer(this._rendererData);
 
 	public constructor(source: Watermark) {
-		this._source = source;
+		this._source = source;	// 指向建構的watermark實例
 	}
 
 	public update(): void {
+		// 在watermark呼叫updateAllViews()時，才會呼叫update
+		// 因為所有的View都更新，watermark view也須更新，因此invalidate為true
 		this._invalidated = true;
 	}
 
 	public renderer(height: number, width: number): IPaneRenderer {
+		// 只有在invalidated為true更才需要重新繪製
 		if (this._invalidated) {
 			this._updateImpl(height, width);
 			this._invalidated = false;
@@ -47,6 +54,7 @@ export class WatermarkPaneView implements IUpdatablePaneView {
 			return;
 		}
 
+		// render data由options更新
 		data.color = options.color;
 		data.width = width;
 		data.height = height;

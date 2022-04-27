@@ -9,9 +9,10 @@ import { PriceScale } from './price-scale';
 export abstract class DataSource implements IDataSource {
 	protected _priceScale: PriceScale | null = null;
 
-	private _zorder: number = 0;
+	private _zorder: number = 0;	//數字越小越底層
 
 	public zorder(): number {
+		/* zorder getter */
 		return this._zorder;
 	}
 
