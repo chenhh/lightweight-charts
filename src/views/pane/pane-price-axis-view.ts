@@ -51,10 +51,10 @@ export class PanePriceAxisView implements IPaneView {
 		/**
 		 * 在Series的ctor中被建構
 		 */
-		this._priceAxisView = priceAxisView;
+		this._priceAxisView = priceAxisView;	// 指向同一個series中建構的priceAxisView實例
 		this._textWidthCache = new TextWidthCache(50); // when should we clear cache?
-		this._dataSource = dataSource;
-		this._chartModel = chartModel;
+		this._dataSource = dataSource;	// 指向series實例
+		this._chartModel = chartModel;	// 指向建構series的chart model
 		this._fontSize = -1;
 		this._renderer = new PanePriceAxisViewRenderer(this._textWidthCache);
 	}

@@ -39,6 +39,7 @@ export interface BarsInfo extends Partial<Range<Time>> {
 
 /**
  * Represents the interface for interacting with series.
+ * 由SeriesApi class實現
  */
 export interface ISeriesApi<TSeriesType extends SeriesType> {
 	/**

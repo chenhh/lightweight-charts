@@ -35,9 +35,9 @@ export class SeriesApi<TSeriesType extends SeriesType> implements ISeriesApi<TSe
 	 *  TSeriesType為所要建立的圖表類型
 	 */
 	protected _series: Series<TSeriesType>;	// 對應的series, 在ctor中對映
-	protected _dataUpdatesConsumer: DataUpdatesConsumer<TSeriesType>;
+	protected _dataUpdatesConsumer: DataUpdatesConsumer<TSeriesType>;	// ctor中指向ChartApi實例
 
-	private readonly _priceScaleApiProvider: IPriceScaleApiProvider;
+	private readonly _priceScaleApiProvider: IPriceScaleApiProvider; // ctor中指向ChartApi實例
 
 	public constructor(series: Series<TSeriesType>, dataUpdatesConsumer: DataUpdatesConsumer<TSeriesType>, priceScaleApiProvider: IPriceScaleApiProvider) {
 		/**
@@ -45,7 +45,7 @@ export class SeriesApi<TSeriesType extends SeriesType> implements ISeriesApi<TSe
 		 *  series為已經建立的資料實例，
 		 *  dataUpdatesConsumer, priceScaleApiProvider為ChartApi的實例(有實作界面)
 		 */
-		this._series = series;	// 指向ChartApi中的seriesMap的某一個序列
+		this._series = series;	// 指向ChartApi中的seriesMap的某一個序列, Series class的實例
 		this._dataUpdatesConsumer = dataUpdatesConsumer;	    // 指向ChartApi實例
 		this._priceScaleApiProvider = priceScaleApiProvider;	// 指向ChartApi實例
 	}

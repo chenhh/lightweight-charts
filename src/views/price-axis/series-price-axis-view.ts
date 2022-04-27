@@ -11,12 +11,11 @@ export class SeriesPriceAxisView extends PriceAxisView {
 	 *  在Series的ctor中被建構
 	 */
 
-
 	private readonly _source: Series;
 
 	public constructor(source: Series) {
 		super();
-		this._source = source;
+		this._source = source;	// 指向建構此物件的series
 	}
 
 	protected _updateRendererData(

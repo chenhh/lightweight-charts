@@ -23,6 +23,7 @@ export class WatermarkPaneView implements IUpdatablePaneView {
 		vertAlign: 'center',
 		horzAlign: 'center',
 	};
+	// 實際的watermark繪圖物件
 	private readonly _renderer: WatermarkRenderer = new WatermarkRenderer(this._rendererData);
 
 	public constructor(source: Watermark) {

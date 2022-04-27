@@ -119,9 +119,9 @@ export class Series<T extends SeriesType = SeriesType> extends PriceDataSource i
 		 * options為series的選項
 		 * seriesType T限定為支援的繪圖類型
 		 */
-		super(model);	//PriceDataSource
-		this._options = options;
-		this._seriesType = seriesType;
+		super(model);	//指向呼叫的chart model
+		this._options = options;	// 合併過的選項
+		this._seriesType = seriesType;	// 繪圖類型，string
 
 		const priceAxisView = new SeriesPriceAxisView(this);
 		this._priceAxisViews = [priceAxisView];	// add to array
