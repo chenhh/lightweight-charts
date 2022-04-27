@@ -142,6 +142,7 @@ export class Series<T extends SeriesType = SeriesType> extends PriceDataSource i
 
 	public destroy(): void {
 		if (this._animationTimeoutId !== null) {
+			// 可取消由setTimeout() 方法設定的timeout.
 			clearTimeout(this._animationTimeoutId);
 		}
 	}
@@ -217,6 +218,7 @@ export class Series<T extends SeriesType = SeriesType> extends PriceDataSource i
 	}
 
 	public options(): Readonly<SeriesOptionsMap[T]> {
+		/* series options getter */
 		return this._options as SeriesOptionsMap[T];
 	}
 
