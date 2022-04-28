@@ -34,7 +34,7 @@ export class SeriesBarColorer {
 	private _series: Series;
 
 	public constructor(series: Series) {
-		this._series = series;
+		this._series = series;	// 指向parent series
 	}
 
 	public barStyle(barIndex: TimePointIndex, precomputedBars?: PrecomputedBars): BarColorerStyle {
