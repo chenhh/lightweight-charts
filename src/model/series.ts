@@ -543,10 +543,12 @@ export class Series<T extends SeriesType = SeriesType> extends PriceDataSource i
 	}
 
 	private _recreateFormatter(): void {
-		/*  決定price scale */
+		/*  ctor中被呼叫, 以options之值決定price scale */
+
+		// 設定formatter之值
 		switch (this._options.priceFormat.type) {
 			case 'custom': {
-				this._formatter = { format: this._options.priceFormat.formatter };
+				this._formatter = {format: this._options.priceFormat.formatter};
 				break;
 			}
 			case 'volume': {
@@ -566,6 +568,7 @@ export class Series<T extends SeriesType = SeriesType> extends PriceDataSource i
 			}
 		}
 
+		// 更新price scale
 		if (this._priceScale !== null) {
 			this._priceScale.updateFormatter();
 		}
@@ -601,7 +604,7 @@ export class Series<T extends SeriesType = SeriesType> extends PriceDataSource i
 	}
 
 	private _recreatePaneViews(): void {
-		/* 由series type決定繪圖內容 */
+		/* 在ctor中最後一步被呼叫, 由series type決定繪圖內容 */
 		this._markersPaneView = new SeriesMarkersPaneView(this, this.model());
 
 		switch (this._seriesType) {
