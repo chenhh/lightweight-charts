@@ -19,6 +19,7 @@ declare const enum MouseEventButton {
 
 /**
  * Removes "readonly" from all properties
+ * 只有去除掉readonly,而沒有刪除掉屬性
  */
 type Mutable<T> = {
 	-readonly [P in keyof T]: T[P];

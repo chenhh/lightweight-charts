@@ -341,6 +341,7 @@ export class ChartApi implements IChartApi, DataUpdatesConsumer<SeriesType> {
 		 * series中的物件，只有包含繪圖的屬性與圖形，而資料要在series-api中以setData新增到series中
 		 * data才是真正的資料
 		 * this._dataLayer是DataLayer實例
+		 * 在series-api中，將data放入series中
 		 */
 		this._sendUpdateToChart(this._dataLayer.setSeriesData(series, data));
 	}

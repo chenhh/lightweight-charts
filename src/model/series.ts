@@ -109,7 +109,7 @@ export class Series<T extends SeriesType = SeriesType> extends PriceDataSource i
 	private _markers: readonly SeriesMarker<TimePoint>[] = [];
 	private _indexedMarkers: InternalSeriesMarker<TimePointIndex>[] = [];
 	private _markersPaneView!: SeriesMarkersPaneView;
-	private _animationTimeoutId: TimerId | null = null;
+	private _animationTimeoutId: TimerId | null = null;	// setTimeout function的return type
 
 	public constructor(model: ChartModel, options: SeriesOptionsInternal<T>, seriesType: T) {
 		/**

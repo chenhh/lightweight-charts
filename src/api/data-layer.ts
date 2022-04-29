@@ -154,11 +154,12 @@ export interface DataUpdateResponse {
 }
 
 interface TimePointData {
-	index: TimePointIndex;
-	timePoint: TimePoint;
+	index: TimePointIndex;	// 型別為TimePointIndex的number
+	timePoint: TimePoint;	// UTCTimestamp + BusinessDay?
 
 	// actually the type of the value should be related to the series' type (generic type)
 	// here, in data layer all data for us is "mutable" by default, but to the chart we provide "readonly" data, to avoid modifying it
+	// key為series type, value為去除掉readonly關鍵字的指定類型
 	mapping: Map<Series, Mutable<SeriesPlotRow | WhitespacePlotRow>>;
 }
 
@@ -244,6 +245,38 @@ export class DataLayer {
 	}
 
 	public setSeriesData<TSeriesType extends SeriesType>(series: Series<TSeriesType>, data: SeriesDataItemTypeMap[TSeriesType][]): DataUpdateResponse {
+		/**
+		 * 在series-api使用setData(series, data)後，回到chart-api的applyNewData(series, data)，
+		 * 在time-data中，有支援三種日期格式：
+		 * Time = UTCTimestamp | BusinessDay | string;
+		 *
+		 * 再呼叫chart-api中的datalayer實例的setSeriesData(series, data)將資料裝入series中
+		 * OHLC資料與string日期
+		 * candleSeries.setData([
+		 * 		{time: '2018-10-19', open: 180.34, high: 180.99, low: 178.57, close: 179.85},
+		 * 		...
+		 * 	])
+		 * 	單筆資料與日期
+		 * 	let dayData = [
+		 * 		{time: '2018-10-19', value: 26.19},
+		 * 		{time: '2018-10-22', value: 25.87},
+		 * 		...
+		 * 	];
+		 * 	chart.setData(dayData);
+		 * 日期的格式為business day
+		 * let data = [{
+		 * 		time: {year: 2018, month: 9, day: 22},
+		 * 		open: 29.630237296336794,
+		 * 		high: 35.36950035097501,
+		 * 		low: 26.21522501353531,
+		 * 		close: 30.734997177569916
+		 * 	},...]
+		 * 	or
+		 * 	let data = [{time: {year: 2018, month: 9, day: 22}, value: 25.531816900940186},...]
+		 * 	日內資料, 日期格式為UTCTimeStamp
+		 * 	let data = [ { time: 1556877600, value: 230.12 },...]
+		 *
+		 */
 		let needCleanupPoints = this._pointDataByTimePoint.size !== 0;
 
 		let isTimeScaleAffected = false;

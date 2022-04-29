@@ -132,7 +132,7 @@ export class SeriesApi<TSeriesType extends SeriesType> implements ISeriesApi<TSe
 		checkItemsAreOrdered(data);	// 檢查資料是否以時間排序完成
 		checkSeriesValuesType(this._series.seriesType(), data);	//檢查資料是否合法
 
-		// ChartApi的method
+		// ChartApi的method, 將data放入series中
 		this._dataUpdatesConsumer.applyNewData(this._series, data);
 	}
 
