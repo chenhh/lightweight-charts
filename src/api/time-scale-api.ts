@@ -28,6 +28,7 @@ export class TimeScaleApi implements ITimeScaleApi, IDestroyable {
 	 * 圖表中時間軸(x軸)資料間隔的API，在頂層的chart-api被建構，但使用的是chart widget中的time axis widget object
 	 * 應該是為了在chartApi object層同時處理chart model中的time scale與chart widget的time axis widget的事件
 	 * 所以在頂層物件一起處理
+	 * 而time scale object是在chart model中以使用者或預設選項建構而成
 	 */
 	private _model: ChartModel;
 	private _timeScale: TimeScale;
