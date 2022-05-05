@@ -116,12 +116,20 @@ function toInternalOptions(options: DeepPartial<ChartOptions>): DeepPartial<Char
 export type IPriceScaleApiProvider = Pick<IChartApi, 'priceScale'>;
 
 export class ChartApi implements IChartApi, DataUpdatesConsumer<SeriesType> {
-	/* 實現了IchartAPI介面，內容為圖表的主要行為, 此為Chart的最頂層物件
+	/** 實現了IchartAPI介面，內容為圖表的主要行為, 此為Chart的最頂層物件
 	 * 實現了DataUpdatesConsumer<SeriesType>介面，內容為資料更新的主要行為
 	 * SeriesType限定義Bar, Candlestick, Area, Baseline, Line, Histogram
+	 *
+	 * ChartApi object -> ChartWidget object(chart model,time axis, pane objects)...
+	 * CharetApi可透過chartwidget object間接操作更底層的object
 	 */
-	private _chartWidget: ChartWidget;	// 圖表組件
-	private _dataLayer: DataLayer = new DataLayer();	// 資料可以有多層
+	private _chartWidget: ChartWidget;	// 圖表組件, 處理html，內嵌chart model處理繪圖邏輯
+
+	// 資料可以有多層, 建立Chart object後, 使用addXXXSeries在model中加入圖形的選項, 回傳SeriesApi object後，
+	// 再使用SeriesApi的setData()新增資料後，再用Chart object的applyNewData()加入真正的資料
+	// 會再呼叫this._sendUpdateToChart()後，更新model中所有Pane的繪圖
+	private _dataLayer: DataLayer = new DataLayer();
+
 	// 正向與反向記錄Series class與對應的SeriesApi class, 可做快速查詢與反查詢
 	// SeriesApi與Series同一類型，在addAreaSeries中被呼叫加入
 	private readonly _seriesMap: Map<SeriesApi<SeriesType>, Series> = new Map();
@@ -132,6 +140,9 @@ export class ChartApi implements IChartApi, DataUpdatesConsumer<SeriesType> {
 	// 滑鼠十字線移動事件處理
 	private readonly _crosshairMovedDelegate: Delegate<MouseEventParams> = new Delegate();
 
+	// 為何timescale是在chartapi而不是chart widget中處理?,
+	// note: 在time widget中的model也有time scale
+	// guess: 因為chart model與chart widget中的time axis widget均有time scale, 因此在chart api層一起處理
 	private readonly _timeScaleApi: TimeScaleApi;
 
 	public constructor(container: HTMLElement, options?: DeepPartial<ChartOptions>) {
@@ -140,7 +151,7 @@ export class ChartApi implements IChartApi, DataUpdatesConsumer<SeriesType> {
 		 * @param container - 建構圖表的html元素
 		 * @param options - 圖表的選項
 		 */
-		// 是否有定義圖表的選項，沒有時使用預設值，有定義時，將自定選項和預設選項合併, 最後的合併選項為internalOptions
+			// 是否有定義圖表的選項，沒有時使用預設值，有定義時，將自定選項和預設選項合併, 最後的合併選項為internalOptions
 		const internalOptions = (options === undefined) ?
 			clone(chartOptionsDefaults) :
 			merge(clone(chartOptionsDefaults), toInternalOptions(options)) as ChartOptionsInternal;
@@ -174,7 +185,8 @@ export class ChartApi implements IChartApi, DataUpdatesConsumer<SeriesType> {
 		);
 		// 取得圖表組件中的model，有left and right price axis, time axis與chart
 		const model = this._chartWidget.model();
-		// time axis縮放的API
+		// time axis scale的API, 使用chart widget中的time axis widget object建構
+		// note: 在time widget中的model也有time scale
 		this._timeScaleApi = new TimeScaleApi(model, this._chartWidget.timeAxisWidget());
 	} // end of constructor
 
@@ -211,7 +223,7 @@ export class ChartApi implements IChartApi, DataUpdatesConsumer<SeriesType> {
 		/**
 		 * 實現IChart-api介面定義的圖表, 為IseriesApi的泛型
 		 * 此處只有建立圖表，尚未加入資料
-		 * 回傳SeriesApi的實體，才可用setData()加入資料
+		 * 回傳SeriesApi的實體(有實現ISeriesApi介面)，才可用setData()加入資料
 		 */
 		patchPriceFormat(options.priceFormat);
 
@@ -229,7 +241,7 @@ export class ChartApi implements IChartApi, DataUpdatesConsumer<SeriesType> {
 		/**
 		 * 實現IChart-api介面定義的圖表, 為IseriesApi的泛型
 		 * 此處只有建立圖表，尚未加入資料
-		 * 回傳SeriesApi的實體，才可用setData()加入資料
+		 * 回傳SeriesApi的實體(有實現ISeriesApi介面)，才可用setData()加入資料
 		 */
 		patchPriceFormat(options.priceFormat);
 
@@ -249,7 +261,7 @@ export class ChartApi implements IChartApi, DataUpdatesConsumer<SeriesType> {
 		/**
 		 * 實現IChart-api介面定義的圖表, 為IseriesApi的泛型
 		 * 此處只有建立圖表，尚未加入資料
-		 * 回傳SeriesApi的實體，才可用setData()加入資料
+		 * 回傳SeriesApi的實體(有實現ISeriesApi介面)，才可用setData()加入資料
 		 */
 		patchPriceFormat(options.priceFormat);
 
@@ -267,7 +279,7 @@ export class ChartApi implements IChartApi, DataUpdatesConsumer<SeriesType> {
 		/**
 		 * 實現IChart-api介面定義的圖表, 為IseriesApi的泛型
 		 * 此處只有建立圖表，尚未加入資料
-		 * 回傳SeriesApi的實體，才可用setData()加入資料
+		 * 回傳SeriesApi的實體(有實現ISeriesApi介面)，才可用setData()加入資料
 		 */
 		fillUpDownCandlesticksColors(options);
 		patchPriceFormat(options.priceFormat);
@@ -286,7 +298,7 @@ export class ChartApi implements IChartApi, DataUpdatesConsumer<SeriesType> {
 		/**
 		 * 實現IChart-api介面定義的圖表, 為IseriesApi的泛型
 		 * 此處只有建立圖表，尚未加入資料
-		 * 回傳SeriesApi的實體，才可用setData()加入資料
+		 * 回傳SeriesApi的實體(有實現ISeriesApi介面)，才可用setData()加入資料
 		 */
 		patchPriceFormat(options.priceFormat);
 
@@ -304,7 +316,7 @@ export class ChartApi implements IChartApi, DataUpdatesConsumer<SeriesType> {
 		/**
 		 * 實現IChart-api介面定義的圖表, 為IseriesApi的泛型
 		 * 此處只有建立圖表，尚未加入資料
-		 * 回傳SeriesApi的實體，才可用setData()加入資料
+		 * 回傳SeriesApi的實體(有實現ISeriesApi介面)，才可用setData()加入資料
 		 */
 		patchPriceFormat(options.priceFormat);
 
@@ -316,7 +328,7 @@ export class ChartApi implements IChartApi, DataUpdatesConsumer<SeriesType> {
 		this._seriesMap.set(res, series);
 		this._seriesMapReversed.set(series, res);
 
-		return res;
+		return res;	// SeriesApi object
 	}
 
 	public removeSeries(seriesApi: SeriesApi<SeriesType>): void {

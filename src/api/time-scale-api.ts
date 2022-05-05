@@ -25,7 +25,9 @@ const enum Constants {
 
 export class TimeScaleApi implements ITimeScaleApi, IDestroyable {
 	/**
-	 * 圖表中時間軸(x軸)的API
+	 * 圖表中時間軸(x軸)資料間隔的API，在頂層的chart-api被建構，但使用的是chart widget中的time axis widget object
+	 * 應該是為了在chartApi object層同時處理chart model中的time scale與chart widget的time axis widget的事件
+	 * 所以在頂層物件一起處理
 	 */
 	private _model: ChartModel;
 	private _timeScale: TimeScale;
@@ -35,9 +37,11 @@ export class TimeScaleApi implements ITimeScaleApi, IDestroyable {
 	private readonly _sizeChanged: Delegate<number, number> = new Delegate();
 
 	public constructor(model: ChartModel, timeAxisWidget: TimeAxisWidget) {
-		this._model = model;
-		this._timeScale = model.timeScale();
-		this._timeAxisWidget = timeAxisWidget;
+		this._model = model;	// 指向time axis widget同一層的chart model
+		this._timeScale = model.timeScale();	// model中的time scale object
+		this._timeAxisWidget = timeAxisWidget;	// 指向chart widget中的time axis widget object
+
+		// 事件處理
 		this._timeScale.visibleBarsChanged().subscribe(this._onVisibleBarsChanged.bind(this));
 		this._timeScale.logicalRangeChanged().subscribe(this._onVisibleLogicalRangeChanged.bind(this));
 		this._timeAxisWidget.sizeChanged().subscribe(this._onSizeChanged.bind(this));

@@ -36,12 +36,12 @@ export interface MouseEventParamsImpl {
 export type MouseEventParamsImplSupplier = () => MouseEventParamsImpl;
 
 export class ChartWidget implements IDestroyable {
-	/*
+	/**
 	 * 主要的圖表組件, 包含了:
 	 * 	- 主要圖表(ChartModel)，
 	 *  - 左(右)側的y軸
 	 *  - 時間軸(TimeAxisWidget)
-	 *  的組件們
+	 *  的組件們, 負責外層的html排版
 	 *
 	 *  只有在網頁的script上建構圖表，之後圖表的行為都是依使用者操作的事件驅動
 
@@ -85,7 +85,7 @@ export class ChartWidget implements IDestroyable {
 		 *    *---------------------------------------------------*
 		 *    | table                                             |
 		 *    *---------------------------------------------------*
-		 * 	  |<tr> pane widget (由ChartModel生成至Pane widget[])  |
+		 * 	  |<tr> pane widgets (由ChartModel生成至Pane widget[]) |
 		 *	  *---------------------------------------------------*
 		 *	  |<tr> time-axis-widget                              |
 		 *    *---------------------------------------------------*

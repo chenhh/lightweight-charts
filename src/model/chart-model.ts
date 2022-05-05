@@ -316,7 +316,8 @@ interface GradientColorsCache {
 
 export class ChartModel implements IDestroyable {
 	/**
-	 * 主要的繪圖模型, 不用處理html的屬性, 但是要處理日期, left and right price axis, chart,
+	 * 主要的繪圖模型, 不用處理html的屬性, 但是要處理日期, left and right price axis, chart組件的連動，
+	 * 但不處理實際繪圖的canvas部份
 	 * 滑鼠為magnet時移動方式，以及watermark的內容
 	 */
 	private readonly _options: ChartOptionsInternal;	// 圖表的選項
