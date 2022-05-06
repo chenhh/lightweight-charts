@@ -293,10 +293,12 @@ export class ChartWidget implements IDestroyable {
 	}
 
 	public clicked(): ISubscription<MouseEventParamsImplSupplier> {
+		// 回傳Delegate<MouseEventParamsImplSupplier>物件，由chart api中的ctor對應callback function
 		return this._clicked;
 	}
 
 	public crosshairMoved(): ISubscription<MouseEventParamsImplSupplier> {
+		// 回傳Delegate<MouseEventParamsImplSupplier>物件，由chart api中的ctor對應callback function
 		return this._crosshairMoved;
 	}
 

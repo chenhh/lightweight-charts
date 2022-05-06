@@ -12,7 +12,14 @@ export class Delegate<T1 = void, T2 = void> implements ISubscription<T1, T2> {
 	 * 事件處理委任類別
 	 * callback function的參數最多兩個, T1與T2,
 	 * T1可為 MouseEventParams, MouseEventParamsImplSupplier等類別
+	 * 在chart api中，由chart widget處理滑鼠按下與十字線移動的事件
+	 *
+	 * ISubscription介面只有三個函數簽名：
+	 * subscribe(callback: Callback<T1, T2>, linkedObject?: unknown, singleshot?: boolean): void;
+	 * unsubscribe(callback: Callback<T1, T2>): void;
+	 * unsubscribeAll(linkedObject: unknown): void;
 	 */
+		// 將callback function, 連結的物件, 是否只執行一次視為一組資料，存在list中
 	private _listeners: Listener<T1, T2>[] = [];
 
 	public subscribe(callback: Callback<T1, T2>, linkedObject?: unknown, singleshot?: boolean): void {
@@ -49,12 +56,12 @@ export class Delegate<T1 = void, T2 = void> implements ISubscription<T1, T2> {
 	}
 
 	public fire(param1: T1, param2: T2): void {
-		/*
+		/**
 			將event傳送出去，如price-scale.ts中的this._modeChanged.fire(oldMode, this.mode())
 		 */
 		// 展開符 ... 展開陣列再裝進 [] 空陣列, copy by value
 		const listenersSnapshot = [...this._listeners];
-		// 去除list中，singleshot為true的callback function
+		// 去除list中，single shot為true的callback function
 		this._listeners = this._listeners.filter((listener: Listener<T1, T2>) => !listener.singleshot);
 		// 執行callback function
 		listenersSnapshot.forEach((listener: Listener<T1, T2>) => listener.callback(param1, param2));

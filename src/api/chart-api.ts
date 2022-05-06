@@ -121,17 +121,20 @@ export class ChartApi implements IChartApi, DataUpdatesConsumer<SeriesType> {
 	 * SeriesType限定義Bar, Candlestick, Area, Baseline, Line, Histogram
 	 *
 	 * ChartApi object -> ChartWidget object(chart model,time axis, pane objects)...
-	 * CharetApi可透過chartwidget object間接操作更底層的object
+	 * CharetApi可透過chart widget object間接操作更底層的object
 	 */
 	private _chartWidget: ChartWidget;	// 圖表組件, 處理html，內嵌chart model處理繪圖邏輯
 
 	// 資料可以有多層, 建立Chart object後, 使用addXXXSeries在model中加入圖形的選項, 回傳SeriesApi object後，
 	// 再使用SeriesApi的setData()新增資料後，再用Chart object的applyNewData()加入真正的資料
 	// 會再呼叫this._sendUpdateToChart()後，更新model中所有Pane的繪圖
+	// note: 實際使用時，必須要加入資料後，網頁才會開始繪圖
 	private _dataLayer: DataLayer = new DataLayer();
 
 	// 正向與反向記錄Series class與對應的SeriesApi class, 可做快速查詢與反查詢
-	// SeriesApi與Series同一類型，在addAreaSeries中被呼叫加入
+	// SeriesApi與Series同一類型，在addAreaSeries中被呼叫加入, 先建立series,再建立對應的seriesApi objects
+	// series為model的物件，只和model互動，而series Api由chartApi建立，與chartApi互動
+	// 因為兩物件是由同樣的資料建構，且經常需要正查與反查，所以建立兩個map快取
 	private readonly _seriesMap: Map<SeriesApi<SeriesType>, Series> = new Map();
 	private readonly _seriesMapReversed: Map<Series, SeriesApi<SeriesType>> = new Map();
 
@@ -140,7 +143,7 @@ export class ChartApi implements IChartApi, DataUpdatesConsumer<SeriesType> {
 	// 滑鼠十字線移動事件處理
 	private readonly _crosshairMovedDelegate: Delegate<MouseEventParams> = new Delegate();
 
-	// 為何timescale是在chartapi而不是chart widget中處理?,
+	// 為何timescale是在chart api而不是chart widget中處理?,
 	// note: 在time widget中的model也有time scale
 	// guess: 因為chart model與chart widget中的time axis widget均有time scale, 因此在chart api層一起處理
 	private readonly _timeScaleApi: TimeScaleApi;
@@ -150,6 +153,8 @@ export class ChartApi implements IChartApi, DataUpdatesConsumer<SeriesType> {
 		 *
 		 * @param container - 建構圖表的html元素
 		 * @param options - 圖表的選項
+		 *
+		 * Chart api只負責滑鼠按下與十字線移動的事件分派
 		 */
 			// 是否有定義圖表的選項，沒有時使用預設值，有定義時，將自定選項和預設選項合併, 最後的合併選項為internalOptions
 		const internalOptions = (options === undefined) ?
@@ -160,9 +165,10 @@ export class ChartApi implements IChartApi, DataUpdatesConsumer<SeriesType> {
 		this._chartWidget = new ChartWidget(container, internalOptions);
 
 		// 圖表上按下滑鼠的事件, 實作ISubscription的方法
+		// chart widget.clicked()回傳Delegate<MouseEventParamsImplSupplier>物件
 		this._chartWidget.clicked().subscribe(
 			/* 當chart widget上按下滑鼠，且chartapi的click listeners list不為空，
-			   則將chart widget上的滑鼠事件轉發給chartapi click listeners list對應的callback functions
+			   則將chart widget上的滑鼠事件轉發給chart api click listeners list對應的callback functions
 			 */
 			(paramSupplier: MouseEventParamsImplSupplier) => {
 				if (this._clickedDelegate.hasListeners()) {
@@ -335,14 +341,18 @@ export class ChartApi implements IChartApi, DataUpdatesConsumer<SeriesType> {
 		/**
 		 * 實現IChart-api介面定義的圖表, 為IseriesApi的泛型
 		 */
+			// 確定series存在於chart api中
 		const series = ensureDefined(this._seriesMap.get(seriesApi));
 
+		// 由chart api的data layer與model中刪掉series
 		const update = this._dataLayer.removeSeries(series);
 		const model = this._chartWidget.model();
 		model.removeSeries(series);
 
+		// 更新圖形
 		this._sendUpdateToChart(update);
 
+		// 去除chart api中的快取查詢
 		this._seriesMap.delete(seriesApi);
 		this._seriesMapReversed.delete(series);
 	}
@@ -430,7 +440,8 @@ export class ChartApi implements IChartApi, DataUpdatesConsumer<SeriesType> {
 
 	private _sendUpdateToChart(update: DataUpdateResponse): void {
 		/**
-		 * 使用applyNewData()加入資料到DataLayer後，回傳的物件再傳入此方法
+		 * 使用applyNewData()加入資料到DataLayer後，removeSeries()後，updateData()後
+		 * 只要對資料更新後，都會呼叫此函數更新圖形
 		 */
 		const model = this._chartWidget.model();
 
