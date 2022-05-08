@@ -165,11 +165,12 @@ export class ChartApi implements IChartApi, DataUpdatesConsumer<SeriesType> {
 		this._chartWidget = new ChartWidget(container, internalOptions);
 
 		// 圖表上按下滑鼠的事件, 實作ISubscription的方法
-		// chart widget.clicked()回傳Delegate<MouseEventParamsImplSupplier>物件
+		// 當chart widget上按下滑鼠，回傳Delegate<MouseEventParamsImplSupplier>物件後，執行subscribe方法
 		this._chartWidget.clicked().subscribe(
-			/* 當chart widget上按下滑鼠，且chartapi的click listeners list不為空，
-			   則將chart widget上的滑鼠事件轉發給chart api click listeners list對應的callback functions
-			 */
+			// subscribe方法的函數簽名為 subscribe(callback: Callback<T1, T2>, linkedObject?: unknown, singleshot?: boolean): void;
+			// callback function的參數是widget滑鼠事件的參數, 當chart api的_clickedDelegate的listener list不為空時，
+			// 用chartapi listener的callback function處理widget中的paramSupplier。
+
 			(paramSupplier: MouseEventParamsImplSupplier) => {
 				if (this._clickedDelegate.hasListeners()) {
 					this._clickedDelegate.fire(this._convertMouseParams(paramSupplier()));
@@ -177,10 +178,10 @@ export class ChartApi implements IChartApi, DataUpdatesConsumer<SeriesType> {
 			},
 			this	// linked object
 		);
-		// 圖表上十字線移動的事件
+		// 圖表上十字線移動的事件,  回傳Delegate<MouseEventParamsImplSupplier>物件後再subscribe
 		this._chartWidget.crosshairMoved().subscribe(
 			/* 當chart widget上滑鼠十字線移動，且chartapi的moved listeners list不為空，
-			   則將chart widget上的滑鼠事件轉發給chartapi moved listeners list對應的callback functions
+			   則將chart widget上的滑鼠事件轉發給chartapi中 listeners list對應的callback functions
 			 */
 			(paramSupplier: MouseEventParamsImplSupplier) => {
 				if (this._crosshairMovedDelegate.hasListeners()) {
@@ -200,7 +201,7 @@ export class ChartApi implements IChartApi, DataUpdatesConsumer<SeriesType> {
 		/**
 		 * 清除圖表所有元素，實現IChartApi的方法
 		 */
-		// 圖形組件的滑鼠事件
+		// 清空chart widget中, clicked與crosshairmoved事件，link object為chart api的listener object
 		this._chartWidget.clicked().unsubscribeAll(this);
 		this._chartWidget.crosshairMoved().unsubscribeAll(this);
 
@@ -212,7 +213,7 @@ export class ChartApi implements IChartApi, DataUpdatesConsumer<SeriesType> {
 		this._seriesMap.clear();
 		this._seriesMapReversed.clear();
 
-		// api的滑鼠事件
+		// 清空chart api的clicked, crosshairmoved事件
 		this._clickedDelegate.destroy();
 		this._crosshairMovedDelegate.destroy();
 		this._dataLayer.destroy();
@@ -377,42 +378,44 @@ export class ChartApi implements IChartApi, DataUpdatesConsumer<SeriesType> {
 
 	public subscribeClick(handler: MouseEventHandler): void {
 		/**
-		 * 實現了IChartApi的方法
+		 * 滑鼠事件的callback function, 簽名為  (param: MouseEventParams) => void;
+		 * (for chartapi object)
 		 */
 		this._clickedDelegate.subscribe(handler);
 	}
 
 	public unsubscribeClick(handler: MouseEventHandler): void {
 		/**
-		 * 實現了IChartApi的方法
+		 * 取消滑鼠事件的callback function (for chartapi object)
 		 */
 		this._clickedDelegate.unsubscribe(handler);
 	}
 
 	public subscribeCrosshairMove(handler: MouseEventHandler): void {
 		/**
-		 * 實現了IChartApi的方法
+		 * 十字線事件的callback function,簽名為  (param: MouseEventParams) => void;
+		 * (for chartapi object)
 		 */
 		this._crosshairMovedDelegate.subscribe(handler);
 	}
 
 	public unsubscribeCrosshairMove(handler: MouseEventHandler): void {
 		/**
-		 * 實現了IChartApi的方法
+		 * 取消十字線事件的callback function,
 		 */
 		this._crosshairMovedDelegate.unsubscribe(handler);
 	}
 
 	public priceScale(priceScaleId: string): IPriceScaleApi {
 		/**
-		 * 實現了IChartApi的方法
+		 * 以chart widget object與price scale id(使用者自訂名稱如left, right)產生新的price scale api object
 		 */
 		return new PriceScaleApi(this._chartWidget, priceScaleId);
 	}
 
 	public timeScale(): ITimeScaleApi {
 		/**
-		 * 實現了IChartApi的方法
+		 * time scale api getter
 		 */
 		return this._timeScaleApi;
 	}
@@ -426,14 +429,14 @@ export class ChartApi implements IChartApi, DataUpdatesConsumer<SeriesType> {
 
 	public options(): Readonly<ChartOptions> {
 		/**
-		 * 實現了IChartApi的方法
+		 * 讀取chart的options
 		 */
 		return this._chartWidget.options() as Readonly<ChartOptions>;
 	}
 
 	public takeScreenshot(): HTMLCanvasElement {
 		/**
-		 * 實現了IChartApi的方法
+		 * 調用chart的screen shot方法
 		 */
 		return this._chartWidget.takeScreenshot();
 	}

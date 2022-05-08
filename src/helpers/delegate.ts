@@ -51,6 +51,7 @@ export class Delegate<T1 = void, T2 = void> implements ISubscription<T1, T2> {
 	public unsubscribeAll(linkedObject: unknown): void {
 		/**
 		 * 刪除listeners list中，指定物件(linkedObject)的所有callback functions
+		 * destroy才是清空所有的listeners list
 		 */
 		this._listeners = this._listeners.filter((listener: Listener<T1, T2>) => listener.linkedObject !== linkedObject);
 	}
@@ -75,6 +76,7 @@ export class Delegate<T1 = void, T2 = void> implements ISubscription<T1, T2> {
 	}
 
 	public destroy(): void {
+		// 清空所有的listeners list
 		this._listeners = [];
 	}
 }
