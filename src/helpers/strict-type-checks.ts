@@ -5,6 +5,8 @@
  *   //"key" 可以是取成任何名稱
  *   [key: string]: string | number;
  * };
+ * T為某一物件如ChartOptions或interface
+ * [P in keyof T]?為T的屬性之key形成的可選集合, 且限定key的型態是繼承自U
  */
 export type DeepPartial<T> = {
 	[P in keyof T]?: T[P] extends (infer U)[]

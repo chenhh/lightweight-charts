@@ -12,6 +12,13 @@ import { IChartApi } from './ichart-api';
  * 使用id或是document.getElementById確定div容器後，回傳Chart物件，
  * 再選用chart的種類與繪圖選項
  *
+ * options可在 ChartOptionsInternal中看到完整的預設屬性，可分為兩層，
+ * 第一層chart的屬性有width與height,
+ * 第二層為底下組件的屬性，可再分為layout, crosshair, grid, overlayPriceScales,
+ * leftPriceScale, rightPriceScale, timeScale, watermark, localization, handleScroll,
+ * handleScale, kineticScroll, trackingMode, 每個組件有自已的屬性與子組件的屬性
+ *
+ *
  * @param container - ID of HTML element or element itself
  * @param options - Any subset of options to be applied at start.
  * @returns An interface to the created chart

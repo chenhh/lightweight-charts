@@ -90,7 +90,7 @@ export class ChartWidget implements IDestroyable {
 		 *	  |<tr> time-axis-widget                              |
 		 *    *---------------------------------------------------*
 		 */
-		// 圖表的設定值
+		// 圖表的設定值, 預設值為ChartOptionsInternal
 		this._options = options;
 
 		// container通常是(outer) div，而此處的div是container內再一層(inner)div
@@ -110,19 +110,20 @@ export class ChartWidget implements IDestroyable {
 		// 在top inner div後增加table
 		this._element.appendChild(this._tableElement);
 
-		// 設定滑鼠滾輪的事件處理函數
+		// 設定滑鼠滾輪的事件處理函數，從class method變為function
 		this._onWheelBound = this._onMousewheel.bind(this);
 		// option passive,用途是告訴瀏覽器，這個事件 handler function 會不會呼叫event.preventDefault來停止瀏覽器的原生行為
 		// 就是如果你是 scroll event，以前會因為瀏覽器要判斷會不會被preventDefault，所以讓 scroll 的效能變差，
 		// 加上這個選項可以直接告訴瀏覽器說沒有要 preventDefault 後，原生的事件行為就可以不管 event handler 直接處理了
 		this._element.addEventListener('wheel', this._onWheelBound, {passive: false});
 
-		// chart model物件, 主要的繪圖內容
+		// chart model物件, 主要的繪圖內容, 放在table的第一列
+		// model先建立panes[]後，再synGuiWithModel再用panes[]建立paneWidgets[]
 		this._model = new ChartModel(
 			this._invalidateHandler.bind(this),
 			this._options
 		);
-		// ChartModel的crosshairMoved的事件處理綁定
+		// Chart model的crosshairMoved的事件處理綁定到chart widget與method
 		this.model().crosshairMoved().subscribe(this._onPaneWidgetCrosshairMoved.bind(this), this);
 
 		// 圖表的時間軸(x軸)組件
@@ -155,6 +156,7 @@ export class ChartWidget implements IDestroyable {
 
 		// BEWARE: resize must be called BEFORE _syncGuiWithModel (in constructor only)
 		// or after but with adjustSize to properly update time scale
+		// 設定widget(div)的大小
 		this.resize(width, height);
 
 		// TODO: 不了解此method的功能
@@ -164,8 +166,9 @@ export class ChartWidget implements IDestroyable {
 		container.appendChild(this._element);
 		// 由option中讀取時間是否可見, 預設只能看到日期
 		this._updateTimeAxisVisibility();
-		// 綁定事件處理
+		// 綁定事件處理, chart model的time scale optionapplied事件綁定model的full update與chart widget物件
 		this._model.timeScale().optionsApplied().subscribe(this._model.fullUpdate.bind(this._model), this);
+		// 綁定事件處理, chart model的price scale option changed事件綁定model的full update與chart widget物件
 		this._model.priceScalesOptionsChanged().subscribe(this._model.fullUpdate.bind(this._model), this);
 	}	// end of constructor
 
@@ -490,7 +493,7 @@ export class ChartWidget implements IDestroyable {
 
 	private _onMousewheel(event: WheelEvent): void {
 		/**
-		 * 滑鼠滾輪事件的處理函數
+		 * 滑鼠滾輪事件的處理函數, 在ctor中綁定wheel事件處理
 		 */
 		let deltaX = event.deltaX / 100;
 		let deltaY = -(event.deltaY / 100);
@@ -612,6 +615,10 @@ export class ChartWidget implements IDestroyable {
 	}
 
 	private _invalidateHandler(invalidateMask: InvalidateMask): void {
+		/**
+		 * 在ctor中，傳入chart model的event function
+		 * 因為是以function pointer方式傳入，因此invalidateMask之值是在chart model中決定
+		 */
 		// 合併invalidateMask
 		if (this._invalidateMask !== null) {
 			this._invalidateMask.merge(invalidateMask);
@@ -656,7 +663,7 @@ export class ChartWidget implements IDestroyable {
 		/**
 		 * full invalidation時，更新所有組件
 		 */
-			// 先處理pane widgets
+			// 讀取由model建立的panes[]
 		const panes = this._model.panes();
 		// 何時pane widgets的數量會與panes不一致?
 		const targetPaneWidgetsCount = panes.length;

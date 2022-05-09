@@ -59,8 +59,8 @@ export class TimeAxisWidget implements MouseEventHandlers, IDestroyable {
 		 * 第二例有三欄，第一、三欄為空，第二列(cell)為time axis的內容
 		 * time axis的顯示的時間內容由time-scale處理
 		 */
-		this._chart = chartWidget;
-		this._options = chartWidget.options().layout; // LayoutOptions
+		this._chart = chartWidget;	// 指向parent chart widget object
+		this._options = chartWidget.options().layout; // Layout options
 
 		// 因為是在pane widgets排版, 所以為根元素為tr, 共有三欄, 時間軸位於中間欄
 		this._element = document.createElement('tr');

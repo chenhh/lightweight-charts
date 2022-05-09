@@ -347,10 +347,10 @@ export class ChartModel implements IDestroyable {
 		/**
 		 * invalidateHandler, 處理失效組件重繪的callback function, 通常由chart-widget傳入
 		 */
-		this._invalidateHandler = invalidateHandler;
-		this._options = options;
+		this._invalidateHandler = invalidateHandler;	// 由chart widget指定的evnet function
+		this._options = options;	// 從chart api -> chart widget -> chart model的選項
 
-		// y軸的選項物件
+		// y軸的選項物件, 由預設選項與chart model給定的選項合併而成
 		this._rendererOptionsProvider = new PriceAxisRendererOptionsProvider(this);
 
 		// 生成圖表子組件

@@ -198,17 +198,17 @@ export interface TimeScaleOptions {
 }
 
 export class TimeScale {
-	private readonly _options: TimeScaleOptions;
-	private readonly _model: ChartModel;
-	private readonly _localizationOptions: LocalizationOptions;
+	private readonly _options: TimeScaleOptions;	// time scale options
+	private readonly _model: ChartModel;			// parent chart model
+	private readonly _localizationOptions: LocalizationOptions;	// localization options
 
-	private _dateTimeFormatter!: DateFormatter | DateTimeFormatter;
+	private _dateTimeFormatter!: DateFormatter | DateTimeFormatter;	// 日期或日期與時間的格式
 
 	private _width: number = 0;
 	private _baseIndexOrNull: TimePointIndex | null = null;
-	private _rightOffset: number;
+	private _rightOffset: number;	// 預設為0
 	private _points: readonly TimeScalePoint[] = [];
-	private _barSpacing: number;
+	private _barSpacing: number;	// 預設為6
 	private _scrollStartPoint: Coordinate | null = null;
 	private _scaleStartPoint: Coordinate | null = null;
 	private readonly _tickMarks: TickMarks = new TickMarks();
@@ -227,47 +227,56 @@ export class TimeScale {
 	private _labels: TimeMark[] = [];
 
 	public constructor(model: ChartModel, options: TimeScaleOptions, localizationOptions: LocalizationOptions) {
-		this._options = options;
-		this._localizationOptions = localizationOptions;
-		this._rightOffset = options.rightOffset;
-		this._barSpacing = options.barSpacing;
-		this._model = model;
+		this._options = options;	// chart options中, time scale的部份
+		this._localizationOptions = localizationOptions;	// chart options中, localization的部份
+		this._rightOffset = options.rightOffset;	// time scale中, rightOffset預設為0
+		this._barSpacing = options.barSpacing;		// time scale中, barSpacing預設為6
+		this._model = model;	// 指向parent chart model
 
+		// 更新日期(與時間)的格式
 		this._updateDateTimeFormatter();
 	}
 
 	public options(): Readonly<TimeScaleOptions> {
+		// time scale options
 		return this._options;
 	}
 
 	public applyLocalizationOptions(localizationOptions: DeepPartial<LocalizationOptions>): void {
+		// 合併現有與指定的localization options
 		merge(this._localizationOptions, localizationOptions);
 
 		this._invalidateTickMarks();
+		// 更新日期(與時間)的格式
 		this._updateDateTimeFormatter();
 	}
 
 	public applyOptions(options: DeepPartial<TimeScaleOptions>, localizationOptions?: DeepPartial<LocalizationOptions>): void {
+		// 合併現有與指定的time scale options
 		merge(this._options, options);
 
+		// fixLeftEdge預設為false
 		if (this._options.fixLeftEdge) {
 			this._doFixLeftEdge();
 		}
-
+		// fixRightEdge預設為false
 		if (this._options.fixRightEdge) {
 			this._doFixRightEdge();
 		}
 
 		// note that bar spacing should be applied before right offset
 		// because right offset depends on bar spacing
+		// barSpacing預設為6
 		if (options.barSpacing !== undefined) {
 			this._model.setBarSpacing(options.barSpacing);
 		}
 
+		// rightOffset預設為0
 		if (options.rightOffset !== undefined) {
 			this._model.setRightOffset(options.rightOffset);
 		}
 
+		// minBarSpacing預設為0.5
 		if (options.minBarSpacing !== undefined) {
 			// yes, if we apply min bar spacing then we need to correct bar spacing
 			// the easiest way is to apply it once again
@@ -275,6 +284,7 @@ export class TimeScale {
 		}
 
 		this._invalidateTickMarks();
+		// 更新日期(與時間)的格式
 		this._updateDateTimeFormatter();
 
 		this._optionsApplied.fire();
@@ -932,8 +942,13 @@ export class TimeScale {
 	}
 
 	private _updateDateTimeFormatter(): void {
+		/**
+		 * 日期或日期與時間的格式
+		 */
+			// 讀取localization date format
 		const dateFormat = this._localizationOptions.dateFormat;
 
+		// 顯示日期與時間，(預設只顯示日期)
 		if (this._options.timeVisible) {
 			this._dateTimeFormatter = new DateTimeFormatter({
 				dateFormat: dateFormat,
@@ -942,6 +957,7 @@ export class TimeScale {
 				locale: this._localizationOptions.locale,
 			});
 		} else {
+			// 只顯示日期, 以navigator.language為主
 			this._dateTimeFormatter = new DateFormatter(dateFormat, this._localizationOptions.locale);
 		}
 	}
