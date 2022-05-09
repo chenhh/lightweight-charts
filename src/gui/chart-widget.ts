@@ -411,6 +411,10 @@ export class ChartWidget implements IDestroyable {
 
 	// eslint-disable-next-line complexity
 	private _adjustSizeImpl(): void {
+		/**
+		 * 在sycGuiWithModel()最後呼叫此函數
+		 * 調整所有可視元件的尺寸
+		 */
 		let totalStretch = 0;
 		let leftPriceAxisWidth = 0;
 		let rightPriceAxisWidth = 0;
@@ -684,7 +688,7 @@ export class ChartWidget implements IDestroyable {
 		 */
 			// 讀取由model建立的panes[]
 		const panes = this._model.panes();
-		// 何時pane widgets的數量會與panes不一致?
+		// 何時pane widgets的數量會與panes不一致?, length不代表list元素的數量
 		const targetPaneWidgetsCount = panes.length;
 		const actualPaneWidgetsCount = this._paneWidgets.length;
 
@@ -715,21 +719,25 @@ export class ChartWidget implements IDestroyable {
 			// 	this._tableElement.insertBefore(paneSeparator.getElement(), this._timeAxisWidget.getElement());
 			// }
 
-			// insert paneWidget
+			// 在time axis widget前插入pane widget
 			this._tableElement.insertBefore(paneWidget.getElement(), this._timeAxisWidget.getElement());
 		}
 
+		// 更新price axis widget
 		for (let i = 0; i < targetPaneWidgetsCount; i++) {
+			// pane widget建構時，使用pane做為其state
 			const state = panes[i];
 			const paneWidget = this._paneWidgets[i];
 			if (paneWidget.state() !== state) {
 				paneWidget.setState(state);
 			} else {
+				// 在setState的最後一步也是updatePriceAxisWidgetsStates()
 				paneWidget.updatePriceAxisWidgetsStates();
 			}
 		}
-
+		// 依time scale option設定axis是否可見
 		this._updateTimeAxisVisibility();
+		// 調整所有可視組件的尺寸
 		this._adjustSizeImpl();
 	}
 
@@ -782,6 +790,10 @@ export class ChartWidget implements IDestroyable {
 	}
 
 	private _updateTimeAxisVisibility(): void {
+		/**
+		 * 在syncGuiWithModel()最後呼叫此函數
+		 */
+			// 依據time scale option決定time axis是否可見
 		const display = this._options.timeScale.visible ? '' : 'none';
 		this._timeAxisWidget.getElement().style.display = display;
 	}

@@ -71,7 +71,7 @@ interface StartScrollPosition extends Point {
 
 export class PaneWidget implements IDestroyable, MouseEventHandlers {
 	private readonly _chart: ChartWidget;
-	private _state: Pane | null;
+	private _state: Pane | null;	// pane有left, right price scale與grid objects
 	private _size: Size = new Size(0, 0);
 	private _leftPriceAxisWidget: PriceAxisWidget | null = null;
 	private _rightPriceAxisWidget: PriceAxisWidget | null = null;
@@ -97,7 +97,7 @@ export class PaneWidget implements IDestroyable, MouseEventHandlers {
 		/**
 		 * pane widget放在chart-widget的table中
 		 * chart - ChartWidget
-		 * state - Pane model
+		 * state - Pane, 包含left, right price scale與grid objects
 		 */
 		this._chart = chart;
 
@@ -189,6 +189,10 @@ export class PaneWidget implements IDestroyable, MouseEventHandlers {
 	}
 
 	public setState(pane: Pane | null): void {
+		/**
+		 * 在chart widget的 _syncGuiWithModel()中，
+		 * 當pane與pane widget的state不同時，以pane做為widget的state
+		 */
 		// 重新設定state
 		if (this._state !== null) {
 			this._state.onDestroyed().unsubscribeAll(this);
@@ -214,6 +218,10 @@ export class PaneWidget implements IDestroyable, MouseEventHandlers {
 	}
 
 	public updatePriceAxisWidgetsStates(): void {
+		/**
+		 * 在chart widget的_syncGuiWithModel()最後一步，
+		 * 不論是否重新設定state，最後都會呼叫此函數
+		 */
 		if (this._state === null) {
 			return;
 		}
@@ -223,6 +231,7 @@ export class PaneWidget implements IDestroyable, MouseEventHandlers {
 			return;
 		}
 
+		// 使用pane中的price scale設定price axis widget
 		if (this._leftPriceAxisWidget !== null) {
 			const leftPriceScale = this._state.leftPriceScale();
 			this._leftPriceAxisWidget.setPriceScale(ensureNotNull(leftPriceScale));
