@@ -346,6 +346,7 @@ export class ChartModel implements IDestroyable {
 	public constructor(invalidateHandler: InvalidateHandler, options: ChartOptionsInternal) {
 		/**
 		 * invalidateHandler, 處理失效組件重繪的callback function, 通常由chart-widget傳入
+		 * Q: 設定資料後，圖形是在何處生成?
 		 */
 		this._invalidateHandler = invalidateHandler;	// 由chart widget指定的evnet function
 		this._options = options;	// 從chart api -> chart widget -> chart model的選項
@@ -355,11 +356,11 @@ export class ChartModel implements IDestroyable {
 
 		// 生成圖表子組件
 		this._timeScale = new TimeScale(this, options.timeScale, this._options.localization);
-		this._crosshair = new Crosshair(this, options.crosshair);
-		this._magnet = new Magnet(options.crosshair);
-		this._watermark = new Watermark(this, options.watermark);
+		this._crosshair = new Crosshair(this, options.crosshair);	// 十字線
+		this._magnet = new Magnet(options.crosshair);	// 十字線是否吸附圖形
+		this._watermark = new Watermark(this, options.watermark);	// 浮水印
 
-		this.createPane();	// 生成pane且置於_panes[]中
+		this.createPane();	// 生成pane且置於_panes[]中, 生成left, right price scales與grid
 		this._panes[0].setStretchFactor(DEFAULT_STRETCH_FACTOR * 2);
 
 		this._backgroundTopColor = this._getBackgroundColor(BackgroundColorSide.Top);
@@ -501,7 +502,7 @@ export class ChartModel implements IDestroyable {
 	}
 
 	public createPane(index?: number): Pane {
-		// 使用時，通常不會設定index
+		// ctor呼叫時，沒有設定index
 		const pane = new Pane(this._timeScale, this);
 
 		if (index !== undefined) {

@@ -128,7 +128,7 @@ export class Crosshair extends DataSource {
 	private _price: number = NaN;
 	private _index: TimePointIndex = 0 as TimePointIndex;
 	private _visible: boolean = true;
-	private readonly _model: ChartModel;
+	private readonly _model: ChartModel;	// 指向parent chart model
 	private _priceAxisViews: Map<PriceScale, CrosshairPriceAxisView> = new Map();
 	private readonly _timeAxisView: CrosshairTimeAxisView;
 	private readonly _markersPaneView: CrosshairMarksPaneView;
@@ -145,8 +145,8 @@ export class Crosshair extends DataSource {
 
 	public constructor(model: ChartModel, options: CrosshairOptions) {
 		super();
-		this._model = model;
-		this._options = options;
+		this._model = model;	// 指向parent chart model
+		this._options = options;	// crosshair options
 		this._markersPaneView = new CrosshairMarksPaneView(model, this);
 
 		// arrow function pointer
@@ -156,7 +156,7 @@ export class Crosshair extends DataSource {
 				const rawPrice = rawPriceProvider();
 				if (priceScale === ensureNotNull(this._pane).defaultPriceScale()) {
 					// price must be defined
-					return { price: rawPrice, coordinate: coordinate };
+					return {price: rawPrice, coordinate: coordinate};
 				} else {
 					// always convert from coordinate
 					const firstValue = ensureNotNull(priceScale.firstValue());

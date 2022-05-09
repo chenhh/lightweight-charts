@@ -45,8 +45,8 @@ export class Pane implements IDestroyable {
 		 * 通常在chart model的ctor中的createpane()時被呼叫產生新的Pane
 		 * 而timeScale使用chart model中相同的實例
 		 */
-		this._timeScale = timeScale;	// 通常指向model中的time scale
-		this._model = model;			// 通常指向parent model
+		this._timeScale = timeScale;	// 指向parent model中的time scale
+		this._model = model;			// 指向parent model
 		this._grid = new Grid(this);	// 網格
 
 		const options = model.options();
@@ -87,6 +87,9 @@ export class Pane implements IDestroyable {
 	}
 
 	public priceScaleById(id: string): PriceScale | null {
+		/**
+		 * id通常是left ,right或其它使用者自訂的名稱
+		 */
 		switch (id) {
 			case DefaultPriceScaleId.Left: {
 				return this._leftPriceScale;
