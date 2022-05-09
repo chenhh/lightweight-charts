@@ -818,6 +818,9 @@ export class PriceScale {
 	}
 
 	public updateAllViews(): void {
+		/**
+		 * 在pane的_recalculatePriceScaleImpl()中，更新price scale後，更新所有的view
+		 */
 		this._dataSources.forEach((s: IPriceDataSource) => s.updateAllViews());
 	}
 

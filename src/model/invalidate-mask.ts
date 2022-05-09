@@ -53,6 +53,7 @@ export interface TimeScaleResetInvalidation {
 	type: TimeScaleInvalidationType.Reset;
 }
 
+// 對應到TimeScale中的method
 export type TimeScaleInvalidation =
 	| TimeScaleApplyRangeInvalidation
 	| TimeScaleFitContentInvalidation
@@ -61,16 +62,24 @@ export type TimeScaleInvalidation =
 	| TimeScaleResetInvalidation;
 
 export class InvalidateMask {
+	// 記錄pane(by index)與對應的{invalidation level, autoscale}
 	private _invalidatedPanes: Map<number, PaneInvalidation> = new Map();
 	private _globalLevel: InvalidationLevel;
 	private _timeScaleInvalidations: TimeScaleInvalidation[] = [];
 
 	public constructor(globalLevel: InvalidationLevel) {
-		// 全局失效等級
+		/** 全局失效等級, 有{None, Cursor, Light, Full} 4個等級
+			在chart model的createPane用是Full建構mask
+		 */
 		this._globalLevel = globalLevel;
 	}
 
 	public invalidatePane(paneIndex: number, invalidation: PaneInvalidation): void {
+		/**
+		 * paneIndex為pane在chart model中pane list的index, 通常為0
+		 * invalidation為invalidationLevel與autoscaling(bool)的介面
+		 * 更新指定pane index的{invalidation, autoscale}之快取值
+		 */
 		const prevValue = this._invalidatedPanes.get(paneIndex);
 		const newValue = mergePaneInvalidation(prevValue, invalidation);
 		this._invalidatedPanes.set(paneIndex, newValue);
@@ -117,6 +126,15 @@ export class InvalidateMask {
 	}
 
 	public timeScaleInvalidations(): readonly TimeScaleInvalidation[] {
+		/**
+		 * time scale的invalidation
+		 * TimeScaleInvalidation =
+		 * 	| TimeScaleApplyRangeInvalidation
+		 * 	| TimeScaleFitContentInvalidation
+		 * 	| TimeScaleApplyRightOffsetInvalidation
+		 * 	| TimeScaleApplyBarSpacingInvalidation
+		 * 	| TimeScaleResetInvalidation;
+		 */
 		return this._timeScaleInvalidations;
 	}
 

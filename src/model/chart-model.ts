@@ -326,7 +326,7 @@ export class ChartModel implements IDestroyable {
 	private readonly _rendererOptionsProvider: PriceAxisRendererOptionsProvider;	// 繪製y軸的選項
 
 	private readonly _timeScale: TimeScale;	// 時間軸時間顯示的屬性, 事件在time-scale api中處理，因為要和time axis widget連動
-	private readonly _panes: Pane[] = [];	// table中第一列組件中的left and right price scale
+	private readonly _panes: Pane[] = [];	// table中第一列組件中的left and right price scale與grid, 在createPane()中生成
 	private readonly _crosshair: Crosshair;	// 十字線
 	private readonly _magnet: Magnet;		// 十字線是否自動貼近圖形
 	private readonly _watermark: Watermark;	// 浮水印
@@ -361,6 +361,7 @@ export class ChartModel implements IDestroyable {
 		this._watermark = new Watermark(this, options.watermark);	// 浮水印
 
 		this.createPane();	// 生成pane且置於_panes[]中, 生成left, right price scales與grid
+
 		this._panes[0].setStretchFactor(DEFAULT_STRETCH_FACTOR * 2);
 
 		this._backgroundTopColor = this._getBackgroundColor(BackgroundColorSide.Top);
@@ -502,7 +503,9 @@ export class ChartModel implements IDestroyable {
 	}
 
 	public createPane(index?: number): Pane {
-		// ctor呼叫時，沒有設定index
+		/** ctor呼叫時，沒有設定index
+		 *  目前只有在ctor使用此方法
+		 */
 		const pane = new Pane(this._timeScale, this);
 
 		if (index !== undefined) {
@@ -512,14 +515,21 @@ export class ChartModel implements IDestroyable {
 			this._panes.push(pane);
 		}
 
-		// pane的真正index
+		// pane的真正index，取index之值(pane在list中間)或是panes[]的長度-1(pane在list最後面)
 		const actualIndex = (index === undefined) ? this._panes.length - 1 : index;
 
 		// we always do autoscaling on the creation
 		// if autoscale option is true, it is ok, just recalculate by invalidation mask
 		// if autoscale option is false, autoscale anyway on the first draw
 		// also there is a scenario when autoscale is true in constructor and false later on applyOptions
-		const mask = new InvalidateMask(InvalidationLevel.Full);
+		// InvalidationLevel {
+		// 	None = 0,
+		// 	Cursor = 1,
+		// 	Light = 2,
+		// 	Full = 3,
+		// }
+		const mask = new InvalidateMask(InvalidationLevel.Full);	// 全部無效需要更新
+		// 更新指定pane的{invalidationLevel, autoscale}之值
 		mask.invalidatePane(actualIndex, {
 			level: InvalidationLevel.None,
 			autoScale: true,
@@ -906,10 +916,15 @@ export class ChartModel implements IDestroyable {
 	}
 
 	private _invalidate(mask: InvalidateMask): void {
+		/**
+		 * 在createPane()中被呼叫, mask設定全局為full, pane為none且autoscale=true
+		 */
+		// 使用invalidate event function處理mask,
+		// _invalidateHandler是chart widget在ctor建構model時傳入
 		if (this._invalidateHandler) {
 			this._invalidateHandler(mask);
 		}
-
+		// 更新pane中的paneView
 		this._panes.forEach((pane: Pane) => pane.grid().paneView().update());
 	}
 

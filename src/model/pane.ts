@@ -330,6 +330,10 @@ export class Pane implements IDestroyable {
 	}
 
 	public momentaryAutoScale(): void {
+		/**
+		 * 在chart widget的_drawImpl()->applyMomentaryAutoScale()呼叫，
+		 * 會依mask invalidation中，autoscale=true的設定呼叫
+		 */
 		this._recalculatePriceScaleImpl(this._leftPriceScale);
 		this._recalculatePriceScaleImpl(this._rightPriceScale);
 	}
@@ -365,16 +369,21 @@ export class Pane implements IDestroyable {
 	}
 
 	private _recalculatePriceScaleImpl(priceScale: PriceScale): void {
-		// TODO: can use this checks
+		/**
+		 * momentaryAutoScale()中，會對left, right price scale呼叫此函數
+		 */
+			// TODO: can use this checks
+			// 取得price scale中的data source list
 		const sourceForAutoScale = priceScale.sourcesForAutoScale();
 
+		// 若 source存在，且 pane的time scale不為空, 更新price scale
 		if (sourceForAutoScale && sourceForAutoScale.length > 0 && !this._timeScale.isEmpty()) {
 			const visibleBars = this._timeScale.visibleStrictRange();
 			if (visibleBars !== null) {
 				priceScale.recalculatePriceRange(visibleBars);
 			}
 		}
-
+		// 更新price scale中，data source的所有view
 		priceScale.updateAllViews();
 	}
 

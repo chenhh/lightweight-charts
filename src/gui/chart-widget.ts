@@ -534,17 +534,22 @@ export class ChartWidget implements IDestroyable {
 
 	private _drawImpl(invalidateMask: InvalidateMask): void {
 		/**
+		 * 由chart model的createPane() -> this._invalidateHandler() -> _drawImpl()
 		 * 重新繪製圖形, 依指定的invalidateMask決定須要繪製的組件
+		 * 在createPane()中設定mask的level為full, pane的level為none, autoscale=true
 		 * 有四個Level None = 0, Cursor = 1, Light = 2, Full = 3,
 		 */
+			// 取mask的global invalidationLevel之值
 		const invalidationType = invalidateMask.fullInvalidation();
 
 		// actions for full invalidation ONLY (not shared with light)
+		// full時，更新整個gui
 		if (invalidationType === InvalidationLevel.Full) {
 			this._updateGui();
 		}
 
 		// light or full invalidate actions
+		// full或light時要執行的操作
 		if (
 			invalidationType === InvalidationLevel.Full ||
 			invalidationType === InvalidationLevel.Light
@@ -572,12 +577,16 @@ export class ChartWidget implements IDestroyable {
 				invalidateMask = this._invalidateMask;
 				this._invalidateMask = null;
 			}
-		}
+		}	// end of full or light level
+
 		// invalid level為none或cursor時，只會呼叫此部份, 而其它level都會呼叫此部份
 		this.paint(invalidateMask);
 	}
 
 	private _applyTimeScaleInvalidations(invalidateMask: InvalidateMask): void {
+		/**
+		 * invalidation level為full or light時，在_drawImpl()會呼叫此函數
+		 */
 		const timeScaleInvalidations = invalidateMask.timeScaleInvalidations();
 		for (const tsInvalidation of timeScaleInvalidations) {
 			this._applyTimeScaleInvalidation(tsInvalidation);
@@ -585,6 +594,10 @@ export class ChartWidget implements IDestroyable {
 	}
 
 	private _applyMomentaryAutoScale(invalidateMask: InvalidateMask): void {
+		/**
+		 * invalidation level為full or light時，在_drawImpl()會呼叫此函數
+		 * 將chart model中panes對應的invalidation中, autoscale=true處理
+		 */
 		const panes = this._model.panes();
 		for (let i = 0; i < panes.length; i++) {
 			if (invalidateMask.invalidateForPane(i).autoScale) {
@@ -594,6 +607,9 @@ export class ChartWidget implements IDestroyable {
 	}
 
 	private _applyTimeScaleInvalidation(invalidation: TimeScaleInvalidation): void {
+		/**
+		 * invalidation level為full or light時，在_drawImpl()會呼叫此函數
+		 */
 		const timeScale = this._model.timeScale();
 		switch (invalidation.type) {
 			case TimeScaleInvalidationType.FitContent:
@@ -618,6 +634,7 @@ export class ChartWidget implements IDestroyable {
 		/**
 		 * 在ctor中，傳入chart model的event function
 		 * 因為是以function pointer方式傳入，因此invalidateMask之值是在chart model中決定
+		 * 在chart model中的createPane(), 會設定mask的invalidLevel為full, 而pane的level為none, 但autoscale=true
 		 */
 		// 合併invalidateMask
 		if (this._invalidateMask !== null) {
@@ -626,6 +643,7 @@ export class ChartWidget implements IDestroyable {
 			this._invalidateMask = invalidateMask;
 		}
 
+		// 在window.requestAnimationFrame後，drawPlanned為設為false
 		if (!this._drawPlanned) {
 			this._drawPlanned = true;
 			// window.requestAnimationFrame()方法通知瀏覽器我們想要產生動畫，
@@ -641,6 +659,7 @@ export class ChartWidget implements IDestroyable {
 					// 重新設定invalidateMask
 					const mask = this._invalidateMask;
 					this._invalidateMask = null;
+					// 依mask繪圖
 					this._drawImpl(mask);
 				}
 			});

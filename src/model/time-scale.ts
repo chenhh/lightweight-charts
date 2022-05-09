@@ -444,6 +444,9 @@ export class TimeScale {
 	}
 
 	public setRightOffset(offset: number): void {
+		/**
+		 * chart widget的_applyTimeScaleInvalidation中，TimeScaleInvalidationType.setRightOffset時被呼叫
+		 */
 		this._visibleRangeInvalidated = true;
 		this._rightOffset = offset;
 		this._correctOffset();
@@ -456,6 +459,9 @@ export class TimeScale {
 	}
 
 	public setBarSpacing(newBarSpacing: number): void {
+		/**
+		 * chart widget的_applyTimeScaleInvalidation中，TimeScaleInvalidationType.setBarSpacing時被呼叫
+		 * */
 		this._setBarSpacing(newBarSpacing);
 
 		// do not allow scroll out of visible bars
@@ -544,6 +550,9 @@ export class TimeScale {
 	}
 
 	public restoreDefault(): void {
+		/**
+		 * chart widget的_applyTimeScaleInvalidation中，TimeScaleInvalidationType.restoreDefault時被呼叫
+		 */
 		this._visibleRangeInvalidated = true;
 
 		this.setBarSpacing(this._options.barSpacing);
@@ -725,6 +734,9 @@ export class TimeScale {
 	}
 
 	public fitContent(): void {
+		/**
+		 * chart widget的_applyTimeScaleInvalidation中，TimeScaleInvalidationType.FitContent時被呼叫
+		 * */
 		const first = this._firstIndex();
 		const last = this._lastIndex();
 		if (first === null || last === null) {
@@ -735,6 +747,9 @@ export class TimeScale {
 	}
 
 	public setLogicalRange(range: LogicalRange): void {
+		/**
+		 *  chart widget的_applyTimeScaleInvalidation中，TimeScaleInvalidationType.setLogicalRange時被呼叫
+		 */
 		const barRange = new RangeImpl(
 			range.from as number as TimePointIndex,
 			range.to as number as TimePointIndex
