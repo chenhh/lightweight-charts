@@ -234,6 +234,9 @@ export class PaneWidget implements IDestroyable, MouseEventHandlers {
 	}
 
 	public updatePriceAxisWidgets(): void {
+		/**
+		 * 在chart-widget的 _drawImpl()被呼叫
+		 */
 		if (this._leftPriceAxisWidget !== null) {
 			this._leftPriceAxisWidget.update();
 		}

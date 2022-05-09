@@ -634,6 +634,9 @@ export class PriceScale {
 	}
 
 	public marks(): PriceMark[] {
+		/**
+		 * 在update scale後被呼叫
+		 */
 		const firstValueIsNull = this.firstValue() === null;
 
 		// do not recalculate marks if firstValueIsNull is true because in this case we'll always get empty result

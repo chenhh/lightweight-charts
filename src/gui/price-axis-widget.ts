@@ -298,6 +298,9 @@ export class PriceAxisWidget implements IDestroyable {
 	}
 
 	public update(): void {
+		/**
+		 * chart-widget的_drawImpl() -> pane-widget的updatePriceAxisWidgets()中被呼叫
+		 */
 		// this call has side-effect - it regenerates marks on the price scale
 		this._priceScale?.marks();
 	}
