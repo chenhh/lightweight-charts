@@ -695,9 +695,11 @@ export class ChartWidget implements IDestroyable {
 		// 何時pane widgets的數量會與panes不一致?, length不代表list元素的數量
 		const targetPaneWidgetsCount = panes.length;
 		const actualPaneWidgetsCount = this._paneWidgets.length;
+		console.log(`target pane widget count: ${targetPaneWidgetsCount}, actual pane widget count ${actualPaneWidgetsCount}`);
 
 		// Remove (if needed) pane widgets and separators
 		for (let i = targetPaneWidgetsCount; i < actualPaneWidgetsCount; i++) {
+			console.log("remove pane widget");
 			const paneWidget = ensureDefined(this._paneWidgets.pop());
 			this._tableElement.removeChild(paneWidget.getElement());
 			paneWidget.clicked().unsubscribeAll(this);
@@ -711,6 +713,7 @@ export class ChartWidget implements IDestroyable {
 
 		// Create (if needed) new pane widgets and separators
 		for (let i = actualPaneWidgetsCount; i < targetPaneWidgetsCount; i++) {
+			console.log("add pane widget");
 			const paneWidget = new PaneWidget(this, panes[i]);
 			paneWidget.clicked().subscribe(this._onPaneWidgetClicked.bind(this), this);
 

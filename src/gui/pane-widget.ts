@@ -70,7 +70,7 @@ interface StartScrollPosition extends Point {
 }
 
 export class PaneWidget implements IDestroyable, MouseEventHandlers {
-	private readonly _chart: ChartWidget;
+	private readonly _chart: ChartWidget;	// reference to parent chart widget
 	private _state: Pane | null;	// pane有left, right price scale與grid objects
 	private _size: Size = new Size(0, 0);
 	private _leftPriceAxisWidget: PriceAxisWidget | null = null;
@@ -95,6 +95,9 @@ export class PaneWidget implements IDestroyable, MouseEventHandlers {
 
 	public constructor(chart: ChartWidget, state: Pane) {
 		/**
+		 * pane由chart model生成，在chart widget的 _syncGuiWithModel()
+		 * 中生成pane widget，且在此處的ctor插入table的第一列
+		 *
 		 * pane widget放在chart-widget的table中
 		 * chart - ChartWidget
 		 * state - Pane, 包含left, right price scale與grid objects
