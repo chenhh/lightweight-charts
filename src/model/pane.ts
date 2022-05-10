@@ -41,6 +41,8 @@ export class Pane implements IDestroyable {
 
 	public constructor(timeScale: TimeScale, model: ChartModel) {
 		/**
+		 * chart widget (ctor) -> chart model (ctor, createPane) -> Pane
+		 *
 		 * Pane為Chart model的子組件，因此在ctor中的chart model指向parent
 		 * 通常在chart model的ctor中的createpane()時被呼叫產生新的Pane
 		 * 而timeScale使用chart model中相同的實例
@@ -49,7 +51,7 @@ export class Pane implements IDestroyable {
 		this._model = model;			// 指向parent model
 		this._grid = new Grid(this);	// 網格
 
-		const options = model.options();
+		const options = model.options();	// chart options
 
 		// 左側與右側的price scale物件
 		this._leftPriceScale = this._createPriceScale(DefaultPriceScaleId.Left, options.leftPriceScale);
@@ -447,8 +449,12 @@ export class Pane implements IDestroyable {
 	}
 
 	private _createPriceScale(id: string, options: OverlayPriceScaleOptions | VisiblePriceScaleOptions): PriceScale {
-		// 設定選項
-		const actualOptions: PriceScaleOptions = { visible: true, autoScale: true, ...clone(options) };
+		/**
+		 * id 預設為left或right
+		 * options為price scale options
+		 */
+			// 設定選項
+		const actualOptions: PriceScaleOptions = {visible: true, autoScale: true, ...clone(options)};
 		// 建立price scale物件
 		const priceScale = new PriceScale(
 			id,

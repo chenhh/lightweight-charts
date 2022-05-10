@@ -246,7 +246,7 @@ export class PriceScale {
 	}
 
 	public options(): Readonly<PriceScaleOptions> {
-		/* options getter */
+		/* price scale options getter */
 		return this._options;
 	}
 

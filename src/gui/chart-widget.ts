@@ -92,7 +92,7 @@ export class ChartWidget implements IDestroyable {
 		 */
 		// 圖表的設定值, 預設值為ChartOptionsInternal
 		this._options = options;
-
+		console.log("create chart widget div");
 		// container通常是(outer) div，而此處的div是container內再一層(inner)div
 		// 設定圖表的html element為div, 且指定div的class與css屬性
 		this._element = document.createElement('div');
@@ -104,6 +104,7 @@ export class ChartWidget implements IDestroyable {
 		disableSelection(this._element);	// user-select: none
 
 		// 設定表格的html element與css屬性
+		console.log("create chart widget table");
 		this._tableElement = document.createElement('table');
 		// 表格欄位間用cellspacing 屬性(px)指定距離
 		this._tableElement.setAttribute('cellspacing', '0');
@@ -129,7 +130,10 @@ export class ChartWidget implements IDestroyable {
 		// 圖表的時間軸(x軸)組件
 		this._timeAxisWidget = new TimeAxisWidget(this);
 		// 將timeAxis置於table中的第二列
-		this._tableElement.appendChild(this._timeAxisWidget.getElement());
+		const taElement = this._timeAxisWidget.getElement()
+		taElement.setAttribute("id", "timeAxisWidget");
+		this._tableElement.appendChild(taElement);
+		// this._tableElement.appendChild(this._timeAxisWidget.getElement());
 
 		// 從options中讀取圖表的寬度與高度
 		let width = this._options.width;
@@ -156,7 +160,7 @@ export class ChartWidget implements IDestroyable {
 
 		// BEWARE: resize must be called BEFORE _syncGuiWithModel (in constructor only)
 		// or after but with adjustSize to properly update time scale
-		// 設定widget(div)的大小
+		// 設定table的大小, 且重新繪圖
 		this.resize(width, height);
 
 		// TODO: 不了解此method的功能

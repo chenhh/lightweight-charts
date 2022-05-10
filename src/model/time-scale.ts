@@ -208,7 +208,7 @@ export class TimeScale {
 	private _baseIndexOrNull: TimePointIndex | null = null;
 	private _rightOffset: number;	// 預設為0
 	private _points: readonly TimeScalePoint[] = [];
-	private _barSpacing: number;	// 預設為6
+	private _barSpacing: number;	// 預設為6, 兩個資料bar圖形間的距離(px?)
 	private _scrollStartPoint: Coordinate | null = null;
 	private _scaleStartPoint: Coordinate | null = null;
 	private readonly _tickMarks: TickMarks = new TickMarks();
@@ -324,6 +324,9 @@ export class TimeScale {
 
 	// strict range: integer indices of the bars in the visible range rounded in more wide direction
 	public visibleStrictRange(): RangeImpl<TimePointIndex> | null {
+		/**
+		 * 在pane中被使用多次
+		 */
 		this._updateVisibleRange();
 		return this._visibleRange.strictRange();
 	}
