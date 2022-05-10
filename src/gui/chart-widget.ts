@@ -163,7 +163,7 @@ export class ChartWidget implements IDestroyable {
 		// 設定table的大小, 且重新繪圖
 		this.resize(width, height);
 
-		// TODO: 不了解此method的功能
+		// 在此處才插入table第一列的pane widget
 		this._syncGuiWithModel();
 
 		// 將建立好的圖表放入使用者指定的container內

@@ -99,18 +99,20 @@ export class PaneWidget implements IDestroyable, MouseEventHandlers {
 		 * chart - ChartWidget
 		 * state - Pane, 包含left, right price scale與grid objects
 		 */
-		this._chart = chart;
+		this._chart = chart;	//指向parent chart widget
 
-		this._state = state;
+		this._state = state;	// pane (left, right price scale and grid)
 		this._state.onDestroyed().subscribe(this._onStateDestroyed.bind(this), this, true);
 
 		// 設定中間欄位屬性
 		this._paneCell = document.createElement('td');
+		this._paneCell.setAttribute("id", "paneCell");
 		this._paneCell.style.padding = '0';
 		this._paneCell.style.position = 'relative';
 
 		// 中間欄位再插入div container
 		const paneWrapper = document.createElement('div');
+		paneWrapper.setAttribute("id", "paneWrapper");
 		paneWrapper.style.width = '100%';
 		paneWrapper.style.height = '100%';
 		paneWrapper.style.position = 'relative';
@@ -118,10 +120,12 @@ export class PaneWidget implements IDestroyable, MouseEventHandlers {
 
 		// 左側price axis欄位屬性
 		this._leftAxisCell = document.createElement('td');
+		this._leftAxisCell.setAttribute("id", "leftAxisCell");
 		this._leftAxisCell.style.padding = '0';
 
 		// 右側price axis欄位屬性
 		this._rightAxisCell = document.createElement('td');
+		this._rightAxisCell.setAttribute("id", "rightAxisCell");
 		this._rightAxisCell.style.padding = '0';
 
 		this._paneCell.appendChild(paneWrapper);
@@ -130,6 +134,7 @@ export class PaneWidget implements IDestroyable, MouseEventHandlers {
 		this._canvasBinding = createBoundCanvas(paneWrapper, new Size(16, 16));
 		this._canvasBinding.subscribeCanvasConfigured(this._canvasConfiguredHandler);
 		const canvas = this._canvasBinding.canvas;
+		canvas.setAttribute("id", "widgetCanvas");
 		canvas.style.position = 'absolute';
 		canvas.style.zIndex = '1';
 		canvas.style.left = '0';
@@ -139,6 +144,7 @@ export class PaneWidget implements IDestroyable, MouseEventHandlers {
 		this._topCanvasBinding = createBoundCanvas(paneWrapper, new Size(16, 16));
 		this._topCanvasBinding.subscribeCanvasConfigured(this._topCanvasConfiguredHandler);
 		const topCanvas = this._topCanvasBinding.canvas;
+		topCanvas.setAttribute("id", "topCanvas");
 		topCanvas.style.position = 'absolute';
 		topCanvas.style.zIndex = '2';
 		topCanvas.style.left = '0';
@@ -146,6 +152,7 @@ export class PaneWidget implements IDestroyable, MouseEventHandlers {
 
 		// 欄位順序: 左側price axis, 圖表, 右側price axis
 		this._rowElement = document.createElement('tr');
+		this._rowElement.setAttribute("id", "paneWidgetRow");
 		this._rowElement.appendChild(this._leftAxisCell);
 		this._rowElement.appendChild(this._paneCell);
 		this._rowElement.appendChild(this._rightAxisCell);
