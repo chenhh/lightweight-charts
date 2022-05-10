@@ -242,12 +242,12 @@ export class Pane implements IDestroyable {
 	}
 
 	public leftPriceScale(): PriceScale {
-		/* leftPriceScale getter */
+		/* leftPriceScale getter, 在pane widget建構price axis widget時讀取 */
 		return this._leftPriceScale;
 	}
 
 	public rightPriceScale(): PriceScale {
-		/* rightPriceScale getter */
+		/* rightPriceScale getter, 在pane widget建構price axis widget時讀取 */
 		return this._rightPriceScale;
 	}
 

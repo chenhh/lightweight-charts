@@ -113,7 +113,7 @@ export class PaneWidget implements IDestroyable, MouseEventHandlers {
 		this._paneCell.style.padding = '0';
 		this._paneCell.style.position = 'relative';
 
-		// 中間欄位再插入div container
+		// 中間欄位再插入div container, 裡面就是主要的canvas繪圖
 		const paneWrapper = document.createElement('div');
 		paneWrapper.setAttribute("id", "paneWrapper");
 		paneWrapper.style.width = '100%';
@@ -232,16 +232,20 @@ export class PaneWidget implements IDestroyable, MouseEventHandlers {
 		 * 在chart widget的_syncGuiWithModel()最後一步，
 		 * 不論是否重新設定state，最後都會呼叫此函數
 		 */
+		// state為pane
 		if (this._state === null) {
 			return;
 		}
 
+		// 在recreatePriceAxisWidgets()中, 已經依left, right price scale是否可見
+		// 建立或刪除對應的price axis widgets
 		this._recreatePriceAxisWidgets();
+		// 沒有資料時直接返回
 		if (this._model().serieses().length === 0) {
 			return;
 		}
 
-		// 使用pane中的price scale設定price axis widget
+		// 使用pane中的price scale重新設定price axis widget
 		if (this._leftPriceAxisWidget !== null) {
 			const leftPriceScale = this._state.leftPriceScale();
 			this._leftPriceAxisWidget.setPriceScale(ensureNotNull(leftPriceScale));
@@ -637,27 +641,37 @@ export class PaneWidget implements IDestroyable, MouseEventHandlers {
 	}
 
 	private _recreatePriceAxisWidgets(): void {
+		/**
+		 * 在updatePriceAxisWidgetsStates()中呼叫此函數
+		 * 使用pane中的left, right price scale and grid object更新price axis
+		 */
+		//
 		if (this._state === null) {
 			return;
 		}
-		const chart = this._chart;
+		const chart = this._chart;	// parent chart widget
+		// 讀取left, right price scale是否可見的選項，預設left不可見, right可見
 		const leftAxisVisible = this._state.leftPriceScale().options().visible;
 		const rightAxisVisible = this._state.rightPriceScale().options().visible;
+		// left axis不可見時且left price axis widget存在時, 刪除之
 		if (!leftAxisVisible && this._leftPriceAxisWidget !== null) {
 			this._leftAxisCell.removeChild(this._leftPriceAxisWidget.getElement());
 			this._leftPriceAxisWidget.destroy();
 			this._leftPriceAxisWidget = null;
 		}
+		// right axis不可見時且right price axis widget存在時, 刪除之
 		if (!rightAxisVisible && this._rightPriceAxisWidget !== null) {
 			this._rightAxisCell.removeChild(this._rightPriceAxisWidget.getElement());
 			this._rightPriceAxisWidget.destroy();
 			this._rightPriceAxisWidget = null;
 		}
 		const rendererOptionsProvider = chart.model().rendererOptionsProvider();
+		// left axis可見但left price axis widget不存在時, 生成新物件
 		if (leftAxisVisible && this._leftPriceAxisWidget === null) {
 			this._leftPriceAxisWidget = new PriceAxisWidget(this, chart.options().layout, rendererOptionsProvider, 'left');
 			this._leftAxisCell.appendChild(this._leftPriceAxisWidget.getElement());
 		}
+		// right axis可見但right price axis widget不存在時, 生成新物件
 		if (rightAxisVisible && this._rightPriceAxisWidget === null) {
 			this._rightPriceAxisWidget = new PriceAxisWidget(this, chart.options().layout, rendererOptionsProvider, 'right');
 			this._rightAxisCell.appendChild(this._rightPriceAxisWidget.getElement());

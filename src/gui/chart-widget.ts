@@ -163,7 +163,7 @@ export class ChartWidget implements IDestroyable {
 		// 設定table的大小, 且重新繪圖
 		this.resize(width, height);
 
-		// 在此處才插入table第一列的pane widget
+		// 在此處才插入table第一列的pane widget,
 		this._syncGuiWithModel();
 
 		// 將建立好的圖表放入使用者指定的container內
@@ -174,6 +174,8 @@ export class ChartWidget implements IDestroyable {
 		this._model.timeScale().optionsApplied().subscribe(this._model.fullUpdate.bind(this._model), this);
 		// 綁定事件處理, chart model的price scale option changed事件綁定model的full update與chart widget物件
 		this._model.priceScalesOptionsChanged().subscribe(this._model.fullUpdate.bind(this._model), this);
+
+		// note: 如果沒有新增資料時，執行到chart-widget ctor結束後並不會繪圖
 	}	// end of constructor
 
 	public model(): ChartModel {
@@ -739,6 +741,7 @@ export class ChartWidget implements IDestroyable {
 				paneWidget.setState(state);
 			} else {
 				// 在setState的最後一步也是updatePriceAxisWidgetsStates()
+				// 會依left, right price scale是否可見建構對應的price axis widgets
 				paneWidget.updatePriceAxisWidgetsStates();
 			}
 		}

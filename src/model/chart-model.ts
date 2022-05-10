@@ -774,7 +774,7 @@ export class ChartModel implements IDestroyable {
 		 * seriesType為支援的繪圖，有line, area, Histogram, CandleStick, Bar, Baseline
 		 * options為對應繪圖類別的選項
 		 */
-		const pane = this._panes[0];
+		const pane = this._panes[0];	// 有left, right price scale and grid
 		// 私有的_createSeries有將參數的位置調換
 		const series = this._createSeries(options, seriesType, pane);
 		this._serieses.push(series);
