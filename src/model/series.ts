@@ -94,6 +94,10 @@ export type SeriesOptionsInternal<T extends SeriesType = SeriesType> = SeriesOpt
 export type SeriesPartialOptionsInternal<T extends SeriesType = SeriesType> = SeriesPartialOptionsMap[T];
 
 export class Series<T extends SeriesType = SeriesType> extends PriceDataSource implements IDestroyable {
+	/**
+	 *  series指的是bar, candlestick ,area, baseline, line, histogram這類有包含資料的序列，
+	 *  除了資料外，也包含了各類圖形的繪圖屬性
+	 */
 	private readonly _seriesType: T;	//支援的繪圖類型
 	private _data: SeriesPlotList<T> = createSeriesPlotList();
 	private readonly _priceAxisViews: IPriceAxisView[];

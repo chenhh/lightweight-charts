@@ -369,12 +369,16 @@ export class ChartModel implements IDestroyable {
 	} // end of constructor
 
 	public fullUpdate(): void {
-		// 全部元素更新,  失效層級為full
+		/** 全部元素更新,  失效層級為full
+		 * 當圖形中只有一個series時，在createSeries()中呼叫
+		 */
 		this._invalidate(new InvalidateMask(InvalidationLevel.Full));
 	}
 
 	public lightUpdate(): void {
-		// light更新, 失效層級為light
+		/** light更新, 失效層級為light
+		 * 當圖形中有多個series時，在createSeries()中呼叫
+		 */
 		this._invalidate(new InvalidateMask(InvalidationLevel.Light));
 	}
 
@@ -774,7 +778,9 @@ export class ChartModel implements IDestroyable {
 		 * seriesType為支援的繪圖，有line, area, Histogram, CandleStick, Bar, Baseline
 		 * options為對應繪圖類別的選項
 		 */
-		const pane = this._panes[0];	// 有left, right price scale and grid
+			// 有left, right price scale and grid的資料
+		const pane = this._panes[0];
+
 		// 私有的_createSeries有將參數的位置調換
 		const series = this._createSeries(options, seriesType, pane);
 		this._serieses.push(series);
@@ -932,11 +938,14 @@ export class ChartModel implements IDestroyable {
 		/**
 		 * 在createSeries的公開方法中被呼叫, 限定T為支援的series類別
 		 * 此處的pane一般是this._panes[0]
+		 * 指定series的類型T, 對應的選項options，以及pane(包含left ,right price scale and grid)
 		 */
 			// 包含建立series資料和繪圖的部份的物件
 		const series = new Series<T>(this, options, seriesType);
 
+		// 通常在options中不會指定price scale id, 因此是用預設的left或right作為id
 		const targetScaleId = options.priceScaleId !== undefined ? options.priceScaleId : this.defaultVisiblePriceScaleId();
+		// 反向指定pane object綁定那一個series
 		pane.addDataSource(series, targetScaleId);
 
 		if (!isDefaultPriceScale(targetScaleId)) {

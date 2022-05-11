@@ -329,8 +329,9 @@ export class ChartApi implements IChartApi, DataUpdatesConsumer<SeriesType> {
 
 		// 將line options的預設值和自訂值合併
 		const strictOptions = merge(clone(seriesOptionsDefaults), lineStyleDefaults, options) as LineSeriesOptions;
+		// 新建series object, 存入model的serieses[]中，且更新圖形內容
 		const series = this._chartWidget.model().createSeries('Line', strictOptions);
-
+		// 使用建立好的series object建立series api物件
 		const res = new SeriesApi<'Line'>(series, this, this);
 		this._seriesMap.set(res, series);
 		this._seriesMapReversed.set(series, res);

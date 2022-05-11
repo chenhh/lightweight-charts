@@ -191,7 +191,13 @@ export class Pane implements IDestroyable {
 	}
 
 	public addDataSource(source: IPriceDataSource, targetScaleId: string, zOrder?: number): void {
-		/* 新增data source時，加在最上層 (z-index最大值+1) */
+		/**
+		 * 在chart model ctor時, pane物件已經建立，但是還沒綁定到series object，
+		 * 而在新增資料後，在chart model的 _createSeries中，呼叫此方法綁定pane與series
+		 */
+		/* 新增data source時，加在最上層 (z-index最大值+1)
+		 * 因此一個pane可以對應到多個series (sources)
+		 * */
 		const targetZOrder = (zOrder !== undefined) ? zOrder : this._getZOrderMinMax().maxZOrder + 1;
 		this._insertDataSource(source, targetScaleId, targetZOrder);
 	}
@@ -416,6 +422,13 @@ export class Pane implements IDestroyable {
 	}
 
 	private _insertDataSource(source: IPriceDataSource, priceScaleId: string, zOrder: number): void {
+		/**
+		 * 在addDataSource()中呼叫此方法
+		 * source為要插入的series object
+		 * price scale id預設為left or right
+		 * zorder為最上層
+		 */
+			// 用price id取出對應的price scale object
 		let priceScale = this.priceScaleById(priceScaleId);
 
 		if (priceScale === null) {
@@ -429,11 +442,13 @@ export class Pane implements IDestroyable {
 			this._overlaySourcesByScaleId.set(priceScaleId, overlaySources);
 		}
 
+		// 將price scale與series雙向對應
 		priceScale.addDataSource(source);
 		source.setPriceScale(priceScale);
 
 		source.setZorder(zOrder);
 
+		// 新增series後，重新計算price scale
 		this.recalculatePriceScale(priceScale);
 
 		this._cachedOrderedSources = null;
