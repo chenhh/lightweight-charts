@@ -127,7 +127,7 @@ export class ChartApi implements IChartApi, DataUpdatesConsumer<SeriesType> {
 
 	// 資料可以有多層, 建立Chart object後, 使用addXXXSeries在model中加入圖形的選項, 回傳SeriesApi object後，
 	// 再使用SeriesApi的setData()新增資料後，再用Chart object的applyNewData()加入真正的資料
-	// 會再呼叫this._sendUpdateToChart()後，更新model中所有Pane的繪圖
+	// 先將series與data加入data layer後，會再呼叫this._sendUpdateToChart()後，更新model中所有Pane的繪圖
 	// note: 實際使用時，必須要加入資料後，網頁才會開始繪圖
 	private _dataLayer: DataLayer = new DataLayer();
 
@@ -331,8 +331,10 @@ export class ChartApi implements IChartApi, DataUpdatesConsumer<SeriesType> {
 		const strictOptions = merge(clone(seriesOptionsDefaults), lineStyleDefaults, options) as LineSeriesOptions;
 		// 新建series object, 存入model的serieses[]中，且更新圖形內容
 		const series = this._chartWidget.model().createSeries('Line', strictOptions);
-		// 使用建立好的series object建立series api物件
+		// 使用建立好的series object建立series api物件, ctor只是把series object與chart api連接起來
 		const res = new SeriesApi<'Line'>(series, this, this);
+
+		// 建立series, series api objects的正向與反向map
 		this._seriesMap.set(res, series);
 		this._seriesMapReversed.set(series, res);
 
@@ -362,11 +364,14 @@ export class ChartApi implements IChartApi, DataUpdatesConsumer<SeriesType> {
 	public applyNewData<TSeriesType extends SeriesType>(series: Series<TSeriesType>, data: SeriesDataItemTypeMap[TSeriesType][]): void {
 		/**
 		 * 實現了DataUpdatesConsumer<SeriesType>介面的方法
+		 * 在series api的setData中被呼叫
+
 		 * series中的物件，只有包含繪圖的屬性與圖形，而資料要在series-api中以setData新增到series中
 		 * data才是真正的資料
 		 * this._dataLayer是DataLayer實例
 		 * 在series-api中，將data放入series中
 		 */
+		// 將series與data加入data layer後，更新chart
 		this._sendUpdateToChart(this._dataLayer.setSeriesData(series, data));
 	}
 

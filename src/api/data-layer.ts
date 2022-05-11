@@ -227,6 +227,7 @@ export class DataLayer {
 	/**
 	 *  在ChartApi中初始化時就建立，而在applyNewData()中使用dataLayer的setSeriesData()加入資料
 	 *  沒有constructor，處理的都是在圖表中關於資料的方法
+	 *  series指的是特定的圖形與其屬性，而data才是真正的資料, 要將data與series關聯才能繪圖
 	 */
 		// note that _pointDataByTimePoint and _seriesRowsBySeries shares THE SAME objects in their values between each other
 		// it's just different kind of maps to make usages/perf better
