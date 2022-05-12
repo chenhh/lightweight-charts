@@ -77,6 +77,7 @@ type SeriesItemValueFnMap = {
 export type TimedSeriesItemValueFn = (time: TimePoint, index: TimePointIndex, item: SeriesDataItemTypeMap[SeriesType], originalTime: OriginalTime) => Mutable<SeriesPlotRow | WhitespacePlotRow>;
 
 function wrapWhitespaceData(createPlotRowFn: (typeof getLineBasedSeriesPlotRow) | (typeof getBarSeriesPlotRow) | (typeof getCandlestickSeriesPlotRow)): TimedSeriesItemValueFn {
+	// 在DataLayer的setSeriesData()被呼叫
 	return (time: TimePoint, index: TimePointIndex, bar: SeriesDataItemTypeMap[SeriesType], originalTime: OriginalTime) => {
 		if (isWhitespaceData(bar)) {
 			return { time, index, originalTime };
@@ -87,6 +88,7 @@ function wrapWhitespaceData(createPlotRowFn: (typeof getLineBasedSeriesPlotRow) 
 }
 
 const seriesPlotRowFnMap: SeriesItemValueFnMap = {
+	// value為兩個function, 先call getCandlestickSEriesPlotRow後，再call wrap WhitespaceData
 	Candlestick: wrapWhitespaceData(getCandlestickSeriesPlotRow),
 	Bar: wrapWhitespaceData(getBarSeriesPlotRow),
 	Area: wrapWhitespaceData(getLineBasedSeriesPlotRow),
@@ -96,5 +98,8 @@ const seriesPlotRowFnMap: SeriesItemValueFnMap = {
 };
 
 export function getSeriesPlotRowCreator(seriesType: SeriesType): TimedSeriesItemValueFn {
+	// 在DataLayer的setSeriesData()被呼叫
+	// 原始的資料此處應只有{time, originalTime, value}或{time, originalTime, open , close, high, low},
+	// 還沒有index, bar屬性
 	return seriesPlotRowFnMap[seriesType] as TimedSeriesItemValueFn;
 }

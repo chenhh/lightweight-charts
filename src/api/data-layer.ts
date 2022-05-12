@@ -227,15 +227,17 @@ export class DataLayer {
 	/**
 	 *  在ChartApi中初始化時就建立，而在applyNewData()中使用dataLayer的setSeriesData()加入資料
 	 *  沒有constructor，處理的都是在圖表中關於資料的方法
-	 *  series指的是特定的圖形與其屬性，而data才是真正的資料, 要將data與series關聯才能繪圖
+	 *  series指的是特定的圖形與其屬性，而data才是真正的資料, 要將data與series關聯才能開始繪圖
 	 */
 		// note that _pointDataByTimePoint and _seriesRowsBySeries shares THE SAME objects in their values between each other
 		// it's just different kind of maps to make usages/perf better
+		// UTCTimestamp為名稱為UTCTimestamp的數值名目類型
 	private _pointDataByTimePoint: Map<UTCTimestamp, TimePointData> = new Map();
 	private _seriesRowsBySeries: Map<Series, SeriesPlotRow[]> = new Map();
 	private _seriesLastTimePoint: Map<Series, TimePoint> = new Map();
 
-	// this is kind of "dest" values (in opposite to "source" ones) - we don't need to modify it manually, the only by calling _updateTimeScalePoints or updateSeriesData methods
+	// this is kind of "dest" values (in opposite to "source" ones) - we don't need to modify it manually,
+	// the only by calling _updateTimeScalePoints or updateSeriesData methods
 	private _sortedTimePoints: readonly InternalTimeScalePoint[] = [];
 
 	public destroy(): void {
@@ -245,7 +247,9 @@ export class DataLayer {
 		this._sortedTimePoints = [];
 	}
 
-	public setSeriesData<TSeriesType extends SeriesType>(series: Series<TSeriesType>, data: SeriesDataItemTypeMap[TSeriesType][]): DataUpdateResponse {
+	public setSeriesData<TSeriesType extends SeriesType>(series: Series<TSeriesType>,
+														 data: SeriesDataItemTypeMap[TSeriesType][]):
+		DataUpdateResponse {
 		/**
 		 * 在series-api使用setData(series, data)後，回到chart-api的applyNewData(series, data)，
 		 * 在time-data中，有支援三種日期格式：
@@ -280,11 +284,13 @@ export class DataLayer {
 		 */
 		let needCleanupPoints = this._pointDataByTimePoint.size !== 0;
 
+		// 只有在series plot row不存在，且series不影響到time point時才為false
 		let isTimeScaleAffected = false;
 
 		// save previous series rows data before it's replaced inside this._setRowsToSeries
-		const prevSeriesRows = this._seriesRowsBySeries.get(series);
+		const prevSeriesRows = this._seriesRowsBySeries.get(series);	// 取得series plot row, 初始使用時不存在
 		if (prevSeriesRows !== undefined) {
+			// plot row 存在時
 			if (this._seriesRowsBySeries.size === 1) {
 				needCleanupPoints = false;
 				isTimeScaleAffected = true;
@@ -292,8 +298,10 @@ export class DataLayer {
 				// perf optimization - if there is only 1 series, then we can just clear and fill everything from scratch
 				this._pointDataByTimePoint.clear();
 			} else {
+				// plot row 不存在時
 				// perf optimization - actually we have to use this._pointDataByTimePoint for going through here
 				// but as soon as this._sortedTimePoints is just a different form of _pointDataByTimePoint we can use it as well
+				// this._sortedTimePoints在資料第一次加入時為empty list
 				for (const point of this._sortedTimePoints) {
 					if (point.pointData.mapping.delete(series)) {
 						isTimeScaleAffected = true;
@@ -304,13 +312,19 @@ export class DataLayer {
 
 		let seriesRows: (SeriesPlotRow | WhitespacePlotRow)[] = [];
 
+		// 輸入的資料不為空
 		if (data.length !== 0) {
+			// 將原始資料增加originalTime屬性
 			const extendedData = data as SeriesDataItemWithOriginalTime<TSeriesType>[];
+			// 將原始資料的time複製到originalTime屬性
 			extendedData.forEach((i: SeriesDataItemWithOriginalTime<TSeriesType>) => saveOriginalTime(i));
 
+			// 將時間改成{year, month, day} businessDay object
 			convertStringsToBusinessDays(data);
 
+			// 將時間包裝成{UTC, businessDay} timePoint object
 			const timeConverter = ensureNotNull(selectTimeConverter(data));
+			// 兩層的function pointer,
 			const createPlotRow = getSeriesPlotRowCreator(series.seriesType());
 
 			seriesRows = extendedData.map((item: SeriesDataItemWithOriginalTime<TSeriesType>) => {
