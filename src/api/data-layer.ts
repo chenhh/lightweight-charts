@@ -58,9 +58,11 @@ function selectTimeConverter(data: TimedData[]): TimeConverter | null {
 	if (data.length === 0) {
 		return null;
 	}
+	// time欄位為business day格式
 	if (isBusinessDay(data[0].time)) {
 		return businessDayConverter;
 	}
+	// time欄位為time stamp格式
 	return timestampConverter;
 }
 
@@ -233,11 +235,15 @@ export class DataLayer {
 		// it's just different kind of maps to make usages/perf better
 		// UTCTimestamp為名稱為UTCTimestamp的數值名目類型
 	private _pointDataByTimePoint: Map<UTCTimestamp, TimePointData> = new Map();
+	// 將series object與series plot row資料關聯
+	// 單筆row的格式為row為{ index, time, value: [val(open), val(high), val(low), val(close)], originalTime }
 	private _seriesRowsBySeries: Map<Series, SeriesPlotRow[]> = new Map();
 	private _seriesLastTimePoint: Map<Series, TimePoint> = new Map();
 
 	// this is kind of "dest" values (in opposite to "source" ones) - we don't need to modify it manually,
 	// the only by calling _updateTimeScalePoints or updateSeriesData methods
+	//  {timeWeight: TickMarkWeight, readonly time: TimePoint,
+	//  readonly originalTime: OriginalTime, pointData: TimePointData}
 	private _sortedTimePoints: readonly InternalTimeScalePoint[] = [];
 
 	public destroy(): void {
@@ -322,34 +328,46 @@ export class DataLayer {
 			// 將時間改成{year, month, day} businessDay object
 			convertStringsToBusinessDays(data);
 
-			// 將時間包裝成{UTC, businessDay} timePoint object
+			// 將時間包裝成{UTC, businessDay} 或 {UTC} 的function pointer
 			const timeConverter = ensureNotNull(selectTimeConverter(data));
-			// 兩層的function pointer,
+			// 兩層的function pointer
 			const createPlotRow = getSeriesPlotRowCreator(series.seriesType());
 
+			//  extendedData的屬性為{time, originalTime, value}或{time, originalTime, open, high, low, close}
+			// 單筆row的格式為row為{ index, time, value: [val(open), val(high), val(low), val(close)], originalTime }
 			seriesRows = extendedData.map((item: SeriesDataItemWithOriginalTime<TSeriesType>) => {
+				// 將時間包裝成{UTC, businessDay} 或 {UTC}
 				const time = timeConverter(item.time);
 
+				// _pointDataByTimePoint: Map<UTCTimestamp, TimePointData>
+				// timePointData的key為 {index, timePoint, map: Map<Series, Mutable<SeriesPlotRow | WhitespacePlotRow>>;}
 				let timePointData = this._pointDataByTimePoint.get(time.timestamp);
 				if (timePointData === undefined) {
+					// 建立index為0的time point data並插入pointDataByTimePoint
 					// the indexes will be sync later
-					timePointData = createEmptyTimePointData(time);
+					timePointData = createEmptyTimePointData(time);	// empty map object
 					this._pointDataByTimePoint.set(time.timestamp, timePointData);
 					isTimeScaleAffected = true;
 				}
-
+				// row為{ index, time, value: [val, val, val, val], originalTime } 或
+				//{ index, time, value: [item.open, item.high, item.low, item.close], originalTime }格式
+				// 其中第三個value:[]稱為bar
 				const row = createPlotRow(time, timePointData.index, item, item.originalTime);
+				// 設定time point data的mapping
 				timePointData.mapping.set(series, row);
 				return row;
-			});
+			});	// end of map
 		}
 
 		if (needCleanupPoints) {
 			// we deleted the old data from mapping and added the new ones
 			// so there might be empty points now, let's remove them first
+			// 由存在於this._sortedTimePoints的point中，清除
+			// this._pointDataByTimePoint.delete(point.time.timestamp);
 			this._cleanupPointsData();
 		}
 
+		//
 		this._setRowsToSeries(series, seriesRows);
 
 		let firstChangedPointIndex = -1;
@@ -467,7 +485,13 @@ export class DataLayer {
 	}
 
 	private _setRowsToSeries(series: Series, seriesRows: (SeriesPlotRow | WhitespacePlotRow)[]): void {
+		/**
+		 * series為chart api傳入的已建立的object
+		 * series rows為多筆已轉換的資料
+		 * { index, time, value: [val(open), val(high), val(low), val(close)], originalTime }
+		 */
 		if (seriesRows.length !== 0) {
+			// 去除掉null的row後，將series與series rows object關聯
 			this._seriesRowsBySeries.set(series, seriesRows.filter(isSeriesPlotRow));
 			this._seriesLastTimePoint.set(series, seriesRows[seriesRows.length - 1].time);
 		} else {

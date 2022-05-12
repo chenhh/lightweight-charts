@@ -6,17 +6,19 @@ import { OriginalTime, TimePoint, TimePointIndex } from '../model/time-data';
 import { BarData, CandlestickData, HistogramData, isWhitespaceData, LineData, SeriesDataItemTypeMap } from './data-consumer';
 
 function getLineBasedSeriesPlotRow(time: TimePoint, index: TimePointIndex, item: LineData | HistogramData, originalTime: OriginalTime): Mutable<SeriesPlotRow<'Area' | 'Baseline'>> {
+	// 因為只有value的欄位, 因此value的四個值都填入val
 	const val = item.value;
 	return { index, time, value: [val, val, val, val], originalTime };
 }
 
 function getColoredLineBasedSeriesPlotRow(time: TimePoint, index: TimePointIndex, item: LineData | HistogramData, originalTime: OriginalTime): Mutable<SeriesPlotRow<'Line' | 'Histogram'>> {
 	const val = item.value;
-
+	// 因為只有value的欄位, 因此value的四個值都填入val
 	const res: Mutable<SeriesPlotRow<'Line' | 'Histogram'>> = { index, time, value: [val, val, val, val], originalTime };
 
 	// 'color' here is public property (from API) so we can use `in` here safely
 	// eslint-disable-next-line no-restricted-syntax
+	// HistogramData有可選的color欄位
 	if ('color' in item && item.color !== undefined) {
 		res.color = item.color;
 	}
@@ -80,6 +82,7 @@ function wrapWhitespaceData(createPlotRowFn: (typeof getLineBasedSeriesPlotRow) 
 	// 在DataLayer的setSeriesData()被呼叫
 	return (time: TimePoint, index: TimePointIndex, bar: SeriesDataItemTypeMap[SeriesType], originalTime: OriginalTime) => {
 		if (isWhitespaceData(bar)) {
+			// 原始data只有time, 沒有value
 			return { time, index, originalTime };
 		}
 
@@ -99,7 +102,7 @@ const seriesPlotRowFnMap: SeriesItemValueFnMap = {
 
 export function getSeriesPlotRowCreator(seriesType: SeriesType): TimedSeriesItemValueFn {
 	// 在DataLayer的setSeriesData()被呼叫
-	// 原始的資料此處應只有{time, originalTime, value}或{time, originalTime, open , close, high, low},
+	// 原始的資料此處應只有{time, value}或{time, open , close, high, low},
 	// 還沒有index, bar屬性
 	return seriesPlotRowFnMap[seriesType] as TimedSeriesItemValueFn;
 }
