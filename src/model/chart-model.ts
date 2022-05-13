@@ -699,7 +699,7 @@ export class ChartModel implements IDestroyable {
 
 	public updateTimeScale(newBaseIndex: TimePointIndex | null, newPoints?: readonly TimeScalePoint[], firstChangedPointIndex?: number): void {
 		/**
-		 * 在chart api更新資料後，第一步先更新time scale
+		 * 在chart api更新或新增資料後，第一步先更新time scale
 		 */
 		const oldFirstTime = this._timeScale.indexToTime(0 as TimePointIndex);
 
