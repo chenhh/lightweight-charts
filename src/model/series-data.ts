@@ -29,6 +29,10 @@ export interface SeriesPlotRowTypeAtTypeMap {
 	Histogram: HistogramPlotRow;
 }
 
+// SeriesPlotRow為單筆轉換過的資料，包含
+// PlotRow{time, index: TimePointIndex; readonly time: TimePoint; readonly value: PlotRowValue;
+// 	readonly originalTime: OriginalTime;}
+// 與各類圖形的延伸屬性, 多筆plot row為array
 export type SeriesPlotRow<T extends SeriesType = SeriesType> = SeriesPlotRowTypeAtTypeMap[T];
 export type SeriesPlotList<T extends SeriesType = SeriesType> = PlotList<SeriesPlotRow<T>>;
 

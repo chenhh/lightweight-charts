@@ -47,6 +47,12 @@ function weightByTime(currentDate: Date, prevDate: Date): TickMarkWeight {
 }
 
 export function fillWeightsForPoints(sortedTimePoints: readonly Mutable<TimeScalePoint>[], startIndex: number = 0): void {
+	/**
+	 * data layer中，_replaceTimeScalePoints()中最後將newTimePoints更新time weight
+	 * sortedTimePoints為newTimePoints,  {timeWeight, time, pointData, originalTime}
+	 * startIndex為firstChangedPointIndex
+	 * note: 在startIndex之前的timeWeight不會被更新
+	 */
 	if (sortedTimePoints.length === 0) {
 		return;
 	}
@@ -70,6 +76,7 @@ export function fillWeightsForPoints(sortedTimePoints: readonly Mutable<TimeScal
 		prevDate = currentDate;
 	}
 
+	// 因為在for loop中，startIndex=0時，timeWeight不會被算到，在此補算
 	if (startIndex === 0 && sortedTimePoints.length > 1) {
 		// let's guess a weight for the first point
 		// let's say the previous point was average time back in the history

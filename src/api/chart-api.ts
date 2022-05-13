@@ -372,6 +372,7 @@ export class ChartApi implements IChartApi, DataUpdatesConsumer<SeriesType> {
 		 * 在series-api中，將data放入series中
 		 */
 		// 將series與data加入data layer後，更新chart
+		// data layer回傳DataUpdateResponse object {series: Map<Series, SeriesChanges>, timeScale: TimeScaleChanges}
 		this._sendUpdateToChart(this._dataLayer.setSeriesData(series, data));
 	}
 
@@ -451,10 +452,11 @@ export class ChartApi implements IChartApi, DataUpdatesConsumer<SeriesType> {
 		/**
 		 * 使用applyNewData()加入資料到DataLayer後，removeSeries()後，updateData()後
 		 * 只要對資料更新後，都會呼叫此函數更新圖形
+		 * update為已經處理好的資料
 		 */
 		const model = this._chartWidget.model();
 
-		// 更新time scale
+		// 更新model的time scale
 		model.updateTimeScale(update.timeScale.baseIndex, update.timeScale.points, update.timeScale.firstChangedPointIndex);
 		// 更新data對應的series
 		update.series.forEach((value: SeriesChanges, series: Series) => series.setData(value.data, value.info));

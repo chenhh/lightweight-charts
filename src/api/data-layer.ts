@@ -1,12 +1,12 @@
 /// <reference types="_build-time-constants" />
 
-import { lowerbound } from '../helpers/algorithms';
-import { ensureDefined, ensureNotNull } from '../helpers/assertions';
-import { isString } from '../helpers/strict-type-checks';
+import {lowerbound} from '../helpers/algorithms';
+import {ensureDefined, ensureNotNull} from '../helpers/assertions';
+import {isString} from '../helpers/strict-type-checks';
 
-import { Series, SeriesUpdateInfo } from '../model/series';
-import { SeriesPlotRow } from '../model/series-data';
-import { SeriesType } from '../model/series-options';
+import {Series, SeriesUpdateInfo} from '../model/series';
+import {SeriesPlotRow} from '../model/series-data';
+import {SeriesType} from '../model/series-options';
 import {
 	BusinessDay,
 	OriginalTime,
@@ -22,8 +22,8 @@ import {
 	isUTCTimestamp,
 	SeriesDataItemTypeMap,
 } from './data-consumer';
-import { getSeriesPlotRowCreator, isSeriesPlotRow, WhitespacePlotRow } from './get-series-plot-row-creator';
-import { fillWeightsForPoints } from './time-scale-point-weight-generator';
+import {getSeriesPlotRowCreator, isSeriesPlotRow, WhitespacePlotRow} from './get-series-plot-row-creator';
+import {fillWeightsForPoints} from './time-scale-point-weight-generator';
 
 type TimedData = Pick<SeriesDataItemTypeMap[SeriesType], 'time'>;
 type TimeConverter = (time: Time) => TimePoint;
@@ -170,7 +170,7 @@ interface InternalTimeScalePoint extends Mutable<TimeScalePoint> {
 }
 
 function createEmptyTimePointData(timePoint: TimePoint): TimePointData {
-	return { index: 0 as TimePointIndex, mapping: new Map(), timePoint };
+	return {index: 0 as TimePointIndex, mapping: new Map(), timePoint};
 }
 
 interface SeriesRowsFirstAndLastTime {
@@ -190,6 +190,10 @@ function seriesRowsFirsAndLastTime(seriesRows: SeriesPlotRow[] | undefined): Ser
 }
 
 function seriesUpdateInfo(seriesRows: SeriesPlotRow[] | undefined, prevSeriesRows: SeriesPlotRow[] | undefined): SeriesUpdateInfo | undefined {
+	/**
+	 * 在setSeriesData()最後回傳時被呼叫, 判斷lastBarUpdatedOrNewBarsAddedToTheRight
+	 * 即新的最後一筆資料是單純更新資料，還是新增資料在尾部
+	 */
 	const firstAndLastTime = seriesRowsFirsAndLastTime(seriesRows);
 	const prevFirstAndLastTime = seriesRowsFirsAndLastTime(prevSeriesRows);
 	if (firstAndLastTime !== undefined && prevFirstAndLastTime !== undefined) {
@@ -238,12 +242,16 @@ export class DataLayer {
 	// 將series object與series plot row資料關聯
 	// 單筆row的格式為row為{ index, time, value: [val(open), val(high), val(low), val(close)], originalTime }
 	private _seriesRowsBySeries: Map<Series, SeriesPlotRow[]> = new Map();
+	// 記錄(快取)series所對應到的plot row中最新(後)的一筆time: TimePoint
+	// 在_replaceTimeScalePoints時更新
 	private _seriesLastTimePoint: Map<Series, TimePoint> = new Map();
 
 	// this is kind of "dest" values (in opposite to "source" ones) - we don't need to modify it manually,
 	// the only by calling _updateTimeScalePoints or updateSeriesData methods
 	//  {timeWeight: TickMarkWeight, readonly time: TimePoint,
 	//  readonly originalTime: OriginalTime, pointData: TimePointData}
+	// _sortedTimePoints為目前series plot已經依時間排序好的資料，如果有新的資料進來時，
+	// newTimePoints可與sortedTimePoints比較是否需要更新time scale以及first change index
 	private _sortedTimePoints: readonly InternalTimeScalePoint[] = [];
 
 	public destroy(): void {
@@ -367,32 +375,41 @@ export class DataLayer {
 			this._cleanupPointsData();
 		}
 
-		//
+		// 將series row與series做map關聯，以及記錄series對應的最後一筆row的時間
 		this._setRowsToSeries(series, seriesRows);
 
 		let firstChangedPointIndex = -1;
 		if (isTimeScaleAffected) {
 			// then generate the time scale points
 			// timeWeight will be updates in _updateTimeScalePoints later
+			//{timeWeight: TickMarkWeight, readonly time: TimePoint, readonly originalTime: OriginalTime,
+			// pointData: TimePointData {index: TimePointIndex, timePoint: TimePoint,
+			// 							 mapping: Map<Series, Mutable<SeriesPlotRow | WhitespacePlotRow>>};
+			// }
 			const newTimeScalePoints: InternalTimeScalePoint[] = [];
+			// _pointDataByTimePoint: Map<UTCTimestamp, TimePointData>
+			// map的foreach callback fn三個參數為value, key, map
+			// 將pointData的值，依序轉換後存入newTimeScalePoints
 			this._pointDataByTimePoint.forEach((pointData: TimePointData) => {
 				newTimeScalePoints.push({
-					timeWeight: 0,
-					time: pointData.timePoint,
-					pointData,
-					originalTime: timeScalePointTime(pointData.mapping),
+					timeWeight: 0,	// 之後更新
+					time: pointData.timePoint, // copy from point data
+					pointData,	// copy from point data
+					originalTime: timeScalePointTime(pointData.mapping),	// copy from point data
 				});
 			});
-
+			// 依據timestamp排序
 			newTimeScalePoints.sort((t1: InternalTimeScalePoint, t2: InternalTimeScalePoint) => t1.time.timestamp - t2.time.timestamp);
 
+			// 計算firstChangedPointIndex與更新this._sortedTimePoints為newTimeScalePoints
 			firstChangedPointIndex = this._replaceTimeScalePoints(newTimeScalePoints);
-		}
+		}	// end of isTimeScaleAffected
 
+		// return DataUpdateResponse object
 		return this._getUpdateResponse(
 			series,
 			firstChangedPointIndex,
-			seriesUpdateInfo(this._seriesRowsBySeries.get(series), prevSeriesRows)
+			seriesUpdateInfo(this._seriesRowsBySeries.get(series), prevSeriesRows)	//  判斷是更新還是新增資料
 		);
 	}
 
@@ -430,7 +447,7 @@ export class DataLayer {
 
 		this._updateLastSeriesRow(series, plotRow);
 
-		const info: SeriesUpdateInfo = { lastBarUpdatedOrNewBarsAddedToTheRight: isSeriesPlotRow(plotRow) };
+		const info: SeriesUpdateInfo = {lastBarUpdatedOrNewBarsAddedToTheRight: isSeriesPlotRow(plotRow)};
 
 		// if point already exist on the time scale - we don't need to make a full update and just make an incremental one
 		if (!affectsTimeScale) {
@@ -493,6 +510,7 @@ export class DataLayer {
 		if (seriesRows.length !== 0) {
 			// 去除掉null的row後，將series與series rows object關聯
 			this._seriesRowsBySeries.set(series, seriesRows.filter(isSeriesPlotRow));
+			// 記錄series對應的series row最後一筆資料的時間
 			this._seriesLastTimePoint.set(series, seriesRows[seriesRows.length - 1].time);
 		} else {
 			this._seriesRowsBySeries.delete(series);
@@ -514,13 +532,17 @@ export class DataLayer {
 
 	/**
 	 * Sets new time scale and make indexes valid for all series
-	 *
+	 * 更新time scale至所有的series plot
+	 * InternalTimeScalePoint: {timeWeight, time, pointData, originalTime}
 	 * @returns The index of the first changed point or `-1` if there is no change.
 	 */
 	private _replaceTimeScalePoints(newTimePoints: InternalTimeScalePoint[]): number {
+		// newTimePoints在setSeriesData()中呼叫此函數前已依時間排序完成
 		let firstChangedPointIndex = -1;
 
 		// search the first different point and "syncing" time weight by the way
+		// 如果是第一次建構時，this._sortedTimePoints應該為[], 因此不會進入for loop
+		// 迴圈是更新資料時，this._sortedTimePoints已經有資料時才會進入
 		for (let index = 0; index < this._sortedTimePoints.length && index < newTimePoints.length; ++index) {
 			const oldPoint = this._sortedTimePoints[index];
 			const newPoint = newTimePoints[index];
@@ -535,12 +557,15 @@ export class DataLayer {
 			assignIndexToPointData(newPoint.pointData, index as TimePointIndex);
 		}
 
+		// for loop找不到change point index時，但sorted time points與new  time points長度不一致
+		// 第一次資料建構時會進入此區塊，firstChangePointIndex = 0
 		if (firstChangedPointIndex === -1 && this._sortedTimePoints.length !== newTimePoints.length) {
 			// the common part of the prev and the new points are the same
 			// so the first changed point is the next after the common part
 			firstChangedPointIndex = Math.min(this._sortedTimePoints.length, newTimePoints.length);
 		}
 
+		// 還是找不到change point index, 表示資料沒變，update時才會進入此區塊，直接回傳
 		if (firstChangedPointIndex === -1) {
 			// if no time scale changed, then do nothing
 			return -1;
@@ -549,10 +574,12 @@ export class DataLayer {
 		// if time scale points are changed that means that we need to make full update to all series (with clearing points)
 		// but first we need to synchronize indexes and re-fill time weights
 		for (let index = firstChangedPointIndex; index < newTimePoints.length; ++index) {
+			// 更新newTimePoints內的index與map中series row的index
 			assignIndexToPointData(newTimePoints[index].pointData, index as TimePointIndex);
 		}
 
 		// re-fill time weights for point after the first changed one
+		// 計算newTimePoints的time weight
 		fillWeightsForPoints(newTimePoints, firstChangedPointIndex);
 
 		this._sortedTimePoints = newTimePoints;
@@ -578,19 +605,27 @@ export class DataLayer {
 	}
 
 	private _getUpdateResponse(updatedSeries: Series, firstChangedPointIndex: number, info?: SeriesUpdateInfo): DataUpdateResponse {
+		/**
+		 * setSeriesData()最後回資料時呼叫,
+		 * updatedSeries是新的series,
+		 * firstChangedPointIndex是更新的資料起始點
+		 * info是單純資料更新還是新增資料
+		 */
 		const dataUpdateResponse: DataUpdateResponse = {
-			series: new Map(),
+			series: new Map(),	// Map<Series, SeriesChanges>
 			timeScale: {
 				baseIndex: this._getBaseIndex(),
 			},
 		};
 
+		// time scale沒變
 		if (firstChangedPointIndex !== -1) {
 			// TODO: it's possible to make perf improvements by checking what series has data after firstChangedPointIndex
 			// but let's skip for now
 			this._seriesRowsBySeries.forEach((data: SeriesPlotRow[], s: Series) => {
 				dataUpdateResponse.series.set(
-					s,
+					s,	// series
+					// seriesChanges
 					{
 						data,
 						info: s === updatedSeries ? info : undefined,
@@ -602,15 +637,16 @@ export class DataLayer {
 			// meaning the forEach above won't add the series to the data update response
 			// so we handle that case here
 			if (!this._seriesRowsBySeries.has(updatedSeries)) {
-				dataUpdateResponse.series.set(updatedSeries, { data: [], info });
+				dataUpdateResponse.series.set(updatedSeries, {data: [], info});
 			}
 
 			dataUpdateResponse.timeScale.points = this._sortedTimePoints;
 			dataUpdateResponse.timeScale.firstChangedPointIndex = firstChangedPointIndex as TimePointIndex;
 		} else {
+			// time scale changed
 			const seriesData = this._seriesRowsBySeries.get(updatedSeries);
 			// if no seriesData found that means that we just removed the series
-			dataUpdateResponse.series.set(updatedSeries, { data: seriesData || [], info });
+			dataUpdateResponse.series.set(updatedSeries, {data: seriesData || [], info});
 		}
 
 		return dataUpdateResponse;
@@ -618,6 +654,7 @@ export class DataLayer {
 }
 
 function assignIndexToPointData(pointData: TimePointData, index: TimePointIndex): void {
+	// index為_replaceTimeScalePoints()，第一次有變更的index, 之後的index全部用for loop更新
 	// first, nevertheless update index of point data ("make it valid")
 	pointData.index = index;
 
